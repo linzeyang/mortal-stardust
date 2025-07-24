@@ -1,3 +1,28 @@
+/**
+ * @fileoverview Theme Controls Component
+ *
+ * A comprehensive theme management component that provides users with controls
+ * for switching between light/dark modes and selecting from multiple color themes.
+ * This component integrates with the theme context to persist user preferences
+ * and apply changes across the entire application.
+ *
+ * Key Features:
+ * - Light/dark mode toggle with system preference detection
+ * - Color theme picker with visual swatches
+ * - Persistent theme preferences via localStorage
+ * - Hydration-safe rendering to prevent SSR mismatches
+ * - Accessible controls with proper ARIA labels
+ *
+ * Dependencies:
+ * - React hooks for state management and lifecycle
+ * - Lucide React for consistent iconography
+ * - shadcn/ui dropdown components for theme selection
+ * - Custom theme context for global theme state
+ *
+ * @author Mortal Stardust Team
+ * @since 1.0.0
+ */
+
 'use client';
 
 import { useState, useEffect } from 'react';

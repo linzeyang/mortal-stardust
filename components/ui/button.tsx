@@ -1,3 +1,33 @@
+/**
+ * @fileoverview Button Component
+ *
+ * A flexible, accessible button component built on top of Radix UI primitives
+ * with multiple variants and sizes. This component serves as the foundation
+ * for all button interactions throughout the application.
+ *
+ * Key Features:
+ * - Multiple visual variants (default, destructive, outline, secondary, ghost, link)
+ * - Flexible sizing options (sm, default, lg, icon)
+ * - Accessibility features with proper focus management
+ * - Support for rendering as different elements via asChild prop
+ * - Consistent styling with design system tokens
+ * - TypeScript support with proper prop typing
+ *
+ * Built With:
+ * - Radix UI Slot for polymorphic rendering
+ * - class-variance-authority for variant management
+ * - Tailwind CSS for styling
+ * - Custom focus ring and accessibility states
+ *
+ * Dependencies:
+ * - @radix-ui/react-slot for polymorphic component behavior
+ * - class-variance-authority for type-safe variant handling
+ * - Custom utility functions for class name merging
+ *
+ * @author Mortal Stardust Team
+ * @since 1.0.0
+ */
+
 import * as React from "react";
 import { Slot as SlotPrimitive } from "radix-ui";;
 import { cva, type VariantProps } from "class-variance-authority";

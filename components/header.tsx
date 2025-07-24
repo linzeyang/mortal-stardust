@@ -1,3 +1,28 @@
+/**
+ * @fileoverview Global Header Component
+ *
+ * The main navigation header component that appears on all pages of the application.
+ * This component provides user authentication controls, navigation menu, theme switching,
+ * and responsive design for both authenticated and unauthenticated users.
+ *
+ * Key Features:
+ * - Dynamic navigation menu based on authentication status
+ * - User avatar dropdown with profile and sign-out options
+ * - Theme toggle controls for light/dark mode
+ * - Responsive design that adapts to different screen sizes
+ * - Integration with SWR for real-time user data fetching
+ *
+ * Dependencies:
+ * - Next.js Link for client-side navigation
+ * - SWR for data fetching and caching
+ * - Lucide React for consistent iconography
+ * - shadcn/ui components for dropdown and avatar
+ * - Custom theme controls component
+ *
+ * @author Mortal Stardust Team
+ * @since 1.0.0
+ */
+
 'use client';
 
 import Link from 'next/link';

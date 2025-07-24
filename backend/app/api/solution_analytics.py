@@ -1,5 +1,37 @@
 """
-Solution Analytics API endpoints
+Solution Analytics API Endpoints
+
+This module provides comprehensive analytics endpoints for analyzing AI-generated solutions
+and their effectiveness based on user ratings and feedback. The analytics system helps
+users understand patterns in successful solutions and provides insights for improving
+the AI processing pipeline.
+
+Key Features:
+- High-rated solution pattern analysis with configurable rating thresholds
+- Temporal analysis to track solution effectiveness over time
+- Content analysis to identify successful solution characteristics
+- User feedback analysis for continuous improvement insights
+- Analytics history management with export capabilities
+- Quick insights for dashboard integration
+- Comparative analysis between different time periods
+
+Analytics Components:
+- Overview metrics: Total solutions, rating statistics, success rates
+- Pattern analysis: Common themes in high-rated solutions
+- Effectiveness tracking: Consistency scores and improvement rates
+- Content analysis: Successful solution characteristics and formats
+- Temporal trends: Performance changes over time periods
+- User feedback insights: Improvement suggestions and positive aspects
+
+Data Sources:
+- solution_ratings collection: User ratings and feedback data
+- solutions collection: AI-generated solution content and metadata
+- experiences collection: Original user experiences for context analysis
+
+Dependencies:
+- SolutionAnalyticsService: Core analytics processing logic
+- MongoDB aggregation pipeline: For efficient data analysis
+- Pydantic models: Request/response validation and serialization
 """
 
 import logging

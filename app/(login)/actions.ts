@@ -1,3 +1,37 @@
+/**
+ * @fileoverview Authentication Server Actions
+ *
+ * Server-side authentication actions for user sign-in, sign-up, password management,
+ * and account operations. These actions handle secure user authentication using
+ * MongoDB, bcrypt password hashing, and JWT session management.
+ *
+ * Key Features:
+ * - Secure user registration with password hashing
+ * - Email/password authentication with validation
+ * - Session management with JWT tokens and HTTP-only cookies
+ * - Password update functionality with current password verification
+ * - Account deletion with password confirmation
+ * - Activity logging for security auditing
+ * - Form validation using Zod schemas
+ *
+ * Security Measures:
+ * - Password hashing using bcrypt with salt rounds
+ * - JWT tokens stored in secure HTTP-only cookies
+ * - Input validation and sanitization
+ * - Activity logging for audit trails
+ * - Secure session management with automatic expiration
+ *
+ * Dependencies:
+ * - Next.js server actions for form handling
+ * - Zod for schema validation and type safety
+ * - MongoDB with Mongoose for user data persistence
+ * - Custom authentication utilities for session management
+ * - bcrypt for secure password hashing
+ *
+ * @author Mortal Stardust Team
+ * @since 1.0.0
+ */
+
 'use server';
 
 import { z } from 'zod';

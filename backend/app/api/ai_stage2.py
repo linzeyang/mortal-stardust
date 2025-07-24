@@ -252,79 +252,137 @@ async def process_stage2_background(
     user_role: str,
     additional_context: Dict[str, Any],
 ):
-    """Background task for Stage 2 AI processing."""
+    """
+    Background task for Stage 2 AI processing - Practical solutions generation.
+
+    This function handles the asynchronous processing of Stage 2 AI analysis,
+    which focuses on generating practical, actionable solutions based on the
+    user's experience and optionally building upon Stage 1 psychological healing.
+
+    Args:
+        solution_id (str): MongoDB ObjectId of the solution record to update
+        experience_id (str): MongoDB ObjectId of the experience to process
+        stage1_solution_id (Optional[str]): ObjectId of Stage 1 solution for context
+        user_role (str): User's role for personalized solution generation
+        additional_context (Dict[str, Any]): Extra context and preferences
+
+    Processing Flow:
+        1. Establishes database connection for background processing
+        2. Retrieves experience data and optional Stage 1 solution
+        3. Calls enhanced AI service for Stage 2 practical solution generation
+        4. Calculates processing time and performance metrics
+        5. Updates solution record with encrypted results and metadata
+        6. Handles errors by updating solution status appropriately
+
+    Stage 2 Features:
+        - Builds upon Stage 1 emotional healing with practical steps
+        - Generates specific, actionable recommendations
+        - Provides time-bound action plans with milestones
+        - Includes resource recommendations for skill development
+        - Adapts solutions based on user role and context
+
+    Error Handling:
+        - Database connection errors are logged and solution marked as failed
+        - AI processing errors are captured and stored in solution record
+        - Processing time is tracked even for failed attempts
+        - Solution status is updated to GENERATED (retry-able) on failure
+
+    Performance Tracking:
+        - Processing time calculation from start to completion
+        - Confidence score from AI service for solution quality
+        - Integration flags for Stage 1 context usage
+        - Context provision tracking for analytics
+    """
+    # Track processing time for performance monitoring and user feedback
     start_time = datetime.utcnow()
 
     try:
+        # Get database connection for background task processing
         db = await get_database()
 
-        # Get experience data
+        # Get experience data containing user's original input
+        # This provides the context for practical solution generation
         experience_doc = await db.experiences.find_one({"_id": ObjectId(experience_id)})
 
         if not experience_doc:
             raise Exception("Experience not found")
 
-        # Get Stage 1 solution if available
+        # Get Stage 1 solution if available for context integration
+        # Stage 1 provides emotional healing context that Stage 2 builds upon
         stage1_solution_doc = None
         if stage1_solution_id:
             stage1_solution_doc = await db.solutions.find_one(
                 {"_id": ObjectId(stage1_solution_id)}
             )
 
-        # Process with AI service
+        # Process with enhanced AI service for Stage 2 practical solutions
+        # This generates actionable steps, strategies, and resource recommendations
         processing_result = await enhanced_ai_service.process_experience_stage2(
-            experience_data=experience_doc,
-            stage1_solution=stage1_solution_doc,
-            user_role=user_role,
-            additional_context=additional_context,
+            experience_data=experience_doc,  # Original user experience
+            stage1_solution=stage1_solution_doc,  # Optional emotional healing context
+            user_role=user_role,  # Personalizes solutions for role-specific needs
+            additional_context=additional_context,  # User preferences and feedback
         )
 
-        # Calculate processing time
+        # Calculate total processing time including AI API calls and data processing
         processing_time = (datetime.utcnow() - start_time).total_seconds()
 
-        # Update solution with results
+        # Update solution record with AI-generated results and metadata
+        # Content is encrypted by the AI service before storage
         await db.solutions.update_one(
             {"_id": ObjectId(solution_id)},
             {
                 "$set": {
-                    "status": SolutionStatus.COMPLETED,
-                    "content": processing_result["content"],
-                    "aiMetadata": processing_result["ai_metadata"],
+                    "status": SolutionStatus.COMPLETED,  # Mark as successfully completed
+                    "content": processing_result[
+                        "content"
+                    ],  # Encrypted AI-generated content
+                    "aiMetadata": processing_result[
+                        "ai_metadata"
+                    ],  # AI processing details
                     "metadata": {
                         "confidence_score": processing_result.get(
                             "confidence_score", 0.8
-                        ),
-                        "processing_time": processing_time,
-                        "stage1_integration": bool(stage1_solution_doc),
-                        "context_provided": bool(additional_context),
+                        ),  # AI confidence in solution quality
+                        "processing_time": processing_time,  # Total processing duration
+                        "stage1_integration": bool(
+                            stage1_solution_doc
+                        ),  # Used Stage 1 context
+                        "context_provided": bool(
+                            additional_context
+                        ),  # Had additional context
                     },
-                    "processingTime": processing_time,
-                    "updatedAt": datetime.utcnow(),
-                    "completedAt": datetime.utcnow(),
+                    "processingTime": processing_time,  # Duplicate for compatibility
+                    "updatedAt": datetime.utcnow(),  # Last update timestamp
+                    "completedAt": datetime.utcnow(),  # Completion timestamp
                 }
             },
         )
 
+        # Log successful completion for monitoring and debugging
         print(f"✅ Stage 2 processing completed for solution {solution_id}")
 
     except Exception as e:
+        # Log processing failure with details for debugging
         print(f"❌ Stage 2 processing failed for solution {solution_id}: {e}")
 
-        # Update solution with error status
+        # Update solution with error status and details
+        # Status is set to GENERATED (not FAILED) to allow retry attempts
         try:
             db = await get_database()
             await db.solutions.update_one(
                 {"_id": ObjectId(solution_id)},
                 {
                     "$set": {
-                        "status": SolutionStatus.GENERATED,  # Failed processing, back to generated
-                        "error": str(e),
-                        "updatedAt": datetime.utcnow(),
+                        "status": SolutionStatus.GENERATED,  # Retry-able status
+                        "error": str(e),  # Error details for debugging
+                        "updatedAt": datetime.utcnow(),  # Update timestamp
                         "processingTime": (
                             datetime.utcnow() - start_time
-                        ).total_seconds(),
+                        ).total_seconds(),  # Time spent before failure
                     }
                 },
             )
         except Exception as db_error:
+            # Log database update failures for system monitoring
             print(f"Failed to update solution error status: {db_error}")

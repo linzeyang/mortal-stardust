@@ -1,3 +1,15 @@
+/**
+ * @fileoverview Experience Input Form Component
+ *
+ * This component provides a dynamic, role-based form for collecting user experiences.
+ * It features multi-step navigation, real-time validation, draft saving, and
+ * conditional field rendering based on user roles and responses. The form adapts
+ * its structure and validation rules based on role-specific templates.
+ *
+ * @author Mortal Stardust Team
+ * @since 1.0.0
+ */
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -24,76 +36,183 @@ import {
 import { MultimodalInput } from '@/components/multimodal/multimodal-input';
 import { useToast } from '@/hooks/use-toast';
 
-// Types for role templates
+/**
+ * Interface representing a single input field in the form template
+ * Defines the structure, validation rules, and behavior of form fields
+ *
+ * @interface InputField
+ */
 interface InputField {
+  /** Unique identifier for the field */
   id: string;
+  /** Display label for the field */
   label: string;
+  /** Type of input field determining the UI component to render */
   type: 'text' | 'textarea' | 'select' | 'multiselect' | 'slider' | 'file_upload';
+  /** Whether the field is required for form submission */
   required: boolean;
+  /** Optional placeholder text for input fields */
   placeholder?: string;
+  /** Options for select and multiselect fields */
   options?: Array<{ value: string; label: string }>;
+  /** Default value for the field */
   defaultValue?: any;
+  /** Help text displayed below the field */
   helpText?: string;
+  /** Validation rules for the field */
   validations?: Array<{
+    /** Type of validation (min_length, max_length, pattern, etc.) */
     type: string;
+    /** Validation parameter value */
     value: any;
+    /** Error message to display when validation fails */
     message: string;
   }>;
+  /** Conditional display rules based on other field values */
   conditional?: {
+    /** Field ID that this field depends on */
     dependsOn: string;
+    /** Whether the dependent field should have a value (true) or be empty (false) */
     hasValue: boolean;
   };
 }
 
+/**
+ * Interface representing a section within a role template
+ * Groups related fields together with navigation and display metadata
+ *
+ * @interface TemplateSection
+ */
 interface TemplateSection {
+  /** Unique identifier for the section */
   id: string;
+  /** Display title for the section */
   title: string;
+  /** Description explaining the section's purpose */
   description: string;
+  /** Icon identifier for visual representation */
   icon: string;
+  /** Display order within the template */
   order: number;
+  /** Whether the section can be collapsed (optional) */
   collapsible?: boolean;
+  /** Array of input fields within this section */
   fields: InputField[];
 }
 
+/**
+ * Interface representing a complete role-based form template
+ * Defines the structure and metadata for role-specific experience collection
+ *
+ * @interface RoleTemplate
+ */
 interface RoleTemplate {
+  /** Unique identifier for the template */
   id: string;
+  /** Role identifier this template is designed for */
   role: string;
+  /** Human-readable name of the template */
   name: string;
+  /** Description of the template's purpose and target audience */
   description: string;
+  /** Icon identifier for the role */
   icon: string;
+  /** Array of sections that make up the template */
   sections: TemplateSection[];
+  /** Tags for categorization and search */
   tags: string[];
 }
 
+/**
+ * Props interface for the ExperienceInputForm component
+ *
+ * @interface ExperienceInputFormProps
+ */
 interface ExperienceInputFormProps {
+  /** The selected user role that determines which template to load */
   selectedRole: string;
+  /** Callback function called when the form is submitted successfully */
   onSubmit: (data: any) => void;
+  /** Callback function called when saving form data as draft */
   onSaveDraft: (data: any) => void;
+  /** Optional initial data to populate the form (for editing existing entries) */
   initialData?: any;
 }
 
+/**
+ * Mapping of role identifiers to their corresponding icon components
+ * Used for visual representation in the form header
+ */
 const roleIcons = {
-  workplace_newcomer: <Briefcase className=\"w-5 h-5\" />,
-  entrepreneur: <Target className=\"w-5 h-5\" />,
-  student: <GraduationCap className=\"w-5 h-5\" />,
-  other: <User className=\"w-5 h-5\" />
+  workplace_newcomer: <Briefcase className="w-5 h-5" />,
+  entrepreneur: <Target className="w-5 h-5" />,
+  student: <GraduationCap className="w-5 h-5" />,
+  other: <User className="w-5 h-5" />
 };
 
+/**
+ * Experience Input Form Component
+ *
+ * A comprehensive, multi-step form component for collecting user experiences
+ * based on role-specific templates. Features include:
+ *
+ * - Dynamic form generation based on role templates
+ * - Multi-step navigation with progress tracking
+ * - Real-time validation with contextual error messages
+ * - Conditional field rendering based on user responses
+ * - Draft saving functionality for incomplete forms
+ * - Support for various input types (text, select, multiselect, slider, file upload)
+ * - Responsive design with accessibility considerations
+ *
+ * The component automatically loads the appropriate template based on the selected
+ * role and provides a guided experience for users to input their experiences
+ * in a structured manner.
+ *
+ * @param props - Component props
+ * @param props.selectedRole - The user role that determines which template to load
+ * @param props.onSubmit - Callback function for successful form submission
+ * @param props.onSaveDraft - Callback function for saving draft data
+ * @param props.initialData - Optional initial data for editing existing entries
+ *
+ * @example
+ * ```tsx
+ * <ExperienceInputForm
+ *   selectedRole="workplace_newcomer"
+ *   onSubmit={(data) => console.log('Form submitted:', data)}
+ *   onSaveDraft={(data) => console.log('Draft saved:', data)}
+ *   initialData={{ company_type: 'startup' }}
+ * />
+ * ```
+ */
 export function ExperienceInputForm({
   selectedRole,
   onSubmit,
   onSaveDraft,
   initialData = {}
 }: ExperienceInputFormProps) {
+  // Component state management
+  /** Currently loaded role template */
   const [template, setTemplate] = useState<RoleTemplate | null>(null);
+  /** Form data object containing all field values */
   const [formData, setFormData] = useState<Record<string, any>>(initialData);
+  /** Current section index for multi-step navigation */
   const [currentSection, setCurrentSection] = useState(0);
+  /** Validation errors mapped by field ID */
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  /** Loading state for async operations */
   const [isLoading, setIsLoading] = useState(false);
+  /** Indicates if the form has unsaved changes */
   const [isDraft, setIsDraft] = useState(false);
+  /** Toast notification hook for user feedback */
   const { toast } = useToast();
 
-  // Load role template
+  /**
+   * Effect hook to load the appropriate role template when the selected role changes
+   *
+   * Fetches the template configuration based on the selected role and initializes
+   * the form structure. In a production environment, this would make an API call
+   * to retrieve the template from the backend.
+   */
   useEffect(() => {
     const loadTemplate = async () => {
       try {
@@ -119,7 +238,17 @@ export function ExperienceInputForm({
     }
   }, [selectedRole, toast]);
 
-  // Generate mock template data (in real implementation, this would come from API)
+  /**
+   * Generates mock template data based on the selected role
+   *
+   * In a production environment, this would be replaced with an API call
+   * to fetch role-specific templates from the backend. The templates define
+   * the form structure, validation rules, and field types for each role.
+   *
+   * @function generateMockTemplate
+   * @param {string} role - The role identifier to generate a template for
+   * @returns {RoleTemplate} The complete template configuration for the role
+   */
   const generateMockTemplate = (role: string): RoleTemplate => {
     const templates = {
       workplace_newcomer: {
@@ -240,7 +369,16 @@ export function ExperienceInputForm({
     return templates[role as keyof typeof templates] || templates.workplace_newcomer;
   };
 
-  // Handle form field changes
+  /**
+   * Handles changes to form field values
+   *
+   * Updates the form data state, clears any existing validation errors for the field,
+   * and marks the form as having unsaved changes (draft state).
+   *
+   * @function handleFieldChange
+   * @param {string} fieldId - The unique identifier of the field being changed
+   * @param {any} value - The new value for the field
+   */
   const handleFieldChange = (fieldId: string, value: any) => {
     setFormData(prev => ({
       ...prev,
@@ -260,7 +398,16 @@ export function ExperienceInputForm({
     setIsDraft(true);
   };
 
-  // Validate current section
+  /**
+   * Validates all fields in the current section
+   *
+   * Performs comprehensive validation including required field checks,
+   * custom validation rules, and conditional field logic. Updates the
+   * validation errors state with any issues found.
+   *
+   * @function validateCurrentSection
+   * @returns {boolean} True if all fields in the current section are valid
+   */
   const validateCurrentSection = (): boolean => {
     if (!template) return false;
 
@@ -303,19 +450,42 @@ export function ExperienceInputForm({
     return Object.keys(errors).length === 0;
   };
 
-  // Navigate to next section
+  /**
+   * Navigates to the next section of the form
+   *
+   * Validates the current section before allowing navigation. Only proceeds
+   * if all validation rules pass for the current section.
+   *
+   * @function handleNext
+   */
   const handleNext = () => {
     if (validateCurrentSection()) {
       setCurrentSection(prev => Math.min(prev + 1, (template?.sections.length || 1) - 1));
     }
   };
 
-  // Navigate to previous section
+  /**
+   * Navigates to the previous section of the form
+   *
+   * Allows users to go back and modify previously entered information.
+   * No validation is performed when navigating backwards.
+   *
+   * @function handlePrevious
+   */
   const handlePrevious = () => {
     setCurrentSection(prev => Math.max(prev - 1, 0));
   };
 
-  // Save as draft
+  /**
+   * Saves the current form data as a draft
+   *
+   * Allows users to save their progress without completing the entire form.
+   * Includes metadata about the current section and modification timestamp.
+   *
+   * @async
+   * @function handleSaveDraft
+   * @throws {Error} When the draft save operation fails
+   */
   const handleSaveDraft = async () => {
     try {
       setIsLoading(true);
@@ -344,7 +514,16 @@ export function ExperienceInputForm({
     }
   };
 
-  // Submit form
+  /**
+   * Submits the completed form data
+   *
+   * Performs final validation on all sections before submission. If validation
+   * passes, calls the onSubmit callback with the complete form data and metadata.
+   *
+   * @async
+   * @function handleSubmit
+   * @throws {Error} When the form submission fails
+   */
   const handleSubmit = async () => {
     // Validate all sections
     let allValid = true;
@@ -391,7 +570,18 @@ export function ExperienceInputForm({
     }
   };
 
-  // Render field based on type
+  /**
+   * Renders a form field based on its type and configuration
+   *
+   * Dynamically generates the appropriate UI component based on the field type,
+   * handles conditional visibility, applies validation styling, and manages
+   * field-specific interactions. Supports text, textarea, select, multiselect,
+   * slider, and file upload field types.
+   *
+   * @function renderField
+   * @param {InputField} field - The field configuration object
+   * @returns {JSX.Element | null} The rendered field component or null if conditionally hidden
+   */
   const renderField = (field: InputField) => {
     const value = formData[field.id];
     const error = validationErrors[field.id];

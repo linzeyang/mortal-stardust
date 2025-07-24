@@ -1,3 +1,33 @@
+/**
+ * @fileoverview Theme Context Provider
+ *
+ * A React context provider that manages global theme state including light/dark mode
+ * and color theme preferences. This context provides centralized theme management
+ * with localStorage persistence and system preference detection.
+ *
+ * Key Features:
+ * - Light/dark mode management with system preference fallback
+ * - Multiple color theme options with HSL color values
+ * - Automatic localStorage persistence for user preferences
+ * - CSS custom property injection for theme variables
+ * - Hydration-safe rendering to prevent SSR/client mismatches
+ * - Type-safe theme context with TypeScript interfaces
+ *
+ * Theme System:
+ * - Uses CSS custom properties for dynamic theme switching
+ * - Supports multiple predefined color schemes (blue, green, orange, red)
+ * - Integrates with Tailwind CSS dark mode and custom color variables
+ * - Provides smooth transitions between theme changes
+ *
+ * Dependencies:
+ * - React context API for global state management
+ * - localStorage for theme preference persistence
+ * - CSS custom properties for dynamic styling
+ *
+ * @author Mortal Stardust Team
+ * @since 1.0.0
+ */
+
 'use client';
 
 import React, { createContext, useContext, useEffect, useState } from 'react';

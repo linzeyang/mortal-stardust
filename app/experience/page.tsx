@@ -1,3 +1,15 @@
+/**
+ * @fileoverview Experience Collection Page Component
+ *
+ * This page manages the complete experience collection workflow, from role
+ * selection through form input to AI processing. It provides a multi-step
+ * interface that guides users through sharing their experiences in a
+ * structured manner, with draft saving and progress tracking capabilities.
+ *
+ * @author Mortal Stardust Team
+ * @since 1.0.0
+ */
+
 'use client';
 
 import React, { useState, useEffect } from 'react';
@@ -14,31 +26,94 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
+/**
+ * Interface representing the complete experience data structure
+ * Contains all information collected from the user through the form process
+ *
+ * @interface ExperienceData
+ */
 interface ExperienceData {
+  /** Unique identifier of the template used for data collection */
   templateId: string;
+  /** User role that determined the template structure */
   role: string;
+  /** Form data collected from the user */
   data: Record<string, any>;
+  /** Optional timestamp when the experience was submitted */
   submittedAt?: string;
+  /** Indicates if this is a draft (incomplete) submission */
   isDraft?: boolean;
+  /** Current section index for multi-step forms */
   currentSection?: number;
+  /** Timestamp of the last modification */
   lastModified?: string;
 }
 
+/**
+ * Enumeration of the different steps in the experience collection workflow
+ * Defines the possible states of the experience collection process
+ *
+ * @enum {string}
+ */
 enum ExperienceStep {
+  /** Initial step where users select their role/persona */
   ROLE_SELECTION = 'role_selection',
+  /** Form input step where users provide detailed experience information */
   FORM_INPUT = 'form_input',
+  /** Processing step where AI analyzes the submitted experience */
   PROCESSING = 'processing',
+  /** Results step where users can view the AI-generated solutions */
   RESULTS = 'results'
 }
 
+/**
+ * Experience Collection Page Component
+ *
+ * A comprehensive multi-step page that manages the entire experience collection
+ * workflow. This component orchestrates the user journey from role selection
+ * through form completion to AI processing. Key features include:
+ *
+ * - Multi-step workflow with clear navigation
+ * - Role-based form customization
+ * - Draft saving and restoration capabilities
+ * - Real-time processing feedback
+ * - Error handling and user notifications
+ * - Responsive design for various screen sizes
+ *
+ * The component maintains state across the entire workflow and provides
+ * appropriate UI feedback at each step. It integrates with local storage
+ * for draft persistence and includes comprehensive error handling.
+ *
+ * @component
+ * @returns {JSX.Element} The complete experience collection interface
+ *
+ * @example
+ * ```tsx
+ * // This component is automatically rendered for the /experience route
+ * // No props are required as it manages its own state
+ * <ExperiencePage />
+ * ```
+ */
 export default function ExperiencePage() {
+  // Component state management
+  /** Current step in the experience collection workflow */
   const [currentStep, setCurrentStep] = useState<ExperienceStep>(ExperienceStep.ROLE_SELECTION);
+  /** Currently selected user role */
   const [selectedRole, setSelectedRole] = useState<string>('');
+  /** Complete experience data collected from the user */
   const [experienceData, setExperienceData] = useState<ExperienceData | null>(null);
+  /** Indicates if AI processing is currently active */
   const [isProcessing, setIsProcessing] = useState(false);
+  /** Toast notification hook for user feedback */
   const { toast } = useToast();
 
-  // Load existing draft if available
+  /**
+   * Effect hook to load existing draft data on component mount
+   *
+   * Checks local storage for any previously saved draft data and restores
+   * the user's progress if found. This allows users to continue where they
+   * left off if they previously started but didn't complete the form.
+   */
   useEffect(() => {
     const loadExistingDraft = async () => {
       try {
@@ -65,13 +140,29 @@ export default function ExperiencePage() {
     loadExistingDraft();
   }, [toast]);
 
-  // Handle role selection
+  /**
+   * Handles user role selection and advances to the form input step
+   *
+   * @function handleRoleSelected
+   * @param {string} role - The selected user role identifier
+   */
   const handleRoleSelected = (role: string) => {
     setSelectedRole(role);
     setCurrentStep(ExperienceStep.FORM_INPUT);
   };
 
-  // Handle form submission
+  /**
+   * Handles the submission of the completed experience form
+   *
+   * Processes the form data, initiates AI processing, and manages the
+   * transition to the processing state. Includes error handling and
+   * user feedback through toast notifications.
+   *
+   * @async
+   * @function handleFormSubmit
+   * @param {ExperienceData} data - The complete experience data from the form
+   * @throws {Error} When the submission process fails
+   */
   const handleFormSubmit = async (data: ExperienceData) => {
     try {
       setIsProcessing(true);
@@ -112,7 +203,18 @@ export default function ExperiencePage() {
     }
   };
 
-  // Handle draft saving
+  /**
+   * Handles saving form data as a draft
+   *
+   * Saves the current form state to local storage so users can continue
+   * their progress later. In a production environment, this would save
+   * to the backend database.
+   *
+   * @async
+   * @function handleSaveDraft
+   * @param {ExperienceData} data - The current form data to save as draft
+   * @throws {Error} When the draft save operation fails
+   */
   const handleSaveDraft = async (data: ExperienceData) => {
     try {
       // Save to local storage (in real implementation, save to backend)
@@ -124,14 +226,28 @@ export default function ExperiencePage() {
     }
   };
 
-  // Handle going back to role selection
+  /**
+   * Handles navigation back to the role selection step
+   *
+   * Resets the current step and clears selected role data, allowing
+   * users to change their role selection.
+   *
+   * @function handleBackToRoleSelection
+   */
   const handleBackToRoleSelection = () => {
     setCurrentStep(ExperienceStep.ROLE_SELECTION);
     setSelectedRole('');
     setExperienceData(null);
   };
 
-  // Handle starting over
+  /**
+   * Handles completely restarting the experience collection process
+   *
+   * Clears all saved data including drafts and resets the component
+   * to its initial state. Provides user feedback through toast notification.
+   *
+   * @function handleStartOver
+   */
   const handleStartOver = () => {
     localStorage.removeItem('experience_draft');
     setCurrentStep(ExperienceStep.ROLE_SELECTION);
@@ -144,7 +260,15 @@ export default function ExperiencePage() {
     });
   };
 
-  // Render processing screen
+  /**
+   * Renders the AI processing screen with visual feedback
+   *
+   * Displays a loading interface that shows the three-stage AI processing
+   * workflow with animated indicators and progress information.
+   *
+   * @function renderProcessingScreen
+   * @returns {JSX.Element} The processing screen UI component
+   */
   const renderProcessingScreen = () => (
     <div className=\"w-full max-w-4xl mx-auto space-y-8\">
       <Card>
@@ -202,7 +326,15 @@ export default function ExperiencePage() {
     </div>
   );
 
-  // Render results screen (placeholder)
+  /**
+   * Renders the results screen after AI processing completion
+   *
+   * Displays a success message and provides navigation to view the
+   * generated AI solutions. This is currently a placeholder implementation.
+   *
+   * @function renderResultsScreen
+   * @returns {JSX.Element} The results screen UI component
+   */
   const renderResultsScreen = () => (
     <div className=\"w-full max-w-4xl mx-auto space-y-8\">
       <Card>
