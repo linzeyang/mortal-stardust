@@ -1,0 +1,47 @@
+# Life Experience Collection & AI Counseling Platform
+# Environment Configuration with Security Considerations
+
+# Development Commands
+run_command: npm run dev
+dependency_command: npm install
+compile_command: npm run build
+
+# Production Deployment Settings
+# Note: For production deployment, ensure:
+# 1. All environment variables are properly set in .env files
+# 2. MongoDB connection string points to production database
+# 3. JWT secret keys are securely generated and stored
+# 4. HTTPS is enabled for all external communications
+# 5. Rate limiting and CORS are properly configured
+# 6. Backup and monitoring systems are in place
+
+# Backend Service Configuration
+# The Python FastAPI backend runs on port 8000
+# Frontend Next.js application runs on port 3000
+# MongoDB runs on port 27017 with authentication enabled
+
+# Security Considerations Implemented:
+# - Multi-layer AES-256 encryption for sensitive data
+# - JWT-based authentication with secure token handling
+# - GDPR compliance with data export/deletion capabilities
+# - Input validation and SQL injection prevention
+# - Rate limiting and request size limitations
+# - Secure file upload with type validation
+# - Audit logging for all sensitive operations
+# - Password hashing with bcrypt
+# - HTTPS enforcement in production
+
+linter_config:
+  frontend:
+    - "npm run lint"
+    - "npm run type-check"
+  backend:
+    - "cd backend && python -m ruff ."
+    - "cd backend && python -m mypy app/"
+
+# Performance Optimizations:
+# - Database indexing for frequently queried fields
+# - Caching for AI processing results
+# - File compression for media uploads
+# - CDN integration for static assets
+# - Connection pooling for database operations
