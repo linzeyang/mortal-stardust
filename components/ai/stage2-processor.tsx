@@ -1,0 +1,486 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { Separator } from '@/components/ui/separator';
+import { 
+  CheckCircle, 
+  Clock, 
+  AlertCircle, 
+  Zap, 
+  Target, 
+  Users, 
+  Calendar,
+  ArrowRight,
+  Lightbulb,
+  TrendingUp,
+  Award
+} from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+
+interface Stage2ProcessorProps {
+  experienceId: string;
+  stage1SolutionId?: string;
+  onComplete?: (solutionId: string) => void;
+  onError?: (error: string) => void;
+}
+
+interface Stage2Solution {
+  solution_id: string;
+  status: string;
+  stage: number;
+  content: {
+    title: string;
+    description: string;
+    actionSteps: string[];
+    recommendations: string[];
+    implementation_timeline: {
+      phase1: string;
+      phase2: string;
+      phase3: string;
+    };
+    resources: Array<{
+      type: string;
+      title: string;
+      description: string;
+      url?: string;
+    }>;
+    success_metrics: string[];
+  };
+  processing_time: number;
+  confidence_score: number;
+  created_at: string;
+  updated_at: string;
+  stage1_solution_id?: string;
+}
+
+export default function Stage2Processor({ 
+  experienceId, 
+  stage1SolutionId,
+  onComplete, 
+  onError 
+}: Stage2ProcessorProps) {
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [solution, setSolution] = useState<Stage2Solution | null>(null);
+  const [processingProgress, setProcessingProgress] = useState(0);
+  const [processingStage, setProcessingStage] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  
+  const { toast } = useToast();
+
+  const startStage2Processing = async () => {
+    try {
+      setIsProcessing(true);
+      setError(null);
+      setProcessingProgress(10);
+      setProcessingStage('初始化实用解决方案生成...');
+
+      const requestBody = {
+        experience_id: experienceId,
+        stage1_solution_id: stage1SolutionId,
+        priority: 'normal',
+        additional_context: {
+          request_timestamp: new Date().toISOString(),
+          frontend_version: '1.0'
+        }
+      };
+
+      const response = await fetch('/api/ai/stage2/process', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(requestBody)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Stage 2 processing failed');
+      }
+
+      const result = await response.json();
+      
+      if (result.status === 'already_exists') {
+        // Solution already exists, fetch it
+        await fetchSolutionStatus(result.solution_id);
+        toast({
+          title: "解决方案已存在",
+          description: "检测到该经历已有实用解决方案，正在加载现有方案。"
+        });
+        return;
+      }
+
+      // Start polling for status
+      setProcessingProgress(25);
+      setProcessingStage('AI正在分析您的情况...');
+      await pollProcessingStatus(result.solution_id);
+
+    } catch (error) {
+      console.error('Stage 2 processing error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      setError(errorMessage);
+      onError?.(errorMessage);
+      toast({
+        title: "处理失败",
+        description: errorMessage,
+        variant: "destructive"
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const pollProcessingStatus = async (solutionId: string) => {
+    const maxAttempts = 60; // 5 minutes with 5-second intervals
+    let attempts = 0;
+
+    const poll = async () => {
+      try {
+        attempts++;
+        setProcessingProgress(Math.min(25 + (attempts * 2), 95));
+        
+        // Update processing stage message
+        if (attempts < 10) {
+          setProcessingStage('分析经历内容和上下文...');
+        } else if (attempts < 20) {
+          setProcessingStage('生成实用解决方案...');
+        } else if (attempts < 30) {
+          setProcessingStage('制定行动计划...');
+        } else if (attempts < 40) {
+          setProcessingStage('优化建议和策略...');
+        } else {
+          setProcessingStage('最终整理和验证...');
+        }
+
+        const statusResponse = await fetch(`/api/ai/stage2/status/${solutionId}`, {
+          credentials: 'include'
+        });
+
+        if (!statusResponse.ok) {
+          throw new Error('Failed to get processing status');
+        }
+
+        const statusData = await statusResponse.json();
+
+        if (statusData.status === 'completed') {
+          setProcessingProgress(100);
+          setProcessingStage('处理完成！');
+          setSolution(statusData);
+          onComplete?.(solutionId);
+          
+          toast({
+            title: "Stage 2 处理完成",
+            description: "实用解决方案已生成，请查看详细建议。"
+          });
+          return;
+        } else if (statusData.status === 'failed' || statusData.status === 'error') {
+          throw new Error(statusData.error || 'Processing failed');
+        }
+
+        // Continue polling if still processing
+        if (attempts < maxAttempts) {
+          setTimeout(poll, 5000); // Poll every 5 seconds
+        } else {
+          throw new Error('Processing timeout - please try again');
+        }
+
+      } catch (error) {
+        console.error('Polling error:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Status check failed';
+        setError(errorMessage);
+        onError?.(errorMessage);
+      }
+    };
+
+    poll();
+  };
+
+  const fetchSolutionStatus = async (solutionId: string) => {
+    try {
+      const response = await fetch(`/api/ai/stage2/status/${solutionId}`, {
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch solution');
+      }
+
+      const solutionData = await response.json();
+      setSolution(solutionData);
+    } catch (error) {
+      console.error('Fetch solution error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to fetch solution';
+      setError(errorMessage);
+      onError?.(errorMessage);
+    }
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'completed': return 'bg-green-500';
+      case 'processing': return 'bg-blue-500';
+      case 'failed': case 'error': return 'bg-red-500';
+      default: return 'bg-gray-500';
+    }
+  };
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'completed': return '已完成';
+      case 'processing': return '处理中';
+      case 'failed': case 'error': return '处理失败';
+      default: return '未知状态';
+    }
+  };
+
+  if (error) {
+    return (
+      <Card className="border-red-200 bg-red-50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-red-700">
+            <AlertCircle className="h-5 w-5" />
+            Stage 2 处理错误
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-red-600 mb-4">{error}</p>
+          <Button 
+            onClick={() => {
+              setError(null);
+              setSolution(null);
+            }} 
+            variant="outline"
+            className="border-red-300 text-red-700 hover:bg-red-100"
+          >
+            重试
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!solution && !isProcessing) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Target className="h-5 w-5 text-blue-600" />
+            Stage 2: 实用解决方案生成
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            基于您的经历和心理疗愈基础，生成具体可执行的行动计划和实用策略
+          </p>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg">
+              <Lightbulb className="h-5 w-5 text-blue-600 flex-shrink-0" />
+              <div className="text-sm">
+                <div className="font-medium text-blue-900">即将生成的内容：</div>
+                <div className="text-blue-700">具体行动步骤、实施时间安排、成功指标、所需资源</div>
+              </div>
+            </div>
+            
+            {stage1SolutionId && (
+              <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
+                <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+                <div className="text-sm text-green-700">
+                  将整合 Stage 1 心理疗愈方案，确保解决方案的完整性
+                </div>
+              </div>
+            )}
+            
+            <Button 
+              onClick={startStage2Processing}
+              className="w-full"
+              size="lg"
+            >
+              <Zap className="h-4 w-4 mr-2" />
+              开始生成实用解决方案
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (isProcessing) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Clock className="h-5 w-5 text-blue-600 animate-spin" />
+            Stage 2 处理中...
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div>
+              <div className="flex justify-between text-sm mb-2">
+                <span>{processingStage}</span>
+                <span>{processingProgress}%</span>
+              </div>
+              <Progress value={processingProgress} className="h-2" />
+            </div>
+            
+            <div className="text-sm text-muted-foreground">
+              AI正在为您量身定制实用解决方案，这通常需要1-3分钟...
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (solution) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <CheckCircle className="h-5 w-5 text-green-600" />
+            {solution.content.title}
+          </CardTitle>
+          <div className="flex items-center gap-4 text-sm">
+            <Badge className={getStatusColor(solution.status)}>
+              {getStatusText(solution.status)}
+            </Badge>
+            <span className="text-muted-foreground">
+              置信度: {Math.round(solution.confidence_score * 100)}%
+            </span>
+            <span className="text-muted-foreground">
+              处理时间: {solution.processing_time.toFixed(1)}秒
+            </span>
+          </div>
+        </CardHeader>
+        
+        <CardContent className="space-y-6">
+          {/* Description */}
+          <div>
+            <h4 className="font-medium mb-2 flex items-center gap-2">
+              <TrendingUp className="h-4 w-4 text-blue-600" />
+              解决方案概述
+            </h4>
+            <div className="text-sm text-muted-foreground whitespace-pre-wrap">
+              {solution.content.description}
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* Action Steps */}
+          <div>
+            <h4 className="font-medium mb-3 flex items-center gap-2">
+              <ArrowRight className="h-4 w-4 text-green-600" />
+              具体行动步骤
+            </h4>
+            <div className="space-y-2">
+              {solution.content.actionSteps.map((step, index) => (
+                <div key={index} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                  <div className="bg-green-600 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    {index + 1}
+                  </div>
+                  <div className="text-sm">{step}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* Recommendations */}
+          <div>
+            <h4 className="font-medium mb-3 flex items-center gap-2">
+              <Lightbulb className="h-4 w-4 text-yellow-600" />
+              实用建议
+            </h4>
+            <div className="grid gap-2">
+              {solution.content.recommendations.map((recommendation, index) => (
+                <div key={index} className="flex items-start gap-2 text-sm">
+                  <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                  <span>{recommendation}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* Implementation Timeline */}
+          <div>
+            <h4 className="font-medium mb-3 flex items-center gap-2">
+              <Calendar className="h-4 w-4 text-purple-600" />
+              实施时间安排
+            </h4>
+            <div className="space-y-3">
+              {Object.entries(solution.content.implementation_timeline).map(([phase, description], index) => (
+                <div key={phase} className="flex items-start gap-3">
+                  <div className="bg-purple-600 text-white text-xs rounded-full w-8 h-8 flex items-center justify-center flex-shrink-0">
+                    {index + 1}
+                  </div>
+                  <div>
+                    <div className="font-medium text-sm">阶段 {index + 1}</div>
+                    <div className="text-sm text-muted-foreground">{description}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* Success Metrics */}
+          <div>
+            <h4 className="font-medium mb-3 flex items-center gap-2">
+              <Award className="h-4 w-4 text-orange-600" />
+              成功指标
+            </h4>
+            <div className="grid gap-2">
+              {solution.content.success_metrics.map((metric, index) => (
+                <div key={index} className="flex items-start gap-2 text-sm">
+                  <Target className="h-4 w-4 text-orange-600 flex-shrink-0 mt-0.5" />
+                  <span>{metric}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <Separator />
+
+          {/* Resources */}
+          {solution.content.resources && solution.content.resources.length > 0 && (
+            <div>
+              <h4 className="font-medium mb-3 flex items-center gap-2">
+                <Users className="h-4 w-4 text-indigo-600" />
+                相关资源
+              </h4>
+              <div className="grid gap-3">
+                {solution.content.resources.map((resource, index) => (
+                  <div key={index} className="p-3 border rounded-lg">
+                    <div className="font-medium text-sm">{resource.title}</div>
+                    <div className="text-sm text-muted-foreground">{resource.description}</div>
+                    {resource.url && (
+                      <a 
+                        href={resource.url} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800 text-sm underline"
+                      >
+                        访问资源
+                      </a>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return null;
+}

@@ -1,0 +1,3 @@
+run_command: "npm run dev"
+compile_command: ""
+dependency_command: "npm install"
