@@ -21,7 +21,7 @@ class ClientEncryption {
       keySize: 256 / 32,
       iterations: 10000
     };
-    
+
     // In production, this should come from environment variables
     // and be unique per user session
     this.secretKey = process.env.NEXT_PUBLIC_CLIENT_ENCRYPTION_KEY || 'default-client-key-change-in-production';
@@ -42,7 +42,7 @@ class ClientEncryption {
     ];
 
     const encrypted = { ...data };
-    
+
     for (const field of sensitiveFields) {
       if (encrypted[field] && typeof encrypted[field] === 'string') {
         encrypted[field] = this.encryptString(encrypted[field]);
@@ -67,7 +67,7 @@ class ClientEncryption {
     ];
 
     const decrypted = { ...data };
-    
+
     for (const field of sensitiveFields) {
       if (decrypted[field] && typeof decrypted[field] === 'string') {
         try {
@@ -118,7 +118,7 @@ class ClientEncryption {
 
     try {
       const combined = CryptoJS.enc.Utf8.stringify(CryptoJS.enc.Base64.parse(encryptedText));
-      
+
       const salt = CryptoJS.enc.Hex.parse(combined.substr(0, 32));
       const iv = CryptoJS.enc.Hex.parse(combined.substr(32, 32));
       const encrypted = combined.substring(64);
@@ -201,7 +201,7 @@ class ClientEncryption {
     try {
       const encrypted = localStorage.getItem(key);
       if (!encrypted) return null;
-      
+
       return this.decryptObject(encrypted);
     } catch (error) {
       console.error('Secure retrieval failed:', error);

@@ -110,7 +110,7 @@ export function Login({ mode = 'signin' }: { mode?: 'signin' | 'signup' }) {
                     />
                   </div>
                 </div>
-                
+
                 <div>
                   <Label
                     htmlFor="lastName"

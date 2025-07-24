@@ -5,8 +5,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { RoleSelection } from '@/components/experience/role-selection';
 import { ExperienceInputForm } from '@/components/experience/experience-input-form';
-import { 
-  ArrowLeft, 
+import {
+  ArrowLeft,
   RotateCcw,
   FileText,
   Brain,
@@ -50,7 +50,7 @@ export default function ExperiencePage() {
             setSelectedRole(draft.role);
             setExperienceData(draft);
             setCurrentStep(ExperienceStep.FORM_INPUT);
-            
+
             toast({
               title: \"找到草稿\",
               description: \"已为您恢复之前保存的草稿\",
@@ -76,29 +76,29 @@ export default function ExperiencePage() {
     try {
       setIsProcessing(true);
       setCurrentStep(ExperienceStep.PROCESSING);
-      
+
       // Save the experience data
       setExperienceData(data);
-      
+
       // Clear any saved draft
       localStorage.removeItem('experience_draft');
-      
+
       // In a real implementation, this would send data to the backend
       // and trigger AI processing
       console.log('Submitting experience data:', data);
-      
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000));
-      
+
       // Show success and redirect to AI processing
       toast({
         title: \"提交成功\",
         description: \"您的经历已成功提交，AI正在为您生成个性化解决方案\",
       });
-      
+
       // In a real app, redirect to AI processing/results page
       setCurrentStep(ExperienceStep.RESULTS);
-      
+
     } catch (error) {
       console.error('Submission failed:', error);
       toast({
@@ -137,7 +137,7 @@ export default function ExperiencePage() {
     setCurrentStep(ExperienceStep.ROLE_SELECTION);
     setSelectedRole('');
     setExperienceData(null);
-    
+
     toast({
       title: \"重新开始\",
       description: \"已清除所有数据，您可以重新选择角色\",
@@ -170,7 +170,7 @@ export default function ExperiencePage() {
                   <div className=\"text-sm text-blue-700\">分析情绪状态，制定心理支持方案...</div>
                 </div>
               </div>
-              
+
               <div className=\"flex items-center space-x-3 p-3 bg-gray-50 rounded-lg opacity-60\">
                 <div className=\"w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center\">
                   <div className=\"w-2 h-2 bg-white rounded-full\"></div>
@@ -180,7 +180,7 @@ export default function ExperiencePage() {
                   <div className=\"text-sm text-gray-600\">生成具体可行的行动计划...</div>
                 </div>
               </div>
-              
+
               <div className=\"flex items-center space-x-3 p-3 bg-gray-50 rounded-lg opacity-60\">
                 <div className=\"w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center\">
                   <div className=\"w-2 h-2 bg-white rounded-full\"></div>

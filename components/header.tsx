@@ -88,50 +88,50 @@ function NavigationMenu() {
 
   return (
     <nav className="hidden md:flex items-center space-x-6">
-      <Link 
-        href="/experience" 
+      <Link
+        href="/experience"
         className="flex items-center space-x-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
       >
         <FileText className="h-4 w-4" />
         <span>经历收集</span>
       </Link>
-      <Link 
-        href="/solutions" 
+      <Link
+        href="/solutions"
         className="flex items-center space-x-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
       >
         <Brain className="h-4 w-4" />
         <span>AI方案</span>
       </Link>
-      <Link 
-        href="/analytics" 
+      <Link
+        href="/analytics"
         className="flex items-center space-x-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
       >
         <BarChart3 className="h-4 w-4" />
         <span>数据分析</span>
       </Link>
-      <Link 
-        href="/rating-demo" 
+      <Link
+        href="/rating-demo"
         className="flex items-center space-x-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
       >
         <Star className="h-4 w-4" />
         <span>评价系统</span>
       </Link>
-      <Link 
-        href="/experience-summary" 
+      <Link
+        href="/experience-summary"
         className="flex items-center space-x-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
       >
         <Sparkles className="h-4 w-4" />
         <span>经历总结</span>
       </Link>
-      <Link 
-        href="/security" 
+      <Link
+        href="/security"
         className="flex items-center space-x-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
       >
         <Shield className="h-4 w-4" />
         <span>安全中心</span>
       </Link>
-      <Link 
-        href="/privacy" 
+      <Link
+        href="/privacy"
         className="flex items-center space-x-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
       >
         <UserCheck className="h-4 w-4" />

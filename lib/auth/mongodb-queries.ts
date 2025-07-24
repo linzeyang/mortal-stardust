@@ -8,7 +8,7 @@ export async function getCurrentUser() {
     if (!session) return null;
 
     await connectDB();
-    
+
     const user = await User.findById(session.user.id);
     if (!user) return null;
 
@@ -42,7 +42,7 @@ export async function getCurrentUser() {
 export async function getUserById(userId: string) {
   try {
     await connectDB();
-    
+
     const user = await User.findById(userId);
     if (!user) return null;
 
@@ -76,7 +76,7 @@ export async function getUserById(userId: string) {
 export async function updateUserProfile(userId: string, updates: any) {
   try {
     await connectDB();
-    
+
     const user = await User.findById(userId);
     if (!user) return null;
 

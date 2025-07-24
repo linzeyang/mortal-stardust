@@ -8,13 +8,13 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
-import { 
-  Upload, 
-  Mic, 
-  MicOff, 
-  Camera, 
-  Video, 
-  Image as ImageIcon, 
+import {
+  Upload,
+  Mic,
+  MicOff,
+  Camera,
+  Video,
+  Image as ImageIcon,
   FileText,
   X,
   Play,
@@ -47,9 +47,9 @@ interface MultimodalInputProps {
   allowedTypes?: ('audio' | 'image' | 'video')[];
 }
 
-export default function MultimodalInput({ 
-  onSubmit, 
-  placeholder = "分享您的经历...", 
+export default function MultimodalInput({
+  onSubmit,
+  placeholder = "分享您的经历...",
   maxFiles = 5,
   allowedTypes = ['audio', 'image', 'video']
 }: MultimodalInputProps) {
@@ -59,12 +59,12 @@ export default function MultimodalInput({
   const [activeTab, setActiveTab] = useState('text');
   const [isRecording, setIsRecording] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  
+
   const { toast } = useToast();
 
   // File handling
@@ -72,11 +72,11 @@ export default function MultimodalInput({
     if (!files) return;
 
     const newFiles: MediaFile[] = [];
-    
+
     for (let i = 0; i < files.length && mediaFiles.length + newFiles.length < maxFiles; i++) {
       const file = files[i];
       const fileType = getFileType(file.type);
-      
+
       if (!allowedTypes.includes(fileType)) {
         toast({
           title: "不支持的文件类型",
@@ -114,7 +114,7 @@ export default function MultimodalInput({
 
     if (newFiles.length > 0) {
       setMediaFiles(prev => [...prev, ...newFiles]);
-      
+
       // Upload files
       for (const mediaFile of newFiles) {
         await uploadFile(mediaFile);
@@ -144,10 +144,10 @@ export default function MultimodalInput({
       const result = await response.json();
 
       // Update file status
-      setMediaFiles(prev => prev.map(file => 
-        file.id === mediaFile.id 
-          ? { 
-              ...file, 
+      setMediaFiles(prev => prev.map(file =>
+        file.id === mediaFile.id
+          ? {
+              ...file,
               status: 'completed',
               progress: 100,
               metadata: result.metadata
@@ -162,9 +162,9 @@ export default function MultimodalInput({
 
     } catch (error) {
       console.error('File upload failed:', error);
-      
-      setMediaFiles(prev => prev.map(file => 
-        file.id === mediaFile.id 
+
+      setMediaFiles(prev => prev.map(file =>
+        file.id === mediaFile.id
           ? { ...file, status: 'error', progress: 0 }
           : file
       ));
@@ -193,7 +193,7 @@ export default function MultimodalInput({
       mediaRecorder.onstop = () => {
         const blob = new Blob(chunks, { type: 'audio/wav' });
         const file = new File([blob], `recording-${Date.now()}.wav`, { type: 'audio/wav' });
-        
+
         const mediaFile: MediaFile = {
           id: generateId(),
           file,
@@ -230,7 +230,7 @@ export default function MultimodalInput({
       mediaRecorderRef.current.stop();
       mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
       setIsRecording(false);
-      
+
       toast({
         title: "录音完成",
         description: "音频录制完成，正在处理...",
@@ -242,7 +242,7 @@ export default function MultimodalInput({
   const capturePhoto = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      
+
       if (videoRef.current && canvasRef.current) {
         videoRef.current.srcObject = stream;
         await videoRef.current.play();
@@ -258,7 +258,7 @@ export default function MultimodalInput({
         canvas.toBlob((blob) => {
           if (blob) {
             const file = new File([blob], `photo-${Date.now()}.jpg`, { type: 'image/jpeg' });
-            
+
             const mediaFile: MediaFile = {
               id: generateId(),
               file,
@@ -320,7 +320,7 @@ export default function MultimodalInput({
     }
 
     setIsSubmitting(true);
-    
+
     try {
       await onSubmit({
         text: textContent,
@@ -332,7 +332,7 @@ export default function MultimodalInput({
       setTextContent('');
       setDescription('');
       setMediaFiles([]);
-      
+
       toast({
         title: "提交成功",
         description: "您的经历已成功提交",
@@ -434,7 +434,7 @@ export default function MultimodalInput({
                   </>
                 )}
               </Button>
-              
+
               <p className="text-sm text-muted-foreground text-center">
                 {isRecording ? "正在录音中，点击停止录音按钮结束" : "点击开始录音按钮录制您的声音"}
               </p>
@@ -452,7 +452,7 @@ export default function MultimodalInput({
                   <Upload className="w-4 h-4 mr-2" />
                   选择图片
                 </Button>
-                
+
                 <Button
                   type="button"
                   variant="outline"
@@ -462,7 +462,7 @@ export default function MultimodalInput({
                   拍照
                 </Button>
               </div>
-              
+
               <input
                 ref={fileInputRef}
                 type="file"
@@ -515,11 +515,11 @@ export default function MultimodalInput({
                         </Button>
                       </div>
                     </div>
-                    
+
                     {mediaFile.status === 'uploading' && (
                       <Progress value={mediaFile.progress} className="mb-2" />
                     )}
-                    
+
                     {mediaFile.preview && (
                       <div className="mt-2">
                         {mediaFile.type === 'image' ? (
@@ -537,7 +537,7 @@ export default function MultimodalInput({
                         ) : null}
                       </div>
                     )}
-                    
+
                     {mediaFile.metadata?.hasTranscript && (
                       <p className="text-xs text-muted-foreground mt-2">
                         ✓ 包含语音转文字
@@ -563,7 +563,7 @@ export default function MultimodalInput({
         </div>
 
         {/* Submit button */}
-        <Button 
+        <Button
           onClick={handleSubmit}
           disabled={isSubmitting}
           className="w-full"

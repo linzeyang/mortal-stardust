@@ -2,14 +2,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
-import { 
-  Brain, 
-  Shield, 
-  Zap, 
-  Users, 
-  FileText, 
-  BarChart3, 
-  Lock, 
+import {
+  Brain,
+  Shield,
+  Zap,
+  Users,
+  FileText,
+  BarChart3,
+  Lock,
   Heart,
   Sparkles,
   ArrowRight,
@@ -68,7 +68,7 @@ export default function HomePage() {
 
   const benefits = [
     '端到端数据加密保护',
-    'GDPR合规隐私管理', 
+    'GDPR合规隐私管理',
     '三阶段AI智能分析',
     '多模态内容支持',
     '个性化角色模板',

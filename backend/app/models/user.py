@@ -1,13 +1,16 @@
-from pydantic import BaseModel, EmailStr, Field, validator
-from typing import Optional, Dict, Any
 from datetime import datetime
 from enum import Enum
+from typing import Optional
+
+from pydantic import BaseModel, EmailStr, Field
+
 
 class UserRole(str, Enum):
     WORKPLACE_NEWCOMER = "workplace_newcomer"
     ENTREPRENEUR = "entrepreneur"
     STUDENT = "student"
     OTHER = "other"
+
 
 class UserProfile(BaseModel):
     firstName: str = Field(..., min_length=1, max_length=50)
@@ -17,16 +20,19 @@ class UserProfile(BaseModel):
     phoneNumber: Optional[str] = None
     dateOfBirth: Optional[datetime] = None
 
+
 class UserPreferences(BaseModel):
     language: str = "zh-CN"
     notifications: bool = True
     dataSharing: bool = False
+
 
 class UserSecurity(BaseModel):
     twoFactorEnabled: bool = False
     lastLogin: datetime = Field(default_factory=datetime.utcnow)
     loginAttempts: int = 0
     lockUntil: Optional[datetime] = None
+
 
 class UserCreate(BaseModel):
     email: EmailStr
@@ -35,9 +41,11 @@ class UserCreate(BaseModel):
     lastName: str = Field(..., min_length=1, max_length=50)
     role: UserRole
 
+
 class UserLogin(BaseModel):
     email: EmailStr
     password: str = Field(..., min_length=8, max_length=100)
+
 
 class UserUpdate(BaseModel):
     firstName: Optional[str] = Field(None, min_length=1, max_length=50)
@@ -47,6 +55,7 @@ class UserUpdate(BaseModel):
     phoneNumber: Optional[str] = None
     dateOfBirth: Optional[datetime] = None
     preferences: Optional[UserPreferences] = None
+
 
 class UserResponse(BaseModel):
     id: str = Field(..., alias="_id")
@@ -59,12 +68,12 @@ class UserResponse(BaseModel):
 
     class Config:
         populate_by_name = True
-        json_encoders = {
-            datetime: lambda v: v.isoformat()
-        }
+        json_encoders = {datetime: lambda v: v.isoformat()}
+
 
 class User(BaseModel):
     """Main User model for authentication and general use."""
+
     id: Optional[str] = Field(None, alias="_id")
     email: EmailStr
     firstName: str
@@ -77,12 +86,12 @@ class User(BaseModel):
     security: UserSecurity = Field(default_factory=UserSecurity)
     createdAt: datetime = Field(default_factory=datetime.utcnow)
     updatedAt: datetime = Field(default_factory=datetime.utcnow)
-    
+
     # Helper properties
     @property
     def name(self) -> str:
         return f"{self.firstName} {self.lastName}"
-    
+
     @property
     def is_active(self) -> bool:
         """Check if user account is active (not locked)."""
@@ -92,9 +101,8 @@ class User(BaseModel):
 
     class Config:
         populate_by_name = True
-        json_encoders = {
-            datetime: lambda v: v.isoformat()
-        }
+        json_encoders = {datetime: lambda v: v.isoformat()}
+
 
 class UserInDB(BaseModel):
     id: Optional[str] = Field(None, alias="_id")

@@ -5,8 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
-import { 
-  Brain, 
+import {
+  Brain,
   Search,
   Calendar,
   TrendingUp,
@@ -252,7 +252,7 @@ export function ExperienceSummaryList({ onViewSummary }: ExperienceSummaryListPr
           <CardContent className=\"p-8 text-center\">
             <Brain className=\"w-12 h-12 mx-auto mb-4 text-gray-400\" />
             <p className=\"text-gray-600 mb-4\">
-              {summaries.length === 0 
+              {summaries.length === 0
                 ? \"No experience summaries found. Generate your first summary from an experience page.\"
                 : \"No summaries match your current filters.\"
               }
@@ -288,7 +288,7 @@ export function ExperienceSummaryList({ onViewSummary }: ExperienceSummaryListPr
                   )}
                 </div>
               </CardHeader>
-              
+
               <CardContent className=\"pt-0\">
                 {/* Tags */}
                 {summary.tags.length > 0 && (
@@ -322,17 +322,17 @@ export function ExperienceSummaryList({ onViewSummary }: ExperienceSummaryListPr
 
                 {/* Actions */}
                 <div className=\"flex gap-2\">
-                  <Button 
-                    size=\"sm\" 
-                    variant=\"outline\" 
+                  <Button
+                    size=\"sm\"
+                    variant=\"outline\"
                     className=\"flex-1\"
                     onClick={() => onViewSummary?.(summary.summary_id, summary.experience_id)}
                   >
                     <Eye className=\"w-4 h-4 mr-2\" />
                     View
                   </Button>
-                  <Button 
-                    size=\"sm\" 
+                  <Button
+                    size=\"sm\"
                     variant=\"outline\"
                     onClick={() => deleteSummary(summary.summary_id)}
                   >

@@ -6,10 +6,10 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import ExperienceForm from '@/components/forms/experience-form';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
-import { 
-  BookOpen, 
-  Users, 
-  Briefcase, 
+import {
+  BookOpen,
+  Users,
+  Briefcase,
   GraduationCap,
   Target,
   Clock,
@@ -90,8 +90,8 @@ function ProcessSteps() {
             <div className="flex flex-col items-center">
               <div className={`
                 flex items-center justify-center w-12 h-12 rounded-full border-2
-                ${step.status === 'current' 
-                  ? 'bg-blue-500 border-blue-500 text-white' 
+                ${step.status === 'current'
+                  ? 'bg-blue-500 border-blue-500 text-white'
                   : step.status === 'completed'
                   ? 'bg-green-500 border-green-500 text-white'
                   : 'bg-white border-gray-300 text-gray-400'

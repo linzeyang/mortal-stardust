@@ -16,10 +16,10 @@ import { useTheme, themeColors, type ThemeColor } from '@/contexts/theme-context
 export default function ThemeControls() {
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  
+
   // Theme context variables
   let mode, themeColor, toggleMode, setThemeColor;
-  
+
   try {
     const themeContext = useTheme();
     mode = themeContext.mode;
@@ -85,9 +85,9 @@ export default function ThemeControls() {
               onClick={() => handleColorChange(color)}
             >
               <div className="flex items-center space-x-2">
-                <div 
+                <div
                   className="w-4 h-4 rounded-full border border-gray-300"
-                  style={{ 
+                  style={{
                     backgroundColor: `hsl(${color.primary})`,
                   }}
                 />

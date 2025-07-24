@@ -4,7 +4,7 @@ import DashboardContent from '@/components/dashboard/dashboard-content';
 
 export default async function DashboardPage() {
   const user = await getCurrentUser();
-  
+
   if (!user) {
     redirect('/sign-in');
   }
@@ -21,7 +21,7 @@ export default async function DashboardPage() {
               管理您的人生经历和AI辅导方案
             </p>
           </div>
-          
+
           <DashboardContent user={user} />
         </div>
       </div>

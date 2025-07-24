@@ -10,12 +10,12 @@ import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { Checkbox } from '@/components/ui/checkbox';
-import { 
-  Star, 
-  ThumbsUp, 
-  ThumbsDown, 
-  RotateCcw, 
-  CheckCircle, 
+import {
+  Star,
+  ThumbsUp,
+  ThumbsDown,
+  RotateCcw,
+  CheckCircle,
   AlertCircle,
   TrendingUp,
   MessageSquare,
@@ -80,18 +80,18 @@ const IMPROVEMENT_SUGGESTIONS_OPTIONS = [
   "建议增加后续支持"
 ];
 
-export default function SolutionRating({ 
-  solutionId, 
+export default function SolutionRating({
+  solutionId,
   solutionTitle,
-  onRatingComplete, 
+  onRatingComplete,
   onRegenerateRequest,
-  disabled = false 
+  disabled = false
 }: SolutionRatingProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRegenerating, setIsRegenerating] = useState(false);
   const [existingRating, setExistingRating] = useState<ExistingRating>({ rated: false });
   const [showRatingForm, setShowRatingForm] = useState(false);
-  
+
   // Rating form state
   const [ratingData, setRatingData] = useState<RatingData>({
     rating_percentage: 50,
@@ -101,7 +101,7 @@ export default function SolutionRating({
     would_recommend: null,
     implementation_difficulty: 5
   });
-  
+
   const { toast } = useToast();
 
   useEffect(() => {
@@ -117,7 +117,7 @@ export default function SolutionRating({
       if (response.ok) {
         const rating = await response.json();
         setExistingRating(rating);
-        
+
         if (rating.rated) {
           setRatingData({
             rating_percentage: rating.rating_percentage,
@@ -156,7 +156,7 @@ export default function SolutionRating({
       }
 
       const result = await response.json();
-      
+
       toast({
         title: "评价已提交",
         description: result.message,
@@ -169,7 +169,7 @@ export default function SolutionRating({
 
       // Notify parent component
       onRatingComplete?.(result.rating_percentage, result.regeneration_triggered);
-      
+
       // If regeneration was triggered, notify about new solution
       if (result.regeneration_triggered && result.new_solution_id) {
         onRegenerateRequest?.(result.new_solution_id);
@@ -211,7 +211,7 @@ export default function SolutionRating({
       }
 
       const result = await response.json();
-      
+
       toast({
         title: "重新生成已开始",
         description: result.message,
@@ -284,7 +284,7 @@ export default function SolutionRating({
           )}
         </CardTitle>
       </CardHeader>
-      
+
       <CardContent className="space-y-4">
         {existingRating.rated ? (
           <div className="space-y-4">
@@ -295,25 +295,25 @@ export default function SolutionRating({
                   <Award className="h-5 w-5" />
                   <span className="font-medium">您的评价</span>
                 </div>
-                <Badge 
+                <Badge
                   variant={existingRating.rating_percentage! >= 70 ? "default" : existingRating.rating_percentage! >= 50 ? "secondary" : "destructive"}
                 >
                   {existingRating.rating_percentage}%
                 </Badge>
               </div>
-              
+
               <div className="space-y-2">
                 <div className={`text-lg font-medium ${getRatingColor(existingRating.rating_percentage!)}`}>
                   {getRatingLabel(existingRating.rating_percentage!)}
                 </div>
-                
+
                 {existingRating.feedback_text && (
                   <div>
                     <p className="text-sm text-muted-foreground mb-1">您的反馈：</p>
                     <p className="text-sm">{existingRating.feedback_text}</p>
                   </div>
                 )}
-                
+
                 {existingRating.helpful_aspects && existingRating.helpful_aspects.length > 0 && (
                   <div>
                     <p className="text-sm text-muted-foreground mb-1">有帮助的方面：</p>
@@ -326,7 +326,7 @@ export default function SolutionRating({
                     </div>
                   </div>
                 )}
-                
+
                 <div className="text-xs text-muted-foreground">
                   评价时间: {existingRating.updated_at ? new Date(existingRating.updated_at).toLocaleString('zh-CN') : ''}
                 </div>
@@ -343,7 +343,7 @@ export default function SolutionRating({
                 <Star className="h-4 w-4 mr-2" />
                 修改评价
               </Button>
-              
+
               {existingRating.rating_percentage! < 70 && (
                 <Button
                   variant="outline"
@@ -359,7 +359,7 @@ export default function SolutionRating({
                 </Button>
               )}
             </div>
-            
+
             {/* Low Rating Warning */}
             {existingRating.rating_percentage! < 50 && (
               <div className="bg-yellow-50 border border-yellow-200 p-3 rounded-lg">
@@ -524,7 +524,7 @@ export default function SolutionRating({
                   </>
                 )}
               </Button>
-              
+
               <Button
                 variant="outline"
                 onClick={() => setShowRatingForm(false)}

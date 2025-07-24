@@ -135,7 +135,7 @@ const StatCard: React.FC<StatCardProps> = ({
   onClick
 }) => {
   return (
-    <Card 
+    <Card
       className={cn(
         "transition-all duration-200 hover:shadow-md",
         onClick && "cursor-pointer hover:shadow-lg",

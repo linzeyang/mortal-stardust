@@ -176,42 +176,42 @@ SolutionSchema.pre('save', function(next) {
     if (this.isModified('content.title')) {
       this.content.title = encryptData(this.content.title);
     }
-    
+
     if (this.isModified('content.description')) {
       this.content.description = encryptData(this.content.description);
     }
-    
+
     if (this.isModified('content.recommendations')) {
       this.content.recommendations = this.content.recommendations.map(rec => encryptData(rec));
     }
-    
+
     if (this.content.actionSteps && this.isModified('content.actionSteps')) {
       this.content.actionSteps = this.content.actionSteps.map(step => encryptData(step));
     }
-    
+
     // Encrypt AI metadata
     if (this.isModified('aiMetadata.prompt')) {
       this.aiMetadata.prompt = encryptData(this.aiMetadata.prompt);
     }
-    
+
     if (this.isModified('aiMetadata.parameters')) {
       this.aiMetadata.parameters = encryptData(JSON.stringify(this.aiMetadata.parameters));
     }
-    
+
     // Encrypt user feedback
     if (this.userFeedback?.improvementSuggestions && this.isModified('userFeedback.improvementSuggestions')) {
       this.userFeedback.improvementSuggestions = encryptData(this.userFeedback.improvementSuggestions);
     }
-    
+
     if (this.userFeedback?.positiveAspects && this.isModified('userFeedback.positiveAspects')) {
       this.userFeedback.positiveAspects = this.userFeedback.positiveAspects.map(aspect => encryptData(aspect));
     }
-    
+
     // Encrypt follow-up notes
     if (this.followUp?.notes && this.isModified('followUp.notes')) {
       this.followUp.notes = encryptData(this.followUp.notes);
     }
-    
+
     next();
   } catch (error) {
     next(error as Error);
@@ -225,37 +225,37 @@ SolutionSchema.methods.decryptSensitiveData = function(): void {
     if (this.content.title) {
       this.content.title = decryptData(this.content.title);
     }
-    
+
     if (this.content.description) {
       this.content.description = decryptData(this.content.description);
     }
-    
+
     if (this.content.recommendations) {
       this.content.recommendations = this.content.recommendations.map((rec: string) => decryptData(rec));
     }
-    
+
     if (this.content.actionSteps) {
       this.content.actionSteps = this.content.actionSteps.map((step: string) => decryptData(step));
     }
-    
+
     // Decrypt AI metadata
     if (this.aiMetadata.prompt) {
       this.aiMetadata.prompt = decryptData(this.aiMetadata.prompt);
     }
-    
+
     if (this.aiMetadata.parameters && typeof this.aiMetadata.parameters === 'string') {
       this.aiMetadata.parameters = JSON.parse(decryptData(this.aiMetadata.parameters));
     }
-    
+
     // Decrypt user feedback
     if (this.userFeedback?.improvementSuggestions) {
       this.userFeedback.improvementSuggestions = decryptData(this.userFeedback.improvementSuggestions);
     }
-    
+
     if (this.userFeedback?.positiveAspects) {
       this.userFeedback.positiveAspects = this.userFeedback.positiveAspects.map((aspect: string) => decryptData(aspect));
     }
-    
+
     // Decrypt follow-up notes
     if (this.followUp?.notes) {
       this.followUp.notes = decryptData(this.followUp.notes);

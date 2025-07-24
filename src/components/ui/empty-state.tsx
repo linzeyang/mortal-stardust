@@ -36,7 +36,7 @@ const EmptyState: React.FC<EmptyStateProps> = ({
         <p className="text-gray-600 mb-6 max-w-md">{description}</p>
       )}
       {action && (
-        <Button 
+        <Button
           onClick={action.onClick}
           variant={action.variant || 'default'}
         >

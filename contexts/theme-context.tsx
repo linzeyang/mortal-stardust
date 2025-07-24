@@ -19,14 +19,14 @@ export const themeColors: ThemeColor[] = [
     primaryForeground: '0 0% 98%'
   },
   {
-    name: 'Green',  
+    name: 'Green',
     value: 'green',
     primary: '142 76% 36%', // green-500 in HSL
     primaryForeground: '0 0% 98%'
   },
   {
     name: 'Orange',
-    value: 'orange', 
+    value: 'orange',
     primary: '25 95% 53%', // orange-500 in HSL
     primaryForeground: '0 0% 98%'
   },
@@ -68,7 +68,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   useEffect(() => {
     const savedMode = localStorage.getItem('theme-mode') as ThemeMode;
     const savedColor = localStorage.getItem('theme-color');
-    
+
     if (savedMode) {
       setMode(savedMode);
     } else {
@@ -76,40 +76,40 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       setMode(systemDark ? 'dark' : 'light');
     }
-    
+
     if (savedColor) {
       const color = themeColors.find(c => c.value === savedColor);
       if (color) {
         setThemeColorState(color);
       }
     }
-    
+
     setMounted(true);
-    
+
     // Force apply initial theme immediately when mounted
     const root = document.documentElement;
     const initialColor = savedColor ? themeColors.find(c => c.value === savedColor) || themeColors[0] : themeColors[0];
     root.style.setProperty('--primary', initialColor.primary);
     root.style.setProperty('--primary-foreground', initialColor.primaryForeground);
-  }, []); 
+  }, []);
 
   // Apply theme changes to document
   useEffect(() => {
     if (!mounted) return;
 
     const root = document.documentElement;
-    
+
     // Apply dark/light mode
     if (mode === 'dark') {
       root.classList.add('dark');
     } else {
       root.classList.remove('dark');
     }
-    
+
     // Apply theme color as CSS variables
     root.style.setProperty('--primary', themeColor.primary);
     root.style.setProperty('--primary-foreground', themeColor.primaryForeground);
-    
+
     // Save to localStorage
     localStorage.setItem('theme-mode', mode);
     localStorage.setItem('theme-color', themeColor.value);

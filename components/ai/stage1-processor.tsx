@@ -5,10 +5,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { 
-  Brain, 
-  Heart, 
-  CheckCircle, 
+import {
+  Brain,
+  Heart,
+  CheckCircle,
   AlertCircle,
   RefreshCw,
   Clock,
@@ -119,7 +119,7 @@ export function Stage1Processor({ experienceId, onStageComplete, onError }: Stag
       setError(errorMessage);
       onError?.(errorMessage);
       setIsProcessing(false);
-      
+
       toast({
         title: \"启动失败\",
         description: errorMessage,
@@ -136,7 +136,7 @@ export function Stage1Processor({ experienceId, onStageComplete, onError }: Stag
     const poll = async () => {
       try {
         attempts++;
-        
+
         const response = await fetch(`/api/ai/stage1/status/${solutionId}`, {
           credentials: 'include'
         });
@@ -254,7 +254,7 @@ export function Stage1Processor({ experienceId, onStageComplete, onError }: Stag
       const errorMessage = error instanceof Error ? error.message : '重新生成失败';
       setError(errorMessage);
       setIsProcessing(false);
-      
+
       toast({
         title: \"重新生成失败\",
         description: errorMessage,
@@ -284,7 +284,7 @@ export function Stage1Processor({ experienceId, onStageComplete, onError }: Stag
             </div>
             <Progress value={progress} className=\"w-full\" />
           </div>
-          
+
           <div className=\"bg-blue-50 p-4 rounded-lg\">
             <div className=\"flex items-center space-x-2 text-blue-800\">
               <Heart className=\"w-4 h-4\" />

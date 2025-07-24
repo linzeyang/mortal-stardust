@@ -7,10 +7,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { DashboardLayout } from '@/components/ui/dashboard-layout';
-import { 
-  TrendingUp, 
-  BarChart3, 
-  PieChart, 
+import {
+  TrendingUp,
+  BarChart3,
+  PieChart,
   Calendar,
   Target,
   Brain,
@@ -147,7 +147,7 @@ function OverviewStats() {
 
 function CategoryAnalysis() {
   const totalExperiences = analyticsData.categoryBreakdown.reduce((sum, cat) => sum + cat.count, 0);
-  
+
   return (
     <Card>
       <CardHeader>
@@ -193,7 +193,7 @@ function SolutionEffectiveness() {
           {analyticsData.solutionEffectiveness.map((stage, index) => {
             const StageIcon = index === 0 ? Heart : index === 1 ? Target : Users;
             const stageColor = index === 0 ? 'text-red-500' : index === 1 ? 'text-blue-500' : 'text-green-500';
-            
+
             return (
               <div key={index} className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -275,7 +275,7 @@ function PersonalizedInsights() {
       title: '改进建议',
       content: '职场适应类问题的方案评分相对较低，建议多关注实践应用和反馈收集。',
       icon: Target,
-      color: 'text-blue-500', 
+      color: 'text-blue-500',
       bgColor: 'bg-blue-50'
     },
     {
@@ -354,22 +354,22 @@ export default function AnalyticsPage() {
               <TabsTrigger value="categories">分类统计</TabsTrigger>
               <TabsTrigger value="insights">个性洞察</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="overview" className="mt-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <CategoryAnalysis />
                 <SolutionEffectiveness />
               </div>
             </TabsContent>
-            
+
             <TabsContent value="trends" className="mt-6">
               <TimeSeriesChart />
             </TabsContent>
-            
+
             <TabsContent value="categories" className="mt-6">
               <CategoryAnalysis />
             </TabsContent>
-            
+
             <TabsContent value="insights" className="mt-6">
               <PersonalizedInsights />
             </TabsContent>

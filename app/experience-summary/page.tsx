@@ -8,9 +8,9 @@ import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ExperienceSummary } from '@/components/experience/experience-summary'
 import { ExperienceSummaryList } from '@/components/experience/experience-summary-list'
-import { 
-  Brain, 
-  Sparkles, 
+import {
+  Brain,
+  Sparkles,
   TrendingUp,
   FileText,
   Search,
@@ -71,7 +71,7 @@ export default function ExperienceSummaryPage() {
     setActiveTab('browse')
   }
 
-  const filteredExperiences = experiences.filter(exp => 
+  const filteredExperiences = experiences.filter(exp =>
     exp.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (exp.content?.text && exp.content.text.toLowerCase().includes(searchTerm.toLowerCase()))
   )
@@ -95,7 +95,7 @@ export default function ExperienceSummaryPage() {
             <h1 className=\"text-3xl font-bold text-gray-900\">Experience Summarization</h1>
           </div>
           <p className=\"text-lg text-gray-600 max-w-2xl mx-auto\">
-            Generate AI-powered summaries of your life experiences to gain insights, 
+            Generate AI-powered summaries of your life experiences to gain insights,
             track progress, and understand your personal growth journey.
           </p>
         </div>
@@ -146,8 +146,8 @@ export default function ExperienceSummaryPage() {
                   </CardHeader>
                   <CardContent>
                     <p className=\"text-gray-600 mb-6\">
-                      Select an experience below to generate an AI-powered summary. 
-                      The summary will analyze your experience across multiple dimensions 
+                      Select an experience below to generate an AI-powered summary.
+                      The summary will analyze your experience across multiple dimensions
                       including emotional journey, progress tracking, and solution effectiveness.
                     </p>
 
@@ -174,7 +174,7 @@ export default function ExperienceSummaryPage() {
                       <div className=\"text-center py-8\">
                         <FileText className=\"w-12 h-12 mx-auto mb-4 text-gray-400\" />
                         <p className=\"text-gray-600 mb-4\">
-                          {experiences.length === 0 
+                          {experiences.length === 0
                             ? \"No experiences found. Create an experience first to generate summaries.\"
                             : \"No experiences match your search.\"
                           }
@@ -189,8 +189,8 @@ export default function ExperienceSummaryPage() {
                     ) : (
                       <div className=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4\">
                         {filteredExperiences.map((experience) => (
-                          <Card 
-                            key={experience._id} 
+                          <Card
+                            key={experience._id}
                             className=\"hover:shadow-md transition-shadow cursor-pointer\"
                             onClick={() => {
                               setSelectedExperienceId(experience._id)
@@ -210,7 +210,7 @@ export default function ExperienceSummaryPage() {
                             <CardContent className=\"pt-0\">
                               <div className=\"space-y-2\">
                                 <div className=\"text-sm text-gray-600 line-clamp-3\">
-                                  {experience.content?.text 
+                                  {experience.content?.text
                                     ? experience.content.text.substring(0, 150) + '...'
                                     : 'Multimodal experience (contains media content)'
                                   }

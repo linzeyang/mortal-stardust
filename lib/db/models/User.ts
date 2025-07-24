@@ -104,7 +104,7 @@ UserSchema.index({ createdAt: -1 });
 // Hash password before saving
 UserSchema.pre('save', async function(next) {
   if (!this.isModified('passwordHash')) return next();
-  
+
   try {
     const salt = await bcryptjs.genSalt(12);
     this.passwordHash = await bcryptjs.hash(this.passwordHash, salt);
@@ -120,11 +120,11 @@ UserSchema.pre('save', function(next) {
     if (this.profile.phoneNumber && this.isModified('profile.phoneNumber')) {
       this.profile.phoneNumber = encryptData(this.profile.phoneNumber);
     }
-    
+
     if (this.profile.dateOfBirth && this.isModified('profile.dateOfBirth')) {
       this.profile.dateOfBirth = encryptData(this.profile.dateOfBirth.toISOString()) as any;
     }
-    
+
     next();
   } catch (error) {
     next(error as Error);
@@ -142,7 +142,7 @@ UserSchema.methods.decryptSensitiveData = function(): void {
     if (this.profile.phoneNumber) {
       this.profile.phoneNumber = decryptData(this.profile.phoneNumber);
     }
-    
+
     if (this.profile.dateOfBirth && typeof this.profile.dateOfBirth === 'string') {
       this.profile.dateOfBirth = new Date(decryptData(this.profile.dateOfBirth));
     }

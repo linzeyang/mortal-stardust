@@ -4,10 +4,10 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Briefcase, 
-  GraduationCap, 
-  Target, 
+import {
+  Briefcase,
+  GraduationCap,
+  Target,
   User,
   ArrowRight,
   CheckCircle
@@ -108,7 +108,7 @@ export function RoleSelection({ onRoleSelected, selectedRole }: RoleSelectionPro
             }
           }
         ];
-        
+
         setRoles(mockRoles);
       } catch (error) {
         console.error('Failed to load roles:', error);
@@ -170,8 +170,8 @@ export function RoleSelection({ onRoleSelected, selectedRole }: RoleSelectionPro
               <div className=\"flex items-start justify-between\">
                 <div className=\"flex items-center space-x-3\">
                   <div className={`p-2 rounded-lg ${
-                    selectedRole === role.role 
-                      ? 'bg-blue-500 text-white' 
+                    selectedRole === role.role
+                      ? 'bg-blue-500 text-white'
                       : 'bg-white shadow-sm'
                   }`}>
                     {roleIcons[role.role as keyof typeof roleIcons]}
@@ -190,7 +190,7 @@ export function RoleSelection({ onRoleSelected, selectedRole }: RoleSelectionPro
                 {role.description}
               </CardDescription>
             </CardHeader>
-            
+
             <CardContent className=\"space-y-4\">
               {/* Tags */}
               <div className=\"flex flex-wrap gap-2\">

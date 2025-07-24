@@ -10,13 +10,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Slider } from '@/components/ui/slider';
-import { 
-  CheckCircle, 
-  Clock, 
-  AlertCircle, 
-  RotateCcw, 
-  TrendingUp, 
-  Users, 
+import {
+  CheckCircle,
+  Clock,
+  AlertCircle,
+  RotateCcw,
+  TrendingUp,
+  Users,
   Calendar,
   Heart,
   MessageSquare,
@@ -84,12 +84,12 @@ interface Stage3Solution {
   stage2_solution_id?: string;
 }
 
-export default function Stage3Processor({ 
-  experienceId, 
+export default function Stage3Processor({
+  experienceId,
   stage1SolutionId,
   stage2SolutionId,
-  onComplete, 
-  onError 
+  onComplete,
+  onError
 }: Stage3ProcessorProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [solution, setSolution] = useState<Stage3Solution | null>(null);
@@ -98,7 +98,7 @@ export default function Stage3Processor({
   const [error, setError] = useState<string | null>(null);
   const [showFollowUpForm, setShowFollowUpForm] = useState(false);
   const [isSubmittingFollowUp, setIsSubmittingFollowUp] = useState(false);
-  
+
   // Follow-up form state
   const [followUpData, setFollowUpData] = useState<FollowUpData>({
     progress_rating: 5,
@@ -108,7 +108,7 @@ export default function Stage3Processor({
     additional_concerns: '',
     satisfaction_level: 5
   });
-  
+
   const { toast } = useToast();
 
   const startStage3Processing = async () => {
@@ -144,7 +144,7 @@ export default function Stage3Processor({
       }
 
       const result = await response.json();
-      
+
       if (result.status === 'already_exists') {
         await fetchSolutionStatus(result.solution_id);
         toast({
@@ -182,7 +182,7 @@ export default function Stage3Processor({
       try {
         attempts++;
         setProcessingProgress(Math.min(25 + (attempts * 2), 95));
-        
+
         // Update processing stage message
         if (attempts < 8) {
           setProcessingStage('整合前期方案和用户反馈...');
@@ -211,7 +211,7 @@ export default function Stage3Processor({
           setProcessingStage('处理完成！');
           setSolution(statusData);
           onComplete?.(solutionId);
-          
+
           toast({
             title: "Stage 3 处理完成",
             description: "长期支持方案已生成，请查看跟进计划。"
@@ -288,14 +288,14 @@ export default function Stage3Processor({
       }
 
       const result = await response.json();
-      
+
       toast({
         title: "跟进反馈已提交",
         description: `您的第${result.follow_up_count}次跟进反馈已提交，AI正在生成新的适应性建议。`
       });
 
       setShowFollowUpForm(false);
-      
+
       // Refresh solution status to get updated recommendations
       setTimeout(() => {
         fetchSolutionStatus(solution.solution_id);
@@ -364,11 +364,11 @@ export default function Stage3Processor({
         </CardHeader>
         <CardContent>
           <p className="text-red-600 mb-4">{error}</p>
-          <Button 
+          <Button
             onClick={() => {
               setError(null);
               setSolution(null);
-            }} 
+            }}
             variant="outline"
             className="border-red-300 text-red-700 hover:bg-red-100"
           >
@@ -400,7 +400,7 @@ export default function Stage3Processor({
                 <div className="text-purple-700">进度评估、适应性调整、里程碑跟踪、持续资源支持</div>
               </div>
             </div>
-            
+
             {(stage1SolutionId || stage2SolutionId) && (
               <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
                 <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
@@ -409,8 +409,8 @@ export default function Stage3Processor({
                 </div>
               </div>
             )}
-            
-            <Button 
+
+            <Button
               onClick={startStage3Processing}
               className="w-full"
               size="lg"
@@ -442,7 +442,7 @@ export default function Stage3Processor({
               </div>
               <Progress value={processingProgress} className="h-2" />
             </div>
-            
+
             <div className="text-sm text-muted-foreground">
               AI正在为您制定个性化的长期支持计划，这通常需要2-4分钟...
             </div>
@@ -474,7 +474,7 @@ export default function Stage3Processor({
               </span>
             </div>
           </CardHeader>
-          
+
           <CardContent className="space-y-6">
             {/* Follow-up Plan */}
             <div>
@@ -599,9 +599,9 @@ export default function Stage3Processor({
                       <div className="font-medium text-sm">{resource.title}</div>
                       <div className="text-sm text-muted-foreground">{resource.description}</div>
                       {resource.url && (
-                        <a 
-                          href={resource.url} 
-                          target="_blank" 
+                        <a
+                          href={resource.url}
+                          target="_blank"
                           rel="noopener noreferrer"
                           className="text-teal-600 hover:text-teal-800 text-sm underline"
                         >
@@ -618,7 +618,7 @@ export default function Stage3Processor({
 
             {/* Follow-up Action */}
             <div className="flex gap-3">
-              <Button 
+              <Button
                 onClick={() => setShowFollowUpForm(true)}
                 className="flex-1"
                 variant="outline"

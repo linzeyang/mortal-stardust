@@ -7,13 +7,13 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  Shield, 
-  Database, 
-  Clock, 
-  Eye, 
-  Archive, 
-  Trash2, 
+import {
+  Shield,
+  Database,
+  Clock,
+  Eye,
+  Archive,
+  Trash2,
   AlertTriangle,
   CheckCircle2,
   Lock,
@@ -75,7 +75,7 @@ export default function DataSecurityDashboard() {
   const [securityStats, setSecurityStats] = useState<SecurityStats | null>(null);
   const [accessLogs, setAccessLogs] = useState<AccessLog[]>([]);
   const [activeTab, setActiveTab] = useState('overview');
-  
+
   const { toast } = useToast();
 
   useEffect(() => {
@@ -90,7 +90,7 @@ export default function DataSecurityDashboard() {
       const inventoryResponse = await fetch('/api/secure-data/inventory', {
         credentials: 'include'
       });
-      
+
       if (inventoryResponse.ok) {
         const inventoryData = await inventoryResponse.json();
         setInventory(inventoryData);
@@ -100,7 +100,7 @@ export default function DataSecurityDashboard() {
       const statsResponse = await fetch('/api/secure-data/statistics', {
         credentials: 'include'
       });
-      
+
       if (statsResponse.ok) {
         const statsData = await statsResponse.json();
         setSecurityStats(statsData);
@@ -110,7 +110,7 @@ export default function DataSecurityDashboard() {
       const logsResponse = await fetch('/api/secure-data/access-logs?limit=50', {
         credentials: 'include'
       });
-      
+
       if (logsResponse.ok) {
         const logsData = await logsResponse.json();
         setAccessLogs(logsData.logs);
@@ -235,11 +235,11 @@ export default function DataSecurityDashboard() {
                   <div className="text-sm text-muted-foreground">加密覆盖率</div>
                 </div>
               </div>
-              
+
               <div className="mt-4">
                 <Progress value={securityStats.security_score} className="h-2" />
               </div>
-              
+
               {securityStats.recommendations.length > 0 && (
                 <Alert className="mt-4">
                   <CheckCircle2 className="h-4 w-4" />
@@ -282,12 +282,12 @@ export default function DataSecurityDashboard() {
                       <span className="text-sm text-muted-foreground">记录数量</span>
                       <Badge variant="secondary">{data.record_count}</Badge>
                     </div>
-                    
+
                     <div className="flex justify-between items-center">
                       <span className="text-sm text-muted-foreground">数据大小</span>
                       <span className="text-sm font-medium">{formatBytes(data.total_size_bytes)}</span>
                     </div>
-                    
+
                     <div className="space-y-1">
                       <div className="text-xs text-muted-foreground">敏感级别</div>
                       <div className="flex flex-wrap gap-1">
@@ -298,7 +298,7 @@ export default function DataSecurityDashboard() {
                         ))}
                       </div>
                     </div>
-                    
+
                     <div className="text-xs text-muted-foreground">
                       最新: {new Date(data.newest_record).toLocaleDateString('zh-CN')}
                     </div>
@@ -375,7 +375,7 @@ export default function DataSecurityDashboard() {
                   </div>
                   <Badge className="bg-green-100 text-green-800">已启用</Badge>
                 </div>
-                
+
                 <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="h-4 w-4 text-green-600" />
@@ -383,7 +383,7 @@ export default function DataSecurityDashboard() {
                   </div>
                   <Badge className="bg-green-100 text-green-800">AES-256</Badge>
                 </div>
-                
+
                 <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="h-4 w-4 text-green-600" />
@@ -391,7 +391,7 @@ export default function DataSecurityDashboard() {
                   </div>
                   <Badge className="bg-green-100 text-green-800">完整记录</Badge>
                 </div>
-                
+
                 <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="h-4 w-4 text-green-600" />
@@ -414,17 +414,17 @@ export default function DataSecurityDashboard() {
                   <Download className="h-4 w-4 mr-2" />
                   导出我的数据
                 </Button>
-                
+
                 <Button variant="outline" className="w-full justify-start">
                   <Archive className="h-4 w-4 mr-2" />
                   查看数据保留策略
                 </Button>
-                
+
                 <Button variant="outline" className="w-full justify-start">
                   <Clock className="h-4 w-4 mr-2" />
                   设置数据过期时间
                 </Button>
-                
+
                 <Button variant="destructive" className="w-full justify-start">
                   <Trash2 className="h-4 w-4 mr-2" />
                   删除所有数据

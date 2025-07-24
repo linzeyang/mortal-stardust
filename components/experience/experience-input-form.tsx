@@ -9,10 +9,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  Save, 
+import {
+  ChevronLeft,
+  ChevronRight,
+  Save,
   Upload,
   Check,
   AlertCircle,
@@ -255,7 +255,7 @@ export function ExperienceInputForm({
         return newErrors;
       });
     }
-    
+
     // Mark as draft when user makes changes
     setIsDraft(true);
   };
@@ -291,7 +291,7 @@ export function ExperienceInputForm({
       if (field.conditional) {
         const dependentValue = formData[field.conditional.dependsOn];
         const shouldShow = field.conditional.hasValue ? !!dependentValue : !dependentValue;
-        
+
         if (!shouldShow && field.required && (!value || value === '')) {
           // Field is conditionally hidden and required, skip validation
           return;
@@ -415,7 +415,7 @@ export function ExperienceInputForm({
               className={error ? 'border-red-500' : ''}
             />
           );
-        
+
         case 'textarea':
           return (
             <Textarea

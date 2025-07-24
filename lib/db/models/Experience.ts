@@ -156,22 +156,22 @@ ExperienceSchema.pre('save', function(next) {
     if (this.isModified('title')) {
       this.title = encryptData(this.title);
     }
-    
+
     // Encrypt content text
     if (this.isModified('content.text')) {
       this.content.text = encryptData(this.content.text);
     }
-    
+
     // Encrypt emotional state description
     if (this.emotionalState.description && this.isModified('emotionalState.description')) {
       this.emotionalState.description = encryptData(this.emotionalState.description);
     }
-    
+
     // Encrypt location
     if (this.metadata.location && this.isModified('metadata.location')) {
       this.metadata.location = encryptData(this.metadata.location);
     }
-    
+
     // Encrypt media file sensitive data
     if (this.isModified('content.mediaFiles')) {
       this.content.mediaFiles.forEach(file => {
@@ -181,7 +181,7 @@ ExperienceSchema.pre('save', function(next) {
         if (file.metadata) file.metadata = encryptData(JSON.stringify(file.metadata));
       });
     }
-    
+
     next();
   } catch (error) {
     next(error as Error);
@@ -194,19 +194,19 @@ ExperienceSchema.methods.decryptSensitiveData = function(): void {
     if (this.title) {
       this.title = decryptData(this.title);
     }
-    
+
     if (this.content.text) {
       this.content.text = decryptData(this.content.text);
     }
-    
+
     if (this.emotionalState.description) {
       this.emotionalState.description = decryptData(this.emotionalState.description);
     }
-    
+
     if (this.metadata.location) {
       this.metadata.location = decryptData(this.metadata.location);
     }
-    
+
     // Decrypt media files
     this.content.mediaFiles.forEach((file: any) => {
       if (file.url) file.url = decryptData(file.url);

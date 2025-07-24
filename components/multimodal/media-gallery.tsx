@@ -5,14 +5,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Play, 
-  Pause, 
-  Download, 
-  Trash2, 
-  FileText, 
-  Image as ImageIcon, 
-  Video, 
+import {
+  Play,
+  Pause,
+  Download,
+  Trash2,
+  FileText,
+  Image as ImageIcon,
+  Video,
   Music,
   Eye,
   Clock,
@@ -44,17 +44,17 @@ interface MediaGalleryProps {
   showControls?: boolean;
 }
 
-export default function MediaGallery({ 
-  userId, 
-  onFileSelect, 
+export default function MediaGallery({
+  userId,
+  onFileSelect,
   onFileDelete,
-  showControls = true 
+  showControls = true
 }: MediaGalleryProps) {
   const [mediaFiles, setMediaFiles] = useState<MediaFile[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedType, setSelectedType] = useState<string>('all');
   const [playingAudio, setPlayingAudio] = useState<string | null>(null);
-  
+
   const { toast } = useToast();
 
   useEffect(() => {
@@ -175,7 +175,7 @@ export default function MediaGallery({
     }
   };
 
-  const filteredFiles = mediaFiles.filter(file => 
+  const filteredFiles = mediaFiles.filter(file =>
     selectedType === 'all' || file.mediaType === selectedType
   );
 
@@ -209,7 +209,7 @@ export default function MediaGallery({
             <TabsTrigger value="audio">音频</TabsTrigger>
             <TabsTrigger value="video">视频</TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value={selectedType} className="mt-4">
             {filteredFiles.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
@@ -232,39 +232,39 @@ export default function MediaGallery({
                           {file.mediaType}
                         </Badge>
                       </div>
-                      
+
                       <div className="space-y-2 text-xs text-gray-600">
                         <div className="flex justify-between">
                           <span>大小:</span>
                           <span>{formatFileSize(file.fileSize)}</span>
                         </div>
-                        
+
                         {file.metadata.duration && (
                           <div className="flex justify-between">
                             <span>时长:</span>
                             <span>{Math.round(file.metadata.duration)}秒</span>
                           </div>
                         )}
-                        
+
                         {file.metadata.dimensions && (
                           <div className="flex justify-between">
                             <span>尺寸:</span>
                             <span>{file.metadata.dimensions.width}x{file.metadata.dimensions.height}</span>
                           </div>
                         )}
-                        
+
                         <div className="flex justify-between">
                           <span>上传时间:</span>
                           <span>{new Date(file.uploadedAt).toLocaleDateString()}</span>
                         </div>
                       </div>
-                      
+
                       {file.description && (
                         <p className="text-xs text-gray-600 mt-2 line-clamp-2">
                           {file.description}
                         </p>
                       )}
-                      
+
                       {showControls && (
                         <div className="flex space-x-2 mt-3">
                           <Button
@@ -275,7 +275,7 @@ export default function MediaGallery({
                             <Eye className="h-3 w-3 mr-1" />
                             查看
                           </Button>
-                          
+
                           <Button
                             size="sm"
                             variant="outline"
@@ -284,7 +284,7 @@ export default function MediaGallery({
                             <Download className="h-3 w-3 mr-1" />
                             下载
                           </Button>
-                          
+
                           <Button
                             size="sm"
                             variant="outline"

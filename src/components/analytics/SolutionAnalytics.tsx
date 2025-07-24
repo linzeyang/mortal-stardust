@@ -4,12 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
-import { 
-  BarChart3, 
-  TrendingUp, 
-  Users, 
-  Star, 
-  FileText, 
+import {
+  BarChart3,
+  TrendingUp,
+  Users,
+  Star,
+  FileText,
   Download,
   RefreshCw,
   Calendar,
@@ -70,7 +70,7 @@ const SolutionAnalytics: React.FC<SolutionAnalyticsProps> = ({ userId }) => {
   const generateAnalytics = async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const token = localStorage.getItem('authToken');
       const response = await fetch('/api/solution-analytics/analyze', {
@@ -79,10 +79,10 @@ const SolutionAnalytics: React.FC<SolutionAnalyticsProps> = ({ userId }) => {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           min_rating: 70,
           stage_filter: null,
-          time_range_days: null 
+          time_range_days: null
         }),
       });
 
@@ -120,7 +120,7 @@ const SolutionAnalytics: React.FC<SolutionAnalyticsProps> = ({ userId }) => {
 
   const exportAnalytics = async (format: 'json' | 'csv' = 'json') => {
     if (!analyticsData) return;
-    
+
     try {
       const token = localStorage.getItem('authToken');
       const response = await fetch('/api/solution-analytics/export', {
@@ -129,9 +129,9 @@ const SolutionAnalytics: React.FC<SolutionAnalyticsProps> = ({ userId }) => {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           analytics_id: analyticsData.analytics_id,
-          format 
+          format
         }),
       });
 
@@ -263,7 +263,7 @@ const SolutionAnalytics: React.FC<SolutionAnalyticsProps> = ({ userId }) => {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {analyticsData?.patterns?.effectiveness_metrics && 
+            {analyticsData?.patterns?.effectiveness_metrics &&
               Object.entries(analyticsData.patterns.effectiveness_metrics).map(([key, value]) => (
                 <div key={key} className="space-y-2">
                   <div className="flex justify-between text-sm">
@@ -385,8 +385,8 @@ const SolutionAnalytics: React.FC<SolutionAnalyticsProps> = ({ userId }) => {
           </p>
         </div>
         <div className="flex space-x-3">
-          <Button 
-            onClick={generateAnalytics} 
+          <Button
+            onClick={generateAnalytics}
             disabled={loading}
             className="flex items-center space-x-2"
           >
@@ -398,8 +398,8 @@ const SolutionAnalytics: React.FC<SolutionAnalyticsProps> = ({ userId }) => {
             <span>{loading ? 'Generating...' : 'Generate Analytics'}</span>
           </Button>
           {analyticsData && (
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => exportAnalytics('json')}
               className="flex items-center space-x-2"
             >
@@ -421,22 +421,22 @@ const SolutionAnalytics: React.FC<SolutionAnalyticsProps> = ({ userId }) => {
       {analyticsData ? (
         <div>
           {renderOverview()}
-          
+
           <Tabs defaultValue="patterns" className="w-full">
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="patterns">Patterns & Metrics</TabsTrigger>
               <TabsTrigger value="insights">Insights & Trends</TabsTrigger>
               <TabsTrigger value="history">History</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="patterns" className="mt-6">
               {renderPatterns()}
             </TabsContent>
-            
+
             <TabsContent value="insights" className="mt-6">
               {renderInsights()}
             </TabsContent>
-            
+
             <TabsContent value="history" className="mt-6">
               {renderHistory()}
             </TabsContent>

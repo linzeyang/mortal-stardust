@@ -13,11 +13,11 @@ cd backend && pip install -r requirements.txt
 ```
 
 ### 2. 配置环境
-```bash  
+```bash
 # 编辑前端环境变量
 vim .env
 
-# 编辑后端环境变量  
+# 编辑后端环境变量
 vim backend/.env
 ```
 

@@ -33,7 +33,7 @@ export const signIn = validatedAction(signInSchema, async (data, formData) => {
 
   try {
     await connectDB();
-    
+
     const user = await User.findOne({ email });
 
     if (!user) {
@@ -92,7 +92,7 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
 
   try {
     await connectDB();
-    
+
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
@@ -167,9 +167,9 @@ export const updatePassword = validatedActionWithUser(
 
     try {
       await connectDB();
-      
+
       const user = await User.findById(sessionUser.id);
-      
+
       if (!user) {
         return {
           error: 'User not found. Please try again.'
@@ -212,9 +212,9 @@ export const deleteAccount = validatedActionWithUser(
 
     try {
       await connectDB();
-      
+
       const user = await User.findById(sessionUser.id);
-      
+
       if (!user) {
         return {
           error: 'User not found. Please try again.'
@@ -230,10 +230,10 @@ export const deleteAccount = validatedActionWithUser(
       }
 
       await logActivity(user._id.toString(), 'ACCOUNT_DELETE');
-      
+
       // Delete user account
       await User.findByIdAndDelete(user._id);
-      
+
       // Clear session
       (await cookies()).delete('session');
 

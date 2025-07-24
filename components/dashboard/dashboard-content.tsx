@@ -5,12 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  User, 
-  BookOpen, 
-  Brain, 
-  TrendingUp, 
-  Settings, 
+import {
+  User,
+  BookOpen,
+  Brain,
+  TrendingUp,
+  Settings,
   Plus,
   Heart,
   MessageSquare,
@@ -108,7 +108,7 @@ export default function DashboardContent({ user }: DashboardContentProps) {
           <TabsTrigger value="solutions">AI方案</TabsTrigger>
           <TabsTrigger value="settings">设置</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="overview" className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Stats Cards */}
@@ -124,7 +124,7 @@ export default function DashboardContent({ user }: DashboardContentProps) {
                 </p>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">AI方案数</CardTitle>
@@ -137,7 +137,7 @@ export default function DashboardContent({ user }: DashboardContentProps) {
                 </p>
               </CardContent>
             </Card>
-            
+
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">成长指数</CardTitle>
@@ -165,12 +165,12 @@ export default function DashboardContent({ user }: DashboardContentProps) {
                 <Plus className="h-6 w-6 text-primary" />
                 <span>添加新经历</span>
               </Button>
-              
+
               <Button className="h-20 flex-col space-y-2" variant="outline">
                 <Heart className="h-6 w-6 text-primary" />
                 <span>心理疗愈</span>
               </Button>
-              
+
               <Button className="h-20 flex-col space-y-2" variant="outline">
                 <MessageSquare className="h-6 w-6 text-primary" />
                 <span>AI咨询</span>
@@ -178,7 +178,7 @@ export default function DashboardContent({ user }: DashboardContentProps) {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="experiences" className="space-y-6">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold">我的人生经历</h3>
@@ -187,7 +187,7 @@ export default function DashboardContent({ user }: DashboardContentProps) {
               添加经历
             </Button>
           </div>
-          
+
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-12">
               <BookOpen className="h-12 w-12 text-muted-foreground mb-4" />
@@ -199,7 +199,7 @@ export default function DashboardContent({ user }: DashboardContentProps) {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="solutions" className="space-y-6">
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold">AI解决方案</h3>
@@ -218,7 +218,7 @@ export default function DashboardContent({ user }: DashboardContentProps) {
               </Badge>
             </div>
           </div>
-          
+
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-12">
               <Brain className="h-12 w-12 text-muted-foreground mb-4" />
@@ -230,7 +230,7 @@ export default function DashboardContent({ user }: DashboardContentProps) {
             </CardContent>
           </Card>
         </TabsContent>
-        
+
         <TabsContent value="settings" className="space-y-6">
           <Card>
             <CardHeader>
@@ -258,7 +258,7 @@ export default function DashboardContent({ user }: DashboardContentProps) {
                   <p className="text-muted-foreground">简体中文</p>
                 </div>
               </div>
-              
+
               <div className="flex space-x-2 pt-4">
                 <Button variant="outline">
                   <Settings className="w-4 h-4 mr-2" />

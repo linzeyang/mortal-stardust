@@ -6,12 +6,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
-import { 
-  Shield, 
-  Download, 
-  Trash2, 
-  Eye, 
-  FileText, 
+import {
+  Shield,
+  Download,
+  Trash2,
+  Eye,
+  FileText,
   Clock,
   CheckCircle,
   XCircle,
@@ -81,7 +81,7 @@ const PrivacyCenter: React.FC<PrivacyCenterProps> = ({ userId }) => {
   const loadDashboard = async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
       const token = localStorage.getItem('authToken');
       const response = await fetch('/api/privacy/dashboard', {
@@ -105,7 +105,7 @@ const PrivacyCenter: React.FC<PrivacyCenterProps> = ({ userId }) => {
 
   const updateConsent = async (consentType: string, granted: boolean, purpose: string) => {
     setActionLoading(`consent-${consentType}`);
-    
+
     try {
       const token = localStorage.getItem('authToken');
       const response = await fetch('/api/privacy/consent', {
@@ -135,13 +135,13 @@ const PrivacyCenter: React.FC<PrivacyCenterProps> = ({ userId }) => {
 
   const createDataRequest = async (requestType: string, retentionPolicy?: string) => {
     setActionLoading(requestType);
-    
+
     try {
       const token = localStorage.getItem('authToken');
       const requestBody: any = {
         request_type: requestType
       };
-      
+
       if (retentionPolicy) {
         requestBody.retention_policy = retentionPolicy;
       }
@@ -161,7 +161,7 @@ const PrivacyCenter: React.FC<PrivacyCenterProps> = ({ userId }) => {
 
       const result = await response.json();
       await loadDashboard(); // Reload dashboard data
-      
+
       // Show success message
       alert(`${requestType.charAt(0).toUpperCase() + requestType.slice(1)} request created successfully. Request ID: ${result.request_id}`);
     } catch (err) {
@@ -185,7 +185,7 @@ const PrivacyCenter: React.FC<PrivacyCenterProps> = ({ userId }) => {
       }
 
       const data = await response.json();
-      
+
       // Create and download JSON file
       const blob = new Blob([JSON.stringify(data.export_data, null, 2)], {
         type: 'application/json'
@@ -258,7 +258,7 @@ const PrivacyCenter: React.FC<PrivacyCenterProps> = ({ userId }) => {
         {consentTypes.map((consent) => {
           const currentConsent = getConsentStatus(consent.type);
           const isGranted = currentConsent?.status === 'granted';
-          
+
           return (
             <Card key={consent.type}>
               <CardContent className="p-6">
@@ -282,7 +282,7 @@ const PrivacyCenter: React.FC<PrivacyCenterProps> = ({ userId }) => {
                     <Switch
                       checked={isGranted}
                       disabled={actionLoading === `consent-${consent.type}`}
-                      onCheckedChange={(checked) => 
+                      onCheckedChange={(checked) =>
                         updateConsent(consent.type, checked, consent.description)
                       }
                     />
@@ -349,7 +349,7 @@ const PrivacyCenter: React.FC<PrivacyCenterProps> = ({ userId }) => {
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {dashboardData?.retention_policy.retention_periods && 
+            {dashboardData?.retention_policy.retention_periods &&
               Object.entries(dashboardData.retention_policy.retention_periods).map(([dataType, period]) => (
                 <div key={dataType} className="flex justify-between items-center py-2 border-b border-gray-100 last:border-0">
                   <span className="capitalize font-medium">{dataType.replace('_', ' ')}</span>
@@ -359,7 +359,7 @@ const PrivacyCenter: React.FC<PrivacyCenterProps> = ({ userId }) => {
           </div>
           <div className="mt-4 p-3 bg-blue-50 rounded-lg">
             <p className="text-sm text-blue-800">
-              Next data review: {dashboardData?.retention_policy.next_review_date ? 
+              Next data review: {dashboardData?.retention_policy.next_review_date ?
                 new Date(dashboardData.retention_policy.next_review_date).toLocaleDateString() : 'N/A'}
             </p>
           </div>
@@ -382,7 +382,7 @@ const PrivacyCenter: React.FC<PrivacyCenterProps> = ({ userId }) => {
             <p className="text-sm text-gray-600 mb-4">
               Download all your personal data in a structured format (GDPR Article 20).
             </p>
-            <Button 
+            <Button
               onClick={() => createDataRequest('export')}
               disabled={actionLoading === 'export'}
               className="w-full"
@@ -403,7 +403,7 @@ const PrivacyCenter: React.FC<PrivacyCenterProps> = ({ userId }) => {
             <p className="text-sm text-gray-600 mb-4">
               Convert your data to anonymous format for research while removing personal identifiers.
             </p>
-            <Button 
+            <Button
               variant="outline"
               onClick={() => createDataRequest('anonymize')}
               disabled={actionLoading === 'anonymize'}
@@ -429,9 +429,9 @@ const PrivacyCenter: React.FC<PrivacyCenterProps> = ({ userId }) => {
               This action cannot be undone. All your data will be permanently deleted according to your selected retention policy.
             </AlertDescription>
           </Alert>
-          
+
           <div className="space-y-3">
-            <Button 
+            <Button
               variant="destructive"
               onClick={() => createDataRequest('delete', 'complete')}
               disabled={actionLoading === 'delete'}
@@ -439,8 +439,8 @@ const PrivacyCenter: React.FC<PrivacyCenterProps> = ({ userId }) => {
             >
               {actionLoading === 'delete' ? 'Creating Request...' : 'Request Complete Deletion'}
             </Button>
-            
-            <Button 
+
+            <Button
               variant="outline"
               onClick={() => createDataRequest('delete', 'anonymize_retain')}
               disabled={actionLoading === 'delete'}
@@ -579,19 +579,19 @@ const PrivacyCenter: React.FC<PrivacyCenterProps> = ({ userId }) => {
           <TabsTrigger value="requests">Data Requests</TabsTrigger>
           <TabsTrigger value="rights">Privacy Rights</TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="consents" className="mt-6">
           {renderConsentManagement()}
         </TabsContent>
-        
+
         <TabsContent value="data-usage" className="mt-6">
           {renderDataUsage()}
         </TabsContent>
-        
+
         <TabsContent value="requests" className="mt-6">
           {renderDataRequests()}
         </TabsContent>
-        
+
         <TabsContent value="rights" className="mt-6">
           {renderPrivacyRights()}
         </TabsContent>

@@ -5,16 +5,16 @@ import bcryptjs from 'bcryptjs';
 async function seedDatabase() {
   try {
     console.log('🌱 Seeding MongoDB database...');
-    
+
     await connectDB();
-    
+
     // Check if users already exist
     const existingUsers = await User.countDocuments();
     if (existingUsers > 0) {
       console.log('📊 Database already contains users, skipping seed...');
       return;
     }
-    
+
     // Create sample users
     const sampleUsers = [
       {
@@ -60,16 +60,16 @@ async function seedDatabase() {
         }
       }
     ];
-    
+
     // Insert sample users
     for (const userData of sampleUsers) {
       const user = new User(userData);
       await user.save();
       console.log(`✅ Created user: ${user.email}`);
     }
-    
+
     console.log('🎉 Database seeding completed successfully!');
-    
+
   } catch (error) {
     console.error('❌ Database seeding failed:', error);
     process.exit(1);

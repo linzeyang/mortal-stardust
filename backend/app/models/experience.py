@@ -1,12 +1,15 @@
-from pydantic import BaseModel, Field, validator
-from typing import Optional, List, Dict, Any
 from datetime import datetime
 from enum import Enum
+from typing import Any, Dict, List, Optional
+
+from pydantic import BaseModel, Field
+
 
 class MediaType(str, Enum):
     AUDIO = "audio"
     IMAGE = "image"
     VIDEO = "video"
+
 
 class ExperienceCategory(str, Enum):
     CAREER = "career"
@@ -16,6 +19,7 @@ class ExperienceCategory(str, Enum):
     FINANCE = "finance"
     PERSONAL_GROWTH = "personal_growth"
     OTHER = "other"
+
 
 class EmotionalState(str, Enum):
     HAPPY = "happy"
@@ -27,10 +31,12 @@ class EmotionalState(str, Enum):
     PEACEFUL = "peaceful"
     FRUSTRATED = "frustrated"
 
+
 class InputMethod(str, Enum):
     TEXT = "text"
     VOICE = "voice"
     MIXED = "mixed"
+
 
 class ProcessingStage(str, Enum):
     PENDING = "pending"
@@ -38,6 +44,7 @@ class ProcessingStage(str, Enum):
     STAGE2 = "stage2"
     STAGE3 = "stage3"
     COMPLETED = "completed"
+
 
 class MediaFile(BaseModel):
     type: MediaType
@@ -50,15 +57,18 @@ class MediaFile(BaseModel):
     description: Optional[str] = None  # Encrypted
     metadata: Optional[Dict[str, Any]] = None  # Encrypted
 
+
 class ExperienceEmotionalState(BaseModel):
     primary: EmotionalState
     intensity: int = Field(..., ge=1, le=10)
     description: Optional[str] = None  # Encrypted
 
+
 class ExperiencePrivacy(BaseModel):
     isPublic: bool = False
     shareWithAI: bool = True
     anonymizeForResearch: bool = False
+
 
 class ExperienceMetadata(BaseModel):
     location: Optional[str] = None  # Encrypted
@@ -66,9 +76,11 @@ class ExperienceMetadata(BaseModel):
     inputMethod: InputMethod = InputMethod.TEXT
     processingStage: ProcessingStage = ProcessingStage.PENDING
 
+
 class ExperienceContent(BaseModel):
     text: str  # Encrypted
     mediaFiles: List[MediaFile] = []
+
 
 class ExperienceCreate(BaseModel):
     title: str = Field(..., min_length=1, max_length=200)
@@ -79,6 +91,7 @@ class ExperienceCreate(BaseModel):
     privacy: ExperiencePrivacy = ExperiencePrivacy()
     metadata: ExperienceMetadata
 
+
 class ExperienceUpdate(BaseModel):
     title: Optional[str] = Field(None, min_length=1, max_length=200)
     content: Optional[ExperienceContent] = None
@@ -87,6 +100,7 @@ class ExperienceUpdate(BaseModel):
     tags: Optional[List[str]] = None
     privacy: Optional[ExperiencePrivacy] = None
     metadata: Optional[ExperienceMetadata] = None
+
 
 class ExperienceResponse(BaseModel):
     id: str = Field(..., alias="_id")
@@ -103,9 +117,8 @@ class ExperienceResponse(BaseModel):
 
     class Config:
         populate_by_name = True
-        json_encoders = {
-            datetime: lambda v: v.isoformat()
-        }
+        json_encoders = {datetime: lambda v: v.isoformat()}
+
 
 class ExperienceInDB(BaseModel):
     id: Optional[str] = Field(None, alias="_id")

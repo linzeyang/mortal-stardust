@@ -11,12 +11,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
-import { 
-  User, 
-  Bell, 
-  Shield, 
-  Palette, 
-  Globe, 
+import {
+  User,
+  Bell,
+  Shield,
+  Palette,
+  Globe,
   Download,
   Trash2,
   Key,
@@ -60,7 +60,7 @@ function ProfileSettings() {
               <p className="text-sm text-gray-500 mt-1">推荐尺寸: 200x200像素</p>
             </div>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="firstName">姓</Label>
@@ -71,7 +71,7 @@ function ProfileSettings() {
               <Input id="lastName" defaultValue="三" />
             </div>
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="email">邮箱地址</Label>
             <div className="flex space-x-2">
@@ -82,7 +82,7 @@ function ProfileSettings() {
               </Button>
             </div>
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="phone">手机号码</Label>
             <div className="flex space-x-2">
@@ -93,7 +93,7 @@ function ProfileSettings() {
               </Button>
             </div>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="birthDate">出生日期</Label>
@@ -114,7 +114,7 @@ function ProfileSettings() {
               </Select>
             </div>
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="role">当前角色</Label>
             <Select defaultValue="student">
@@ -129,11 +129,11 @@ function ProfileSettings() {
               </SelectContent>
             </Select>
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="bio">个人简介</Label>
-            <Textarea 
-              id="bio" 
+            <Textarea
+              id="bio"
               placeholder="简单介绍一下自己..."
               defaultValue="计算机专业大三学生，对AI和心理学很感兴趣，希望通过这个平台更好地了解自己并获得成长建议。"
             />
@@ -163,7 +163,7 @@ function NotificationSettings() {
               </div>
               <Switch defaultChecked />
             </div>
-            
+
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label className="text-base">邮件提醒</Label>
@@ -171,7 +171,7 @@ function NotificationSettings() {
               </div>
               <Switch defaultChecked />
             </div>
-            
+
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label className="text-base">手机推送</Label>
@@ -179,7 +179,7 @@ function NotificationSettings() {
               </div>
               <Switch />
             </div>
-            
+
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label className="text-base">每周总结</Label>
@@ -187,7 +187,7 @@ function NotificationSettings() {
               </div>
               <Switch defaultChecked />
             </div>
-            
+
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label className="text-base">新功能提醒</Label>
@@ -196,9 +196,9 @@ function NotificationSettings() {
               <Switch />
             </div>
           </div>
-          
+
           <Separator />
-          
+
           <div className="space-y-4">
             <h4 className="font-medium">推送时间设置</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -237,7 +237,7 @@ function PrivacySettings() {
               </div>
               <Switch defaultChecked />
             </div>
-            
+
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label className="text-base">个性化建议</Label>
@@ -245,7 +245,7 @@ function PrivacySettings() {
               </div>
               <Switch defaultChecked />
             </div>
-            
+
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label className="text-base">营销通讯</Label>
@@ -253,7 +253,7 @@ function PrivacySettings() {
               </div>
               <Switch />
             </div>
-            
+
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label className="text-base">第三方集成</Label>
@@ -262,9 +262,9 @@ function PrivacySettings() {
               <Switch />
             </div>
           </div>
-          
+
           <Separator />
-          
+
           <div className="space-y-4">
             <h4 className="font-medium">数据保留设置</h4>
             <div className="space-y-2">
@@ -283,9 +283,9 @@ function PrivacySettings() {
               <p className="text-sm text-gray-500">设置数据自动删除时间，保护您的隐私</p>
             </div>
           </div>
-          
+
           <Separator />
-          
+
           <div className="space-y-4">
             <h4 className="font-medium flex items-center space-x-2">
               <AlertTriangle className="h-4 w-4 text-orange-500" />
@@ -337,7 +337,7 @@ function SecuritySettings() {
                 </Button>
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="newPassword">新密码</Label>
               <div className="relative">
@@ -351,20 +351,20 @@ function SecuritySettings() {
                 </Button>
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">确认新密码</Label>
               <Input id="confirmPassword" type="password" placeholder="再次输入新密码" />
             </div>
-            
+
             <Button className="w-full">
               <Key className="h-4 w-4 mr-2" />
               更新密码
             </Button>
           </div>
-          
+
           <Separator />
-          
+
           <div className="space-y-4">
             <h4 className="font-medium">两步验证</h4>
             <div className="flex items-center justify-between p-4 border rounded-lg">
@@ -381,7 +381,7 @@ function SecuritySettings() {
                 管理
               </Button>
             </div>
-            
+
             <div className="flex items-center justify-between p-4 border rounded-lg">
               <div className="flex items-center space-x-3">
                 <div className="p-2 bg-gray-100 rounded-full">
@@ -397,9 +397,9 @@ function SecuritySettings() {
               </Button>
             </div>
           </div>
-          
+
           <Separator />
-          
+
           <div className="space-y-4">
             <h4 className="font-medium">活跃会话</h4>
             <div className="space-y-3">
@@ -413,7 +413,7 @@ function SecuritySettings() {
                 </div>
                 <Badge variant="secondary">当前</Badge>
               </div>
-              
+
               <div className="flex items-center justify-between p-3 border rounded-lg">
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
@@ -427,7 +427,7 @@ function SecuritySettings() {
                 </Button>
               </div>
             </div>
-            
+
             <Button variant="outline" className="w-full">
               终止所有其他会话
             </Button>
@@ -463,7 +463,7 @@ function PreferencesSettings() {
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="language">界面语言</Label>
               <Select defaultValue="zh-CN">
@@ -477,7 +477,7 @@ function PreferencesSettings() {
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="dateFormat">日期格式</Label>
               <Select defaultValue="YYYY-MM-DD">
@@ -491,7 +491,7 @@ function PreferencesSettings() {
                 </SelectContent>
               </Select>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="timezone">时区</Label>
               <Select defaultValue="Asia/Shanghai">
@@ -506,9 +506,9 @@ function PreferencesSettings() {
               </Select>
             </div>
           </div>
-          
+
           <Separator />
-          
+
           <div className="space-y-4">
             <h4 className="font-medium">AI助手偏好</h4>
             <div className="space-y-4">
@@ -519,7 +519,7 @@ function PreferencesSettings() {
                 </div>
                 <Switch defaultChecked />
               </div>
-              
+
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label className="text-base">快速响应</Label>
@@ -527,7 +527,7 @@ function PreferencesSettings() {
                 </div>
                 <Switch />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="aiStyle">AI助手风格</Label>
                 <Select defaultValue="balanced">
@@ -589,25 +589,25 @@ export default function SettingsPage() {
                 <span className="hidden sm:inline">偏好</span>
               </TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="profile" className="mt-6">
               <Suspense fallback={<LoadingSpinner size="lg" />}>
                 <ProfileSettings />
               </Suspense>
             </TabsContent>
-            
+
             <TabsContent value="notifications" className="mt-6">
               <NotificationSettings />
             </TabsContent>
-            
+
             <TabsContent value="privacy" className="mt-6">
               <PrivacySettings />
             </TabsContent>
-            
+
             <TabsContent value="security" className="mt-6">
               <SecuritySettings />
             </TabsContent>
-            
+
             <TabsContent value="preferences" className="mt-6">
               <PreferencesSettings />
             </TabsContent>

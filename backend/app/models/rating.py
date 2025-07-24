@@ -2,13 +2,16 @@
 Database models for solution ratings and evaluations.
 """
 
-from pydantic import BaseModel, Field
-from typing import Optional, List
 from datetime import datetime
+from typing import List, Optional
+
 from bson import ObjectId
+from pydantic import BaseModel, Field
+
 
 class SolutionRatingInDB(BaseModel):
     """Solution rating document in MongoDB."""
+
     id: Optional[str] = Field(alias="_id")
     userId: ObjectId
     solutionId: ObjectId
@@ -27,8 +30,10 @@ class SolutionRatingInDB(BaseModel):
         populate_by_name = True
         arbitrary_types_allowed = True
 
+
 class SolutionRatingResponse(BaseModel):
     """Response model for solution rating."""
+
     rating_id: str
     solution_id: str
     experience_id: str
@@ -42,8 +47,10 @@ class SolutionRatingResponse(BaseModel):
     created_at: str
     updated_at: str
 
+
 class SuccessfulSolutionInDB(BaseModel):
     """Successful solution record in MongoDB (70%+ rated solutions)."""
+
     id: Optional[str] = Field(alias="_id")
     solutionId: ObjectId
     userId: ObjectId
@@ -57,8 +64,10 @@ class SuccessfulSolutionInDB(BaseModel):
         populate_by_name = True
         arbitrary_types_allowed = True
 
+
 class RatingAnalytics(BaseModel):
     """Rating analytics response model."""
+
     total_ratings: int
     avg_rating: float
     high_ratings: int  # 70%+
@@ -66,14 +75,18 @@ class RatingAnalytics(BaseModel):
     low_ratings: int  # <50%
     success_rate: float  # Percentage of 70%+ ratings
 
+
 class RatingTrend(BaseModel):
     """Rating trend data."""
+
     date: str
     avg_rating: float
     rating_count: int
 
+
 class StageRatingComparison(BaseModel):
     """Rating comparison across different AI processing stages."""
+
     stage: int
     stage_name: str
     total_ratings: int

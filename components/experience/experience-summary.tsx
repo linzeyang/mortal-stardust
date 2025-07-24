@@ -6,12 +6,12 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Progress } from '@/components/ui/progress'
-import { 
-  Brain, 
-  TrendingUp, 
-  Heart, 
-  FileText, 
-  BarChart3, 
+import {
+  Brain,
+  TrendingUp,
+  Heart,
+  FileText,
+  BarChart3,
   Clock,
   Sparkles,
   Download,
@@ -91,7 +91,7 @@ export function ExperienceSummary({ experienceId, onSummaryGenerated }: Experien
 
       const result = await response.json()
       setSummary(result.summary)
-      
+
       if (onSummaryGenerated) {
         onSummaryGenerated(result.summary_id)
       }
@@ -198,7 +198,7 @@ export function ExperienceSummary({ experienceId, onSummaryGenerated }: Experien
               </Button>
             </div>
           </div>
-          
+
           {/* Tags */}
           <div className=\"flex flex-wrap gap-2 mt-4\">
             {summary.summary_metadata.tags.map((tag, index) => (
@@ -388,7 +388,7 @@ export function ExperienceSummary({ experienceId, onSummaryGenerated }: Experien
                     ))}
                   </div>
                   <div className=\"mt-4\">
-                    <p className=\"text-sm text-gray-600\">Progress: 
+                    <p className=\"text-sm text-gray-600\">Progress:
                       <span className={`ml-2 font-medium ${
                         summary.emotional_analysis.emotional_progress === 'improving' ? 'text-green-600' :
                         summary.emotional_analysis.emotional_progress === 'declining' ? 'text-red-600' :
@@ -442,8 +442,8 @@ export function ExperienceSummary({ experienceId, onSummaryGenerated }: Experien
                       <div key={type} className=\"flex justify-between\">
                         <span className=\"capitalize\">{type}:</span>
                         <span className=\"text-gray-600\">
-                          {JSON.stringify(data).length > 50 ? 
-                            JSON.stringify(data).substring(0, 50) + '...' : 
+                          {JSON.stringify(data).length > 50 ?
+                            JSON.stringify(data).substring(0, 50) + '...' :
                             JSON.stringify(data)
                           }
                         </span>
@@ -495,7 +495,7 @@ export function ExperienceSummary({ experienceId, onSummaryGenerated }: Experien
                       <div key={stage} className=\"p-4 border rounded-lg\">
                         <div className=\"flex justify-between items-center mb-2\">
                           <span className=\"font-medium capitalize\">{stage.replace('_', ' ')}</span>
-                          <Badge variant={data.effectiveness === 'high' ? 'default' : 
+                          <Badge variant={data.effectiveness === 'high' ? 'default' :
                                         data.effectiveness === 'moderate' ? 'secondary' : 'destructive'}>
                             {data.effectiveness}
                           </Badge>

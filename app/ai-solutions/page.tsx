@@ -7,11 +7,11 @@ import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { EmptyState } from '@/components/ui/empty-state';
-import { 
-  Brain, 
-  Heart, 
-  Target, 
-  Users, 
+import {
+  Brain,
+  Heart,
+  Target,
+  Users,
   Clock,
   Star,
   MessageCircle,
@@ -39,7 +39,7 @@ const solutionStages = [
     borderColor: 'border-red-200'
   },
   {
-    id: 'stage2', 
+    id: 'stage2',
     title: '实际解决方案',
     description: '基于经历分析，提供具体可行的解决策略',
     icon: Target,
@@ -74,7 +74,7 @@ interface SolutionCardProps {
 
 function SolutionCard({ solution }: SolutionCardProps) {
   const stage = solutionStages.find(s => s.id === solution.stage);
-  
+
   return (
     <Card className={`hover:shadow-lg transition-shadow ${stage?.borderColor}`}>
       <CardHeader>
@@ -112,7 +112,7 @@ function SolutionCard({ solution }: SolutionCardProps) {
           <p className="text-gray-700 leading-relaxed">
             {solution.content}
           </p>
-          
+
           <div className="flex items-center justify-between pt-4 border-t">
             <div className="flex items-center space-x-4 text-sm text-gray-500">
               <span className="flex items-center space-x-1">
@@ -124,7 +124,7 @@ function SolutionCard({ solution }: SolutionCardProps) {
                 <span>{new Date(solution.createdAt).toLocaleDateString()}</span>
               </span>
             </div>
-            
+
             <div className="flex items-center space-x-2">
               <Button size="sm" variant="outline">
                 <Eye className="h-4 w-4 mr-1" />
@@ -293,7 +293,7 @@ export default function AISolutionsPage() {
               <TabsTrigger value="stage2">实际解决</TabsTrigger>
               <TabsTrigger value="stage3">后续支持</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="all" className="mt-6">
               <div className="space-y-6">
                 {mockSolutions.map((solution) => (
@@ -301,7 +301,7 @@ export default function AISolutionsPage() {
                 ))}
               </div>
             </TabsContent>
-            
+
             <TabsContent value="stage1" className="mt-6">
               <div className="space-y-6">
                 {mockSolutions
@@ -318,7 +318,7 @@ export default function AISolutionsPage() {
                 )}
               </div>
             </TabsContent>
-            
+
             <TabsContent value="stage2" className="mt-6">
               <div className="space-y-6">
                 {mockSolutions
@@ -328,7 +328,7 @@ export default function AISolutionsPage() {
                   ))}
               </div>
             </TabsContent>
-            
+
             <TabsContent value="stage3" className="mt-6">
               <EmptyState
                 icon={Users}

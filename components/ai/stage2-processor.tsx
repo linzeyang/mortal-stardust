@@ -6,13 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
-import { 
-  CheckCircle, 
-  Clock, 
-  AlertCircle, 
-  Zap, 
-  Target, 
-  Users, 
+import {
+  CheckCircle,
+  Clock,
+  AlertCircle,
+  Zap,
+  Target,
+  Users,
   Calendar,
   ArrowRight,
   Lightbulb,
@@ -57,18 +57,18 @@ interface Stage2Solution {
   stage1_solution_id?: string;
 }
 
-export default function Stage2Processor({ 
-  experienceId, 
+export default function Stage2Processor({
+  experienceId,
   stage1SolutionId,
-  onComplete, 
-  onError 
+  onComplete,
+  onError
 }: Stage2ProcessorProps) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [solution, setSolution] = useState<Stage2Solution | null>(null);
   const [processingProgress, setProcessingProgress] = useState(0);
   const [processingStage, setProcessingStage] = useState('');
   const [error, setError] = useState<string | null>(null);
-  
+
   const { toast } = useToast();
 
   const startStage2Processing = async () => {
@@ -103,7 +103,7 @@ export default function Stage2Processor({
       }
 
       const result = await response.json();
-      
+
       if (result.status === 'already_exists') {
         // Solution already exists, fetch it
         await fetchSolutionStatus(result.solution_id);
@@ -142,7 +142,7 @@ export default function Stage2Processor({
       try {
         attempts++;
         setProcessingProgress(Math.min(25 + (attempts * 2), 95));
-        
+
         // Update processing stage message
         if (attempts < 10) {
           setProcessingStage('分析经历内容和上下文...');
@@ -171,7 +171,7 @@ export default function Stage2Processor({
           setProcessingStage('处理完成！');
           setSolution(statusData);
           onComplete?.(solutionId);
-          
+
           toast({
             title: "Stage 2 处理完成",
             description: "实用解决方案已生成，请查看详细建议。"
@@ -248,11 +248,11 @@ export default function Stage2Processor({
         </CardHeader>
         <CardContent>
           <p className="text-red-600 mb-4">{error}</p>
-          <Button 
+          <Button
             onClick={() => {
               setError(null);
               setSolution(null);
-            }} 
+            }}
             variant="outline"
             className="border-red-300 text-red-700 hover:bg-red-100"
           >
@@ -284,7 +284,7 @@ export default function Stage2Processor({
                 <div className="text-blue-700">具体行动步骤、实施时间安排、成功指标、所需资源</div>
               </div>
             </div>
-            
+
             {stage1SolutionId && (
               <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
                 <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
@@ -293,8 +293,8 @@ export default function Stage2Processor({
                 </div>
               </div>
             )}
-            
-            <Button 
+
+            <Button
               onClick={startStage2Processing}
               className="w-full"
               size="lg"
@@ -326,7 +326,7 @@ export default function Stage2Processor({
               </div>
               <Progress value={processingProgress} className="h-2" />
             </div>
-            
+
             <div className="text-sm text-muted-foreground">
               AI正在为您量身定制实用解决方案，这通常需要1-3分钟...
             </div>
@@ -356,7 +356,7 @@ export default function Stage2Processor({
             </span>
           </div>
         </CardHeader>
-        
+
         <CardContent className="space-y-6">
           {/* Description */}
           <div>
@@ -463,9 +463,9 @@ export default function Stage2Processor({
                     <div className="font-medium text-sm">{resource.title}</div>
                     <div className="text-sm text-muted-foreground">{resource.description}</div>
                     {resource.url && (
-                      <a 
-                        href={resource.url} 
-                        target="_blank" 
+                      <a
+                        href={resource.url}
+                        target="_blank"
                         rel="noopener noreferrer"
                         className="text-blue-600 hover:text-blue-800 text-sm underline"
                       >

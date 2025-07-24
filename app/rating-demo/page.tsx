@@ -20,7 +20,7 @@ export default function RatingDemoPage() {
       type: "psychological_healing"
     },
     {
-      id: "6747e12345678901234567ac", 
+      id: "6747e12345678901234567ac",
       title: "创业初期资金规划建议",
       stage: 2,
       type: "practical_solution"
@@ -45,7 +45,7 @@ export default function RatingDemoPage() {
             </p>
           </div>
         </div>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <Card>
             <CardContent className="p-4 text-center">
@@ -54,7 +54,7 @@ export default function RatingDemoPage() {
               <div className="text-sm text-muted-foreground">高评价阈值</div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardContent className="p-4 text-center">
               <Star className="h-8 w-8 mx-auto mb-2 text-yellow-600" />
@@ -62,7 +62,7 @@ export default function RatingDemoPage() {
               <div className="text-sm text-muted-foreground">中等评价范围</div>
             </CardContent>
           </Card>
-          
+
           <Card>
             <CardContent className="p-4 text-center">
               <BarChart3 className="h-8 w-8 mx-auto mb-2 text-red-600" />
@@ -91,7 +91,7 @@ export default function RatingDemoPage() {
             <Star className="h-6 w-6" />
             解决方案评价演示
           </h2>
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {mockSolutions.map((solution, index) => (
               <div key={solution.id} className="space-y-4">
@@ -105,12 +105,12 @@ export default function RatingDemoPage() {
                         阶段 {solution.stage}
                       </span>
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                        {solution.type === 'psychological_healing' ? '心理疗愈' : 
+                        {solution.type === 'psychological_healing' ? '心理疗愈' :
                          solution.type === 'practical_solution' ? '实用建议' : '后续支持'}
                       </span>
                     </div>
                   </CardHeader>
-                  
+
                   <CardContent>
                     <div className="bg-muted/50 p-4 rounded-lg mb-4">
                       <h4 className="font-medium mb-2">模拟解决方案内容：</h4>
@@ -122,7 +122,7 @@ export default function RatingDemoPage() {
                     </div>
                   </CardContent>
                 </Card>
-                
+
                 <SolutionRating
                   solutionId={solution.id}
                   solutionTitle={solution.title}
@@ -140,7 +140,7 @@ export default function RatingDemoPage() {
 
         {/* Feature Explanation */}
         <Separator />
-        
+
         <div>
           <h2 className="text-2xl font-semibold mb-4">功能特点</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

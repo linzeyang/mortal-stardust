@@ -1,22 +1,22 @@
 -r requirements.txt
-
-# Media Processing Dependencies
-opencv-python==4.12.0.88
-SpeechRecognition==3.14.3
-librosa==0.11.0
-soundfile==0.13.1
-moviepy==2.2.1
-numpy==2.2.6
-scipy==1.16.0
-
-# Audio processing
-pydub==0.25.1
 audioread==3.0.1
+ffmpeg-python==0.2.0
 
 # Video processing
 imageio==2.37.0
 imageio-ffmpeg==0.6.0
+librosa==0.11.0
+moviepy==2.2.1
+numpy==2.2.6
+
+# Media Processing Dependencies
+opencv-python==4.12.0.88
+
+# Audio processing
+pydub==0.25.1
 
 # Additional utilities
 python-magic==0.4.27
-ffmpeg-python==0.2.0
+scipy==1.16.0
+soundfile==0.13.1
+SpeechRecognition==3.14.3

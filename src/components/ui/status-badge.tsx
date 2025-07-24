@@ -1,11 +1,11 @@
 import React from 'react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { 
-  CheckCircle, 
-  Clock, 
-  XCircle, 
-  AlertTriangle, 
+import {
+  CheckCircle,
+  Clock,
+  XCircle,
+  AlertTriangle,
   Loader2,
   Circle
 } from 'lucide-react';
@@ -86,17 +86,17 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({
       className={cn(
         sizeClasses[size],
         'inline-flex items-center gap-1.5 font-medium',
-        variant === 'outline' 
-          ? statusConfig.outlineClassName 
+        variant === 'outline'
+          ? statusConfig.outlineClassName
           : statusConfig.className
       )}
     >
       {showIcon && (
-        <Icon 
+        <Icon
           className={cn(
             iconSizes[size],
             status === 'loading' && 'animate-spin'
-          )} 
+          )}
         />
       )}
       {displayText}

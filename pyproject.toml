@@ -1,0 +1,33 @@
+[tool.black]
+line-length = 88
+target-version = ['py312']
+
+[tool.coverage.run]
+branch = true
+source = ["./"]
+
+[tool.coverage.report]
+omit = ["test_*.py", "conftest.py"]
+
+[tool.isort]
+py_version = 312
+profile = "black"
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["./tests/"]
+python_files = ["test_*.py"]
+console_output_style = "count"
+
+[tool.ruff]
+src = ["src"]
+line-length = 88
+target-version = "py312"
+output-format = "full"
+
+[tool.ruff.lint]
+select = ["B", "C", "E", "F", "I", "Q", "S", "W"]
+ignore = []
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]

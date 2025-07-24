@@ -22,11 +22,11 @@ export function decryptData(encryptedData: string): string {
   try {
     const bytes = CryptoJS.AES.decrypt(encryptedData, ENCRYPTION_KEY);
     const decrypted = bytes.toString(CryptoJS.enc.Utf8);
-    
+
     if (!decrypted) {
       throw new Error('Invalid encrypted data');
     }
-    
+
     return decrypted;
   } catch (error) {
     console.error('Decryption error:', error);

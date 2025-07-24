@@ -27,7 +27,7 @@ export default function TestMultimodalPage() {
     description?: string;
   }) => {
     console.log('Submitting experience:', data);
-    
+
     // Create experience object
     const experience = {
       id: Date.now().toString(),
@@ -44,7 +44,7 @@ export default function TestMultimodalPage() {
     };
 
     setSubmittedExperiences(prev => [experience, ...prev]);
-    
+
     // Here you would normally send to your API
     // await fetch('/api/experiences', { method: 'POST', body: ... });
   };
@@ -86,7 +86,7 @@ export default function TestMultimodalPage() {
                             <p className="text-sm text-muted-foreground">{exp.text}</p>
                           </div>
                         )}
-                        
+
                         {exp.description && (
                           <div>
                             <h4 className="font-medium mb-2">描述：</h4>
