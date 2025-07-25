@@ -33,7 +33,7 @@ import {
   GraduationCap,
   Target
 } from 'lucide-react';
-import { MultimodalInput } from '@/components/multimodal/multimodal-input';
+
 import { useToast } from '@/hooks/use-toast';
 
 /**
@@ -224,9 +224,9 @@ export function ExperienceInputForm({
       } catch (error) {
         console.error('Failed to load template:', error);
         toast({
-          title: \"错误\",
-          description: \"无法加载角色模板，请重试\",
-          variant: \"destructive\"
+          title: "错误",
+          description: "无法加载角色模板，请重试",
+          variant: "destructive"
         });
       } finally {
         setIsLoading(false);
@@ -500,14 +500,14 @@ export function ExperienceInputForm({
 
       setIsDraft(false);
       toast({
-        title: \"草稿已保存\",
-        description: \"您的输入已自动保存\"
+        title: "草稿已保存",
+        description: "您的输入已自动保存"
       });
     } catch (error) {
       toast({
-        title: \"保存失败\",
-        description: \"无法保存草稿，请重试\",
-        variant: \"destructive\"
+        title: "保存失败",
+        description: "无法保存草稿，请重试",
+        variant: "destructive"
       });
     } finally {
       setIsLoading(false);
@@ -539,9 +539,9 @@ export function ExperienceInputForm({
 
     if (!allValid) {
       toast({
-        title: \"表单验证失败\",
-        description: \"请检查并完善所有必填信息\",
-        variant: \"destructive\"
+        title: "表单验证失败",
+        description: "请检查并完善所有必填信息",
+        variant: "destructive"
       });
       return;
     }
@@ -556,14 +556,14 @@ export function ExperienceInputForm({
       });
 
       toast({
-        title: \"提交成功\",
-        description: \"您的经历已成功提交，AI正在为您生成解决方案\"
+        title: "提交成功",
+        description: "您的经历已成功提交，AI正在为您生成解决方案"
       });
     } catch (error) {
       toast({
-        title: \"提交失败\",
-        description: \"无法提交表单，请重试\",
-        variant: \"destructive\"
+        title: "提交失败",
+        description: "无法提交表单，请重试",
+        variant: "destructive"
       });
     } finally {
       setIsLoading(false);
@@ -626,7 +626,7 @@ export function ExperienceInputForm({
               onChange={(e) => handleFieldChange(field.id, e.target.value)}
               className={`w-full p-2 border rounded-md ${error ? 'border-red-500' : 'border-gray-300'} focus:outline-none focus:ring-2 focus:ring-blue-500`}
             >
-              <option value=\"\">请选择...</option>
+              <option value="">请选择...</option>
               {field.options?.map(option => (
                 <option key={option.value} value={option.value}>
                   {option.label}
@@ -637,11 +637,11 @@ export function ExperienceInputForm({
 
         case 'multiselect':
           return (
-            <div className=\"space-y-2\">
+            <div className="space-y-2">
               {field.options?.map(option => (
-                <label key={option.value} className=\"flex items-center space-x-2\">
+                <label key={option.value} className="flex items-center space-x-2">
                   <input
-                    type=\"checkbox\"
+                    type="checkbox"
                     checked={(value || []).includes(option.value)}
                     onChange={(e) => {
                       const currentValues = value || [];
@@ -650,9 +650,9 @@ export function ExperienceInputForm({
                         : currentValues.filter((v: string) => v !== option.value);
                       handleFieldChange(field.id, newValues);
                     }}
-                    className=\"rounded\"
+                    className="rounded"
                   />
-                  <span className=\"text-sm\">{option.label}</span>
+                  <span className="text-sm">{option.label}</span>
                 </label>
               ))}
             </div>
@@ -660,17 +660,17 @@ export function ExperienceInputForm({
 
         case 'slider':
           return (
-            <div className=\"space-y-2\">
+            <div className="space-y-2">
               <input
-                type=\"range\"
+                type="range"
                 id={field.id}
-                min=\"1\"
-                max=\"10\"
+                min="1"
+                max="10"
                 value={value || field.defaultValue || 5}
                 onChange={(e) => handleFieldChange(field.id, parseInt(e.target.value))}
-                className=\"w-full\"
+                className="w-full"
               />
-              <div className=\"text-center text-sm text-gray-600\">
+              <div className="text-center text-sm text-gray-600">
                 当前值: {value || field.defaultValue || 5}/10
               </div>
             </div>
@@ -678,12 +678,22 @@ export function ExperienceInputForm({
 
         case 'file_upload':
           return (
-            <MultimodalInput
-              onFilesChange={(files) => handleFieldChange(field.id, files)}
-              maxFiles={5}
-              acceptedTypes={['image/*', 'audio/*', 'video/*', '.pdf', '.doc', '.docx']}
-              maxSize={50 * 1024 * 1024} // 50MB
-            />
+            <div className="space-y-2">
+              <input
+                type="file"
+                id={field.id}
+                multiple
+                accept="image/*,audio/*,video/*,.pdf,.doc,.docx"
+                onChange={(e) => {
+                  const files = Array.from(e.target.files || []);
+                  handleFieldChange(field.id, files);
+                }}
+                className="w-full p-2 border rounded-md border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <p className="text-xs text-gray-500">
+                支持图片、音频、视频、PDF、Word文档，最大50MB
+              </p>
+            </div>
           );
 
         default:
@@ -692,18 +702,18 @@ export function ExperienceInputForm({
     })();
 
     return (
-      <div key={field.id} className=\"space-y-2\">
-        <Label htmlFor={field.id} className=\"text-sm font-medium\">
+      <div key={field.id} className="space-y-2">
+        <Label htmlFor={field.id} className="text-sm font-medium">
           {field.label}
-          {field.required && <span className=\"text-red-500 ml-1\">*</span>}
+          {field.required && <span className="text-red-500 ml-1">*</span>}
         </Label>
         {fieldComponent}
         {field.helpText && (
-          <p className=\"text-xs text-gray-500\">{field.helpText}</p>
+          <p className="text-xs text-gray-500">{field.helpText}</p>
         )}
         {error && (
-          <p className=\"text-xs text-red-500 flex items-center gap-1\">
-            <AlertCircle className=\"w-3 h-3\" />
+          <p className="text-xs text-red-500 flex items-center gap-1">
+            <AlertCircle className="w-3 h-3" />
             {error}
           </p>
         )}
@@ -713,11 +723,11 @@ export function ExperienceInputForm({
 
   if (isLoading || !template) {
     return (
-      <Card className=\"w-full max-w-4xl mx-auto\">
-        <CardContent className=\"p-8\">
-          <div className=\"text-center\">
-            <div className=\"animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto\"></div>
-            <p className=\"mt-4 text-gray-600\">加载中...</p>
+      <Card className="w-full max-w-4xl mx-auto">
+        <CardContent className="p-8">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">加载中...</p>
           </div>
         </CardContent>
       </Card>
@@ -728,24 +738,24 @@ export function ExperienceInputForm({
   const progress = ((currentSection + 1) / template.sections.length) * 100;
 
   return (
-    <div className=\"w-full max-w-4xl mx-auto space-y-6\">
+    <div className="w-full max-w-4xl mx-auto space-y-6">
       {/* Header */}
       <Card>
         <CardHeader>
-          <div className=\"flex items-center space-x-3\">
+          <div className="flex items-center space-x-3">
             {roleIcons[selectedRole as keyof typeof roleIcons]}
             <div>
               <CardTitle>{template.name}</CardTitle>
               <CardDescription>{template.description}</CardDescription>
             </div>
           </div>
-          <div className=\"flex items-center justify-between mt-4\">
-            <div className=\"flex space-x-2\">
+          <div className="flex items-center justify-between mt-4">
+            <div className="flex space-x-2">
               {template.tags.map(tag => (
-                <Badge key={tag} variant=\"secondary\">{tag}</Badge>
+                <Badge key={tag} variant="secondary">{tag}</Badge>
               ))}
             </div>
-            <div className=\"text-sm text-gray-500\">
+            <div className="text-sm text-gray-500">
               第 {currentSection + 1} 部分，共 {template.sections.length} 部分
             </div>
           </div>
@@ -754,13 +764,13 @@ export function ExperienceInputForm({
 
       {/* Progress */}
       <Card>
-        <CardContent className=\"p-4\">
-          <div className=\"space-y-2\">
-            <div className=\"flex justify-between text-sm\">
+        <CardContent className="p-4">
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
               <span>完成进度</span>
               <span>{Math.round(progress)}%</span>
             </div>
-            <Progress value={progress} className=\"w-full\" />
+            <Progress value={progress} className="w-full" />
           </div>
         </CardContent>
       </Card>
@@ -768,47 +778,47 @@ export function ExperienceInputForm({
       {/* Current Section */}
       <Card>
         <CardHeader>
-          <CardTitle className=\"flex items-center space-x-2\">
+          <CardTitle className="flex items-center space-x-2">
             <span>{currentSectionData.title}</span>
           </CardTitle>
           <CardDescription>{currentSectionData.description}</CardDescription>
         </CardHeader>
-        <CardContent className=\"space-y-6\">
+        <CardContent className="space-y-6">
           {currentSectionData.fields.map(field => renderField(field))}
         </CardContent>
       </Card>
 
       {/* Navigation */}
       <Card>
-        <CardContent className=\"p-4\">
-          <div className=\"flex items-center justify-between\">
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between">
             <Button
-              variant=\"outline\"
+              variant="outline"
               onClick={handlePrevious}
               disabled={currentSection === 0}
             >
-              <ChevronLeft className=\"w-4 h-4 mr-2\" />
+              <ChevronLeft className="w-4 h-4 mr-2" />
               上一步
             </Button>
 
-            <div className=\"flex space-x-2\">
+            <div className="flex space-x-2">
               <Button
-                variant=\"outline\"
+                variant="outline"
                 onClick={handleSaveDraft}
                 disabled={isLoading}
               >
-                <Save className=\"w-4 h-4 mr-2\" />
+                <Save className="w-4 h-4 mr-2" />
                 {isDraft ? '保存草稿' : '已保存'}
               </Button>
 
               {currentSection < template.sections.length - 1 ? (
                 <Button onClick={handleNext}>
                   下一步
-                  <ChevronRight className=\"w-4 h-4 ml-2\" />
+                  <ChevronRight className="w-4 h-4 ml-2" />
                 </Button>
               ) : (
                 <Button onClick={handleSubmit} disabled={isLoading}>
-                  <Check className=\"w-4 h-4 mr-2\" />
+                  <Check className="w-4 h-4 mr-2" />
                   提交表单
                 </Button>
               )}
