@@ -27,6 +27,25 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
+// 安全的日期格式化函数，避免水合错误
+const formatDate = (dateString: string) => {
+  try {
+    const date = new Date(dateString);
+    return date.toISOString().slice(0, 10); // YYYY-MM-DD 格式
+  } catch {
+    return '未知日期';
+  }
+};
+
+const formatDateTime = (dateString: string) => {
+  try {
+    const date = new Date(dateString);
+    return date.toISOString().slice(0, 16).replace('T', ' '); // YYYY-MM-DD HH:mm 格式
+  } catch {
+    return '未知时间';
+  }
+};
+
 interface DataInventory {
   user_id: string;
   total_records: number;
@@ -75,10 +94,12 @@ export default function DataSecurityDashboard() {
   const [securityStats, setSecurityStats] = useState<SecurityStats | null>(null);
   const [accessLogs, setAccessLogs] = useState<AccessLog[]>([]);
   const [activeTab, setActiveTab] = useState('overview');
+  const [isClient, setIsClient] = useState(false);
 
   const { toast } = useToast();
 
   useEffect(() => {
+    setIsClient(true);
     loadDashboardData();
   }, []);
 
@@ -166,7 +187,7 @@ export default function DataSecurityDashboard() {
     return labels[category] || category;
   };
 
-  if (loading) {
+  if (!isClient || loading) {
     return (
       <div className="p-6">
         <div className="text-center">
@@ -300,7 +321,7 @@ export default function DataSecurityDashboard() {
                     </div>
 
                     <div className="text-xs text-muted-foreground">
-                      最新: {new Date(data.newest_record).toLocaleDateString('zh-CN')}
+                      最新: {formatDate(data.newest_record)}
                     </div>
                   </CardContent>
                 </Card>
@@ -336,7 +357,7 @@ export default function DataSecurityDashboard() {
                             {log.accessType.toUpperCase()} - {getCategoryLabel(log.dataCategory)}
                           </div>
                           <div className="text-xs text-muted-foreground">
-                            {new Date(log.timestamp).toLocaleString('zh-CN')}
+                            {formatDateTime(log.timestamp)}
                             {log.ipAddress && ` • ${log.ipAddress}`}
                           </div>
                         </div>

@@ -16,6 +16,7 @@ import { getCurrentUser } from '@/lib/auth/mongodb-queries';
 import { SWRConfig } from 'swr';
 import Header from '@/components/header';
 import { ThemeProvider } from '@/contexts/theme-context';
+import { HydrationBoundary } from '@/components/ui/hydration-boundary';
 import { siteConfig } from '@/lib/config';
 
 /**
@@ -77,27 +78,30 @@ export default function RootLayout({
       className="font-sans"
     >
       <body className="min-h-[100dvh] bg-background text-foreground">
-        {/* Theme Provider - Enables light/dark mode switching throughout the app */}
-        <ThemeProvider>
-          {/* SWR Configuration - Sets up data fetching with authentication fallback */}
-          <SWRConfig
-            value={{
-              fallback: {
-                // Pre-load user authentication data for immediate availability
-                // Components that read this data will not suspend on first render
-                '/api/user': getCurrentUser()
-              }
-            }}
-          >
-            {/* Main Application Structure - Flex column layout for header and content */}
-            <div className="flex flex-col min-h-screen">
-              {/* Global Header - Navigation and user controls */}
-              <Header />
-              {/* Page Content - Rendered children from individual pages */}
-              {children}
-            </div>
-          </SWRConfig>
-        </ThemeProvider>
+        {/* 水合错误边界 - 捕获和处理客户端水合错误 */}
+        <HydrationBoundary>
+          {/* Theme Provider - Enables light/dark mode switching throughout the app */}
+          <ThemeProvider>
+            {/* SWR Configuration - Sets up data fetching with authentication fallback */}
+            <SWRConfig
+              value={{
+                fallback: {
+                  // Pre-load user authentication data for immediate availability
+                  // Components that read this data will not suspend on first render
+                  '/api/user': getCurrentUser()
+                }
+              }}
+            >
+              {/* Main Application Structure - Flex column layout for header and content */}
+              <div className="flex flex-col min-h-screen">
+                {/* Global Header - Navigation and user controls */}
+                <Header />
+                {/* Page Content - Rendered children from individual pages */}
+                {children}
+              </div>
+            </SWRConfig>
+          </ThemeProvider>
+        </HydrationBoundary>
       </body>
     </html>
   );
