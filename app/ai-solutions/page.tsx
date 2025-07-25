@@ -311,7 +311,7 @@ export default function AISolutionsPage() {
                   ))}
                 {mockSolutions.filter(s => s.stage === 'stage1').length === 0 && (
                   <EmptyState
-                    icon={Heart}
+                    icon={<Heart className="h-12 w-12" />}
                     title="暂无心理疗愈方案"
                     description="当您提交新的经历后，AI将为您生成个性化的心理疗愈建议"
                   />
@@ -331,7 +331,7 @@ export default function AISolutionsPage() {
 
             <TabsContent value="stage3" className="mt-6">
               <EmptyState
-                icon={Users}
+                icon={<Users className="h-12 w-12" />}
                 title="后续支持方案开发中"
                 description="我们正在完善长期跟进功能，敬请期待"
               />
