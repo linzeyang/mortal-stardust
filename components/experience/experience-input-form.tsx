@@ -329,8 +329,8 @@ export function ExperienceInputForm({
                 validations: [
                   {
                     type: 'min_length',
-                    value: 50,
-                    message: '请详细描述，至少50个字符'
+                    value: 20,
+                    message: '请详细描述，至少20个字符'
                   }
                 ]
               },
@@ -409,16 +409,28 @@ export function ExperienceInputForm({
    * @returns {boolean} True if all fields in the current section are valid
    */
   const validateCurrentSection = (): boolean => {
-    if (!template) return false;
+    if (!template) {
+      console.log('❌ 没有模板，验证失败');
+      return false;
+    }
 
     const currentSectionData = template.sections[currentSection];
+    console.log(`🔍 验证section ${currentSection}: ${currentSectionData.title}`);
+    console.log('📋 Section字段:', currentSectionData.fields);
+    
     const errors: Record<string, string> = {};
 
     currentSectionData.fields.forEach(field => {
       const value = formData[field.id];
+      console.log(`🔍 检查字段 ${field.id} (${field.label}):`, {
+        value,
+        required: field.required,
+        type: field.type
+      });
 
       // Check required fields
-      if (field.required && (!value || value === '' || value === [])) {
+      if (field.required && (!value || value === '' || (Array.isArray(value) && value.length === 0))) {
+        console.log(`❌ 必填字段 ${field.id} 为空`);
         errors[field.id] = `${field.label}为必填项`;
         return;
       }
@@ -426,8 +438,10 @@ export function ExperienceInputForm({
       // Check validations
       if (value && field.validations) {
         field.validations.forEach(validation => {
+          console.log(`🔍 检查验证规则 ${validation.type} for ${field.id}`);
           if (validation.type === 'min_length' && typeof value === 'string') {
             if (value.length < validation.value) {
+              console.log(`❌ 字段 ${field.id} 长度不足: ${value.length} < ${validation.value}`);
               errors[field.id] = validation.message;
             }
           }
@@ -438,16 +452,30 @@ export function ExperienceInputForm({
       if (field.conditional) {
         const dependentValue = formData[field.conditional.dependsOn];
         const shouldShow = field.conditional.hasValue ? !!dependentValue : !dependentValue;
+        console.log(`🔍 条件字段 ${field.id} 依赖 ${field.conditional.dependsOn}:`, {
+          dependentValue,
+          shouldShow,
+          hasValue: field.conditional.hasValue
+        });
 
         if (!shouldShow && field.required && (!value || value === '')) {
+          console.log(`⚠️ 条件隐藏的必填字段 ${field.id}，跳过验证`);
           // Field is conditionally hidden and required, skip validation
           return;
         }
       }
+
+      if (!errors[field.id]) {
+        console.log(`✅ 字段 ${field.id} 验证通过`);
+      }
     });
 
+    console.log('🔍 验证错误汇总:', errors);
     setValidationErrors(errors);
-    return Object.keys(errors).length === 0;
+    const isValid = Object.keys(errors).length === 0;
+    console.log(`${isValid ? '✅' : '❌'} Section ${currentSection} 最终验证结果:`, isValid);
+    
+    return isValid;
   };
 
   /**
@@ -525,19 +553,48 @@ export function ExperienceInputForm({
    * @throws {Error} When the form submission fails
    */
   const handleSubmit = async () => {
+    console.log('🚀 handleSubmit 开始执行');
+    console.log('📝 当前表单数据:', formData);
+    console.log('📋 当前模板:', template);
+    console.log('🔢 当前section:', currentSection);
+
+    // 保存当前section，避免验证过程中改变UI状态
+    const originalSection = currentSection;
+
     // Validate all sections
     let allValid = true;
+    const validationResults: Record<number, boolean> = {};
+    
     if (template) {
+      console.log('🔍 开始验证所有sections...');
+      
       for (let i = 0; i < template.sections.length; i++) {
+        console.log(`🔍 验证section ${i}: ${template.sections[i].title}`);
+        
+        // 临时设置section进行验证，但不触发UI更新
+        const tempCurrentSection = currentSection;
         setCurrentSection(i);
-        if (!validateCurrentSection()) {
+        
+        const isValid = validateCurrentSection();
+        validationResults[i] = isValid;
+        
+        console.log(`${isValid ? '✅' : '❌'} Section ${i} 验证结果:`, isValid);
+        
+        if (!isValid) {
           allValid = false;
+          console.log('❌ 发现验证错误，停止验证');
           break;
         }
       }
+      
+      // 恢复原始section
+      setCurrentSection(originalSection);
     }
 
+    console.log('📊 最终验证结果:', { allValid, validationResults });
+
     if (!allValid) {
+      console.log('❌ 表单验证失败');
       toast({
         title: "表单验证失败",
         description: "请检查并完善所有必填信息",
@@ -546,20 +603,29 @@ export function ExperienceInputForm({
       return;
     }
 
+    console.log('✅ 表单验证通过，开始提交...');
+
     try {
       setIsLoading(true);
-      await onSubmit({
+      
+      const submitData = {
         templateId: template?.id,
         role: selectedRole,
         data: formData,
         submittedAt: new Date().toISOString()
-      });
+      };
+      
+      console.log('📤 准备提交的数据:', submitData);
+      
+      await onSubmit(submitData);
 
+      console.log('✅ 表单提交成功');
       toast({
         title: "提交成功",
         description: "您的经历已成功提交，AI正在为您生成解决方案"
       });
     } catch (error) {
+      console.error('❌ 表单提交失败:', error);
       toast({
         title: "提交失败",
         description: "无法提交表单，请重试",
@@ -567,6 +633,7 @@ export function ExperienceInputForm({
       });
     } finally {
       setIsLoading(false);
+      console.log('🏁 handleSubmit 执行完成');
     }
   };
 
