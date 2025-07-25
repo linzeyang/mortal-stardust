@@ -127,8 +127,8 @@ export default function ExperiencePage() {
             setCurrentStep(ExperienceStep.FORM_INPUT);
 
             toast({
-              title: \"找到草稿\",
-              description: \"已为您恢复之前保存的草稿\",
+              title: "找到草稿",
+              description: "已为您恢复之前保存的草稿",
             });
           }
         }
@@ -183,8 +183,8 @@ export default function ExperiencePage() {
 
       // Show success and redirect to AI processing
       toast({
-        title: \"提交成功\",
-        description: \"您的经历已成功提交，AI正在为您生成个性化解决方案\",
+        title: "提交成功",
+        description: "您的经历已成功提交，AI正在为您生成个性化解决方案",
       });
 
       // In a real app, redirect to AI processing/results page
@@ -193,9 +193,9 @@ export default function ExperiencePage() {
     } catch (error) {
       console.error('Submission failed:', error);
       toast({
-        title: \"提交失败\",
-        description: \"无法提交您的经历，请重试\",
-        variant: \"destructive\"
+        title: "提交失败",
+        description: "无法提交您的经历，请重试",
+        variant: "destructive"
       });
       setCurrentStep(ExperienceStep.FORM_INPUT);
     } finally {
@@ -255,8 +255,8 @@ export default function ExperiencePage() {
     setExperienceData(null);
 
     toast({
-      title: \"重新开始\",
-      description: \"已清除所有数据，您可以重新选择角色\",
+      title: "重新开始",
+      description: "已清除所有数据，您可以重新选择角色",
     });
   };
 
@@ -270,55 +270,55 @@ export default function ExperiencePage() {
    * @returns {JSX.Element} The processing screen UI component
    */
   const renderProcessingScreen = () => (
-    <div className=\"w-full max-w-4xl mx-auto space-y-8\">
+    <div className="w-full max-w-4xl mx-auto space-y-8">
       <Card>
-        <CardHeader className=\"text-center\">
-          <div className=\"mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4\">
-            <Brain className=\"w-8 h-8 text-blue-600 animate-pulse\" />
+        <CardHeader className="text-center">
+          <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+            <Brain className="w-8 h-8 text-blue-600 animate-pulse" />
           </div>
-          <CardTitle className=\"text-2xl\">AI正在分析您的经历</CardTitle>
+          <CardTitle className="text-2xl">AI正在分析您的经历</CardTitle>
           <CardDescription>
             我们的AI系统正在深度分析您提供的信息，为您生成个性化的三阶段解决方案
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className=\"space-y-6\">
+          <div className="space-y-6">
             {/* Processing Steps */}
-            <div className=\"space-y-4\">
-              <div className=\"flex items-center space-x-3 p-3 bg-blue-50 rounded-lg\">
-                <div className=\"w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center\">
-                  <div className=\"w-2 h-2 bg-white rounded-full animate-pulse\"></div>
+            <div className="space-y-4">
+              <div className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg">
+                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                  <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
                 </div>
                 <div>
-                  <div className=\"font-medium text-blue-900\">阶段一：心理疗愈分析</div>
-                  <div className=\"text-sm text-blue-700\">分析情绪状态，制定心理支持方案...</div>
+                  <div className="font-medium text-blue-900">阶段一：心理疗愈分析</div>
+                  <div className="text-sm text-blue-700">分析情绪状态，制定心理支持方案...</div>
                 </div>
               </div>
 
-              <div className=\"flex items-center space-x-3 p-3 bg-gray-50 rounded-lg opacity-60\">
-                <div className=\"w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center\">
-                  <div className=\"w-2 h-2 bg-white rounded-full\"></div>
+              <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg opacity-60">
+                <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center">
+                  <div className="w-2 h-2 bg-white rounded-full"></div>
                 </div>
                 <div>
-                  <div className=\"font-medium text-gray-700\">阶段二：实用解决方案</div>
-                  <div className=\"text-sm text-gray-600\">生成具体可行的行动计划...</div>
+                  <div className="font-medium text-gray-700">阶段二：实用解决方案</div>
+                  <div className="text-sm text-gray-600">生成具体可行的行动计划...</div>
                 </div>
               </div>
 
-              <div className=\"flex items-center space-x-3 p-3 bg-gray-50 rounded-lg opacity-60\">
-                <div className=\"w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center\">
-                  <div className=\"w-2 h-2 bg-white rounded-full\"></div>
+              <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg opacity-60">
+                <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center">
+                  <div className="w-2 h-2 bg-white rounded-full"></div>
                 </div>
                 <div>
-                  <div className=\"font-medium text-gray-700\">阶段三：后续跟进</div>
-                  <div className=\"text-sm text-gray-600\">制定长期发展和跟进计划...</div>
+                  <div className="font-medium text-gray-700">阶段三：后续跟进</div>
+                  <div className="text-sm text-gray-600">制定长期发展和跟进计划...</div>
                 </div>
               </div>
             </div>
 
-            <div className=\"text-center text-sm text-gray-500\">
+            <div className="text-center text-sm text-gray-500">
               <p>预计处理时间：2-3分钟</p>
-              <p className=\"mt-1\">请耐心等待，不要关闭此页面</p>
+              <p className="mt-1">请耐心等待，不要关闭此页面</p>
             </div>
           </div>
         </CardContent>
@@ -336,24 +336,24 @@ export default function ExperiencePage() {
    * @returns {JSX.Element} The results screen UI component
    */
   const renderResultsScreen = () => (
-    <div className=\"w-full max-w-4xl mx-auto space-y-8\">
+    <div className="w-full max-w-4xl mx-auto space-y-8">
       <Card>
-        <CardHeader className=\"text-center\">
-          <div className=\"mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4\">
-            <Target className=\"w-8 h-8 text-green-600\" />
+        <CardHeader className="text-center">
+          <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+            <Target className="w-8 h-8 text-green-600" />
           </div>
-          <CardTitle className=\"text-2xl\">AI分析完成</CardTitle>
+          <CardTitle className="text-2xl">AI分析完成</CardTitle>
           <CardDescription>
             为您生成了个性化的三阶段解决方案，点击下方查看详细内容
           </CardDescription>
         </CardHeader>
-        <CardContent className=\"text-center\">
-          <Button size=\"lg\" className=\"text-lg px-8 py-3\">
-            <FileText className=\"w-5 h-5 mr-2\" />
+        <CardContent className="text-center">
+          <Button size="lg" className="text-lg px-8 py-3">
+            <FileText className="w-5 h-5 mr-2" />
             查看AI解决方案
           </Button>
-          <p className=\"mt-4 text-sm text-gray-500\">
-            您也可以稍后在\"我的方案\"中查看和管理所有解决方案
+          <p className="mt-4 text-sm text-gray-500">
+            您也可以稍后在"我的方案"中查看和管理所有解决方案
           </p>
         </CardContent>
       </Card>
@@ -361,25 +361,25 @@ export default function ExperiencePage() {
   );
 
   return (
-    <div className=\"min-h-screen bg-gray-50 py-8 px-4\">
+    <div className="min-h-screen bg-gray-50 py-8 px-4">
       {/* Header with navigation */}
       {currentStep !== ExperienceStep.ROLE_SELECTION && (
-        <div className=\"w-full max-w-6xl mx-auto mb-8\">
-          <div className=\"flex items-center justify-between\">
+        <div className="w-full max-w-6xl mx-auto mb-8">
+          <div className="flex items-center justify-between">
             <Button
-              variant=\"outline\"
+              variant="outline"
               onClick={handleBackToRoleSelection}
               disabled={isProcessing}
             >
-              <ArrowLeft className=\"w-4 h-4 mr-2\" />
+              <ArrowLeft className="w-4 h-4 mr-2" />
               返回角色选择
             </Button>
             <Button
-              variant=\"ghost\"
+              variant="ghost"
               onClick={handleStartOver}
               disabled={isProcessing}
             >
-              <RotateCcw className=\"w-4 h-4 mr-2\" />
+              <RotateCcw className="w-4 h-4 mr-2" />
               重新开始
             </Button>
           </div>
