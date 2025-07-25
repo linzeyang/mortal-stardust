@@ -101,10 +101,10 @@ async def process_stage2(
         # Create or update solution record
         solution_id = None
         if existing_solution:
-            solution_id = existing_solution["_id"]
+            solution_id = str(existing_solution["_id"])
             # Update status to processing
             await db.solutions.update_one(
-                {"_id": solution_id},
+                {"_id": ObjectId(solution_id)},
                 {
                     "$set": {
                         "status": SolutionStatus.PROCESSING,

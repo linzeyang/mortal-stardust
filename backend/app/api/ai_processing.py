@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from ..api.auth import get_current_user
@@ -26,7 +27,7 @@ async def process_experience(
 
     # Get experience
     experience = await experiences_collection.find_one(
-        {"_id": experience_id, "userId": str(current_user["_id"])}
+        {"_id": ObjectId(experience_id), "userId": str(current_user["_id"])}
     )
 
     if not experience:
@@ -70,7 +71,7 @@ async def process_experience(
 
         # Update experience processing stage
         await experiences_collection.update_one(
-            {"_id": experience_id},
+            {"_id": ObjectId(experience_id)},
             {
                 "$set": {
                     "metadata.processingStage": f"stage{stage}",
@@ -103,7 +104,7 @@ async def regenerate_solution(
 
     # Get solution
     solution = await solutions_collection.find_one(
-        {"_id": solution_id, "userId": str(current_user["_id"])}
+        {"_id": ObjectId(solution_id), "userId": str(current_user["_id"])}
     )
 
     if not solution:
@@ -120,13 +121,13 @@ async def regenerate_solution(
 
     # Get experience
     experience = await experiences_collection.find_one(
-        {"_id": solution["experienceId"]}
+        {"_id": ObjectId(solution["experienceId"])}
     )
 
     try:
         # Mark as regenerating
         await solutions_collection.update_one(
-            {"_id": solution_id}, {"$set": {"status": "regenerating"}}
+            {"_id": ObjectId(solution_id)}, {"$set": {"status": "regenerating"}}
         )
 
         # Process through AI service with previous feedback
@@ -144,7 +145,7 @@ async def regenerate_solution(
         }
 
         await solutions_collection.update_one(
-            {"_id": solution_id}, {"$set": update_data}
+            {"_id": ObjectId(solution_id)}, {"$set": update_data}
         )
 
         return {
@@ -156,7 +157,7 @@ async def regenerate_solution(
     except Exception as e:
         # Reset status on error
         await solutions_collection.update_one(
-            {"_id": solution_id}, {"$set": {"status": "generated"}}
+            {"_id": ObjectId(solution_id)}, {"$set": {"status": "generated"}}
         )
 
         raise HTTPException(

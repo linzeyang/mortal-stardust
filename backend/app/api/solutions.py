@@ -27,6 +27,7 @@ Security Considerations:
 from datetime import datetime
 from typing import List
 
+from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from ..api.auth import get_current_user
@@ -204,7 +205,7 @@ async def rate_solution(
 
     # Find solution with user isolation for security
     solution = await solutions_collection.find_one(
-        {"_id": solution_id, "userId": str(current_user["_id"])}
+        {"_id": ObjectId(solution_id), "userId": str(current_user["_id"])}
     )
 
     if not solution:
@@ -229,7 +230,9 @@ async def rate_solution(
     update_data = encrypt_solution_data(update_data)
 
     # Perform atomic update operation
-    await solutions_collection.update_one({"_id": solution_id}, {"$set": update_data})
+    await solutions_collection.update_one(
+        {"_id": ObjectId(solution_id)}, {"$set": update_data}
+    )
 
     # Determine if solution quality is below threshold for regeneration
     needs_regeneration = rating_data.rating.value < 50

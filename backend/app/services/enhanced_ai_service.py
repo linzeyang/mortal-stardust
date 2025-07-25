@@ -18,7 +18,12 @@ from ..utils.encryption import encrypt_data, encrypt_object
 class EnhancedAIService:
     def __init__(self):
         self.client = (
-            openai.OpenAI(api_key=settings.OPENAI_API_KEY)
+            openai.AsyncClient(
+                api_key=settings.OPENAI_API_KEY,
+                base_url=settings.OPENAI_API_URL,
+                timeout=60,
+                max_retries=2,
+            )
             if settings.OPENAI_API_KEY
             else None
         )
@@ -244,7 +249,7 @@ class EnhancedAIService:
 
         # Make API call
         response = await self.client.chat.completions.create(
-            model="gpt-4-turbo-preview",
+            model=settings.MODEL_ID,
             messages=[
                 {
                     "role": "system",
@@ -271,7 +276,7 @@ class EnhancedAIService:
             "confidence_score": 0.85,
             "prompt_used": formatted_prompt,
             "model_params": {
-                "model": "gpt-4-turbo-preview",
+                "model": settings.MODEL_ID,
                 "temperature": 0.7,
                 "max_tokens": 2000,
             },
@@ -735,7 +740,7 @@ class EnhancedAIService:
 
         # Make API call
         response = await self.client.chat.completions.create(
-            model="gpt-4-turbo-preview",
+            model=settings.MODEL_ID,
             messages=[
                 {
                     "role": "system",
@@ -762,7 +767,7 @@ class EnhancedAIService:
             "success_metrics": self._define_success_metrics(context),
             "confidence_score": 0.82,
             "model_params": {
-                "model": "gpt-4-turbo-preview",
+                "model": settings.MODEL_ID,
                 "temperature": 0.6,
                 "max_tokens": 2500,
             },
@@ -1162,7 +1167,7 @@ class EnhancedAIService:
 
         # Make API call
         response = await self.client.chat.completions.create(
-            model="gpt-4-turbo-preview",
+            model=settings.MODEL_ID,
             messages=[
                 {
                     "role": "system",
@@ -1190,7 +1195,7 @@ class EnhancedAIService:
             "schedule": self._generate_follow_up_schedule(context),
             "confidence_score": 0.80,
             "model_params": {
-                "model": "gpt-4-turbo-preview",
+                "model": settings.MODEL_ID,
                 "temperature": 0.7,
                 "max_tokens": 2000,
             },

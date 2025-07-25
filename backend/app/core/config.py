@@ -79,6 +79,7 @@ class Settings(BaseSettings):
     OPENAI_API_URL: str = os.getenv(
         "OPENAI_API_URL", "https://api.openai.com/v1"
     )  # OpenAI API base URL - can be changed for compatible APIs
+    MODEL_ID: str = os.getenv("MODEL_ID", "gpt-4")
 
     # File Upload and Storage Configuration
     # Multi-modal experience collection requires secure file handling for images, audio, and video
