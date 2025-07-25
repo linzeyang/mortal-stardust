@@ -25,6 +25,7 @@ import {
   Target
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { experienceService, type ExperienceData } from '@/lib/api/experiences';
 
 /**
  * Interface representing the complete experience data structure
@@ -137,7 +138,48 @@ export default function ExperiencePage() {
       }
     };
 
+    // 检查用户认证状态
+    const checkAuthStatus = async () => {
+      try {
+        console.log('🔍 检查用户认证状态...');
+        const response = await fetch('/api/user');
+        const user = await response.json();
+        
+        if (!user) {
+          console.log('⚠️ 用户未登录');
+          toast({
+            title: "需要登录",
+            description: "请先登录后再提交经历",
+            variant: "destructive"
+          });
+        } else {
+          console.log('✅ 用户已登录:', user);
+        }
+      } catch (error) {
+        console.error('❌ 检查认证状态失败:', error);
+      }
+    };
+
+    // 测试API连接
+    const testApiConnection = async () => {
+      try {
+        console.log('🔍 测试API连接...');
+        const response = await fetch('http://localhost:8000/health');
+        const data = await response.json();
+        console.log('✅ API连接测试成功:', data);
+      } catch (error) {
+        console.error('❌ API连接测试失败:', error);
+        toast({
+          title: "API连接失败",
+          description: "无法连接到后端服务，请确保后端服务正在运行",
+          variant: "destructive"
+        });
+      }
+    };
+
     loadExistingDraft();
+    checkAuthStatus();
+    testApiConnection();
   }, [toast]);
 
   /**
@@ -164,41 +206,83 @@ export default function ExperiencePage() {
    * @throws {Error} When the submission process fails
    */
   const handleFormSubmit = async (data: ExperienceData) => {
+    console.log('🚀 handleFormSubmit 开始执行');
+    console.log('📝 接收到的表单数据:', data);
+    
     try {
+      console.log('⏳ 设置处理状态...');
       setIsProcessing(true);
       setCurrentStep(ExperienceStep.PROCESSING);
 
-      // Save the experience data
+      // Save the experience data locally first
       setExperienceData(data);
+      console.log('💾 本地数据已保存');
 
       // Clear any saved draft
       localStorage.removeItem('experience_draft');
+      console.log('🗑️ 草稿已清除');
 
-      // In a real implementation, this would send data to the backend
-      // and trigger AI processing
-      console.log('Submitting experience data:', data);
+      console.log('🌐 开始调用后端API...');
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // 实际调用后端API保存经历数据
+      const result = await experienceService.createExperience(data);
+      
+      console.log('✅ 后端API调用成功:', result);
 
-      // Show success and redirect to AI processing
+      // Show success message
       toast({
         title: "提交成功",
-        description: "您的经历已成功提交，AI正在为您生成个性化解决方案",
+        description: `您的经历已成功保存到数据库 (ID: ${result.id.substring(0, 8)}...)`,
       });
 
-      // In a real app, redirect to AI processing/results page
+      console.log('⏱️ 开始模拟AI处理...');
+      // 模拟AI处理时间（实际项目中这里会调用AI处理API）
+      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      toast({
+        title: "AI分析完成",
+        description: "您的经历已分析完成，可以查看AI生成的解决方案",
+      });
+
+      console.log('🎯 跳转到结果页面');
+      // Redirect to results page
       setCurrentStep(ExperienceStep.RESULTS);
 
     } catch (error) {
-      console.error('Submission failed:', error);
+      console.error('❌ handleFormSubmit 执行失败:', error);
+      
+      // 详细的错误信息
+      let errorMessage = '未知错误';
+      let errorDetails = '';
+      
+      if (error instanceof Error) {
+        errorMessage = error.message;
+        errorDetails = error.stack || '';
+        
+        // 检查是否有额外的错误信息
+        const errorWithDetails = error as any;
+        if (errorWithDetails.details) {
+          console.error('❌ 错误详情:', errorWithDetails.details);
+        }
+        if (errorWithDetails.status) {
+          console.error('❌ HTTP状态码:', errorWithDetails.status);
+        }
+      }
+      
+      console.error('❌ 错误消息:', errorMessage);
+      console.error('❌ 错误堆栈:', errorDetails);
+      
       toast({
         title: "提交失败",
-        description: "无法提交您的经历，请重试",
+        description: `无法保存您的经历: ${errorMessage}`,
         variant: "destructive"
       });
+      
+      console.log('🔄 返回表单输入步骤');
+      // Return to form input step so user can try again
       setCurrentStep(ExperienceStep.FORM_INPUT);
     } finally {
+      console.log('🏁 handleFormSubmit 执行完成，重置处理状态');
       setIsProcessing(false);
     }
   };
@@ -217,11 +301,23 @@ export default function ExperiencePage() {
    */
   const handleSaveDraft = async (data: ExperienceData) => {
     try {
-      // Save to local storage (in real implementation, save to backend)
-      localStorage.setItem('experience_draft', JSON.stringify(data));
-      console.log('Draft saved:', data);
+      // 标记为草稿
+      const draftData = {
+        ...data,
+        isDraft: true,
+        lastModified: new Date().toISOString()
+      };
+
+      // 保存到本地存储
+      localStorage.setItem('experience_draft', JSON.stringify(draftData));
+      
+      console.log('草稿已保存到本地存储:', draftData);
+      
+      // 未来可以在这里添加后端草稿保存功能
+      // await experienceService.saveDraft(draftData);
+      
     } catch (error) {
-      console.error('Failed to save draft:', error);
+      console.error('保存草稿失败:', error);
       throw error;
     }
   };
