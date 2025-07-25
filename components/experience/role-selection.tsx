@@ -33,10 +33,10 @@ interface RoleSelectionProps {
 }
 
 const roleIcons = {
-  workplace_newcomer: <Briefcase className=\"w-8 h-8\" />,
-  entrepreneur: <Target className=\"w-8 h-8\" />,
-  student: <GraduationCap className=\"w-8 h-8\" />,
-  other: <User className=\"w-8 h-8\" />
+  workplace_newcomer: <Briefcase className="w-8 h-8" />,
+  entrepreneur: <Target className="w-8 h-8" />,
+  student: <GraduationCap className="w-8 h-8" />,
+  other: <User className="w-8 h-8" />
 };
 
 const roleColors = {
@@ -113,9 +113,9 @@ export function RoleSelection({ onRoleSelected, selectedRole }: RoleSelectionPro
       } catch (error) {
         console.error('Failed to load roles:', error);
         toast({
-          title: \"加载失败\",
-          description: \"无法加载角色选项，请刷新页面重试\",
-          variant: \"destructive\"
+          title: "加载失败",
+          description: "无法加载角色选项，请刷新页面重试",
+          variant: "destructive"
         });
       } finally {
         setIsLoading(false);
@@ -128,93 +128,91 @@ export function RoleSelection({ onRoleSelected, selectedRole }: RoleSelectionPro
   const handleRoleSelect = (role: string) => {
     onRoleSelected(role);
     toast({
-      title: \"角色已选择\",
+      title: "角色已选择",
       description: `您选择了：${roles.find(r => r.role === role)?.name}`,
     });
   };
 
   if (isLoading) {
     return (
-      <div className=\"w-full max-w-4xl mx-auto p-8\">
-        <div className=\"text-center\">
-          <div className=\"animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto\"></div>
-          <p className=\"mt-4 text-gray-600\">加载角色选项中...</p>
+      <div className="w-full max-w-4xl mx-auto p-8">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">加载角色选项中...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className=\"w-full max-w-6xl mx-auto space-y-8\">
+    <div className="w-full max-w-6xl mx-auto space-y-8">
       {/* Header */}
-      <div className=\"text-center space-y-4\">
-        <h1 className=\"text-3xl font-bold text-gray-900\">选择您的身份角色</h1>
-        <p className=\"text-lg text-gray-600 max-w-2xl mx-auto\">
+      <div className="text-center space-y-4">
+        <h1 className="text-3xl font-bold text-gray-900">选择您的身份角色</h1>
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
           请选择最符合您当前情况的身份角色，我们将为您提供个性化的经历收集模板和AI咨询方案
         </p>
       </div>
 
       {/* Role Cards */}
-      <div className=\"grid grid-cols-1 md:grid-cols-2 gap-6\">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {roles.map((role) => (
           <Card
             key={role.role}
-            className={`cursor-pointer transition-all duration-200 ${
-              selectedRole === role.role
+            className={`cursor-pointer transition-all duration-200 ${selectedRole === role.role
                 ? 'ring-2 ring-blue-500 shadow-lg'
                 : roleColors[role.role as keyof typeof roleColors]
-            }`}
+              }`}
             onClick={() => handleRoleSelect(role.role)}
           >
             <CardHeader>
-              <div className=\"flex items-start justify-between\">
-                <div className=\"flex items-center space-x-3\">
-                  <div className={`p-2 rounded-lg ${
-                    selectedRole === role.role
+              <div className="flex items-start justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className={`p-2 rounded-lg ${selectedRole === role.role
                       ? 'bg-blue-500 text-white'
                       : 'bg-white shadow-sm'
-                  }`}>
+                    }`}>
                     {roleIcons[role.role as keyof typeof roleIcons]}
                   </div>
                   <div>
-                    <CardTitle className=\"flex items-center gap-2\">
+                    <CardTitle className="flex items-center gap-2">
                       {role.name}
                       {selectedRole === role.role && (
-                        <CheckCircle className=\"w-5 h-5 text-blue-500\" />
+                        <CheckCircle className="w-5 h-5 text-blue-500" />
                       )}
                     </CardTitle>
                   </div>
                 </div>
               </div>
-              <CardDescription className=\"text-sm leading-relaxed\">
+              <CardDescription className="text-sm leading-relaxed">
                 {role.description}
               </CardDescription>
             </CardHeader>
 
-            <CardContent className=\"space-y-4\">
+            <CardContent className="space-y-4">
               {/* Tags */}
-              <div className=\"flex flex-wrap gap-2\">
+              <div className="flex flex-wrap gap-2">
                 {role.tags.map((tag) => (
-                  <Badge key={tag} variant=\"secondary\" className=\"text-xs\">
+                  <Badge key={tag} variant="secondary" className="text-xs">
                     {tag}
                   </Badge>
                 ))}
               </div>
 
               {/* Preview Info */}
-              <div className=\"bg-white/50 rounded-lg p-3 space-y-2\">
-                <h4 className=\"text-sm font-medium text-gray-700\">模板预览</h4>
-                <div className=\"grid grid-cols-3 gap-4 text-xs text-gray-600\">
-                  <div className=\"text-center\">
-                    <div className=\"font-medium text-gray-900\">{role.preview.sectionCount}</div>
+              <div className="bg-white/50 rounded-lg p-3 space-y-2">
+                <h4 className="text-sm font-medium text-gray-700">模板预览</h4>
+                <div className="grid grid-cols-3 gap-4 text-xs text-gray-600">
+                  <div className="text-center">
+                    <div className="font-medium text-gray-900">{role.preview.sectionCount}</div>
                     <div>个部分</div>
                   </div>
-                  <div className=\"text-center\">
-                    <div className=\"font-medium text-gray-900\">{role.preview.fieldCount}</div>
+                  <div className="text-center">
+                    <div className="font-medium text-gray-900">{role.preview.fieldCount}</div>
                     <div>个字段</div>
                   </div>
-                  <div className=\"text-center\">
-                    <div className=\"font-medium text-gray-900\">{role.preview.estimatedTime}</div>
+                  <div className="text-center">
+                    <div className="font-medium text-gray-900">{role.preview.estimatedTime}</div>
                     <div>预计用时</div>
                   </div>
                 </div>
@@ -222,18 +220,18 @@ export function RoleSelection({ onRoleSelected, selectedRole }: RoleSelectionPro
 
               {/* Select Button */}
               <Button
-                className=\"w-full\"
-                variant={selectedRole === role.role ? \"default\" : \"outline\"}
+                className="w-full"
+                variant={selectedRole === role.role ? "default" : "outline"}
               >
                 {selectedRole === role.role ? (
                   <>
                     已选择
-                    <CheckCircle className=\"w-4 h-4 ml-2\" />
+                    <CheckCircle className="w-4 h-4 ml-2" />
                   </>
                 ) : (
                   <>
                     选择此角色
-                    <ArrowRight className=\"w-4 h-4 ml-2\" />
+                    <ArrowRight className="w-4 h-4 ml-2" />
                   </>
                 )}
               </Button>
@@ -243,19 +241,19 @@ export function RoleSelection({ onRoleSelected, selectedRole }: RoleSelectionPro
       </div>
 
       {/* Additional Info */}
-      <Card className=\"bg-blue-50 border-blue-200\">
-        <CardContent className=\"p-6\">
-          <div className=\"flex items-start space-x-3\">
-            <div className=\"bg-blue-500 text-white p-2 rounded-lg flex-shrink-0\">
-              <User className=\"w-5 h-5\" />
+      <Card className="bg-blue-50 border-blue-200">
+        <CardContent className="p-6">
+          <div className="flex items-start space-x-3">
+            <div className="bg-blue-500 text-white p-2 rounded-lg flex-shrink-0">
+              <User className="w-5 h-5" />
             </div>
-            <div className=\"space-y-2\">
-              <h3 className=\"font-medium text-blue-900\">个性化AI咨询</h3>
-              <p className=\"text-sm text-blue-700 leading-relaxed\">
+            <div className="space-y-2">
+              <h3 className="font-medium text-blue-900">个性化AI咨询</h3>
+              <p className="text-sm text-blue-700 leading-relaxed">
                 根据您选择的角色，我们的AI系统将为您提供三个阶段的专业咨询：
-                <span className=\"font-medium\">心理疗愈支持</span>、
-                <span className=\"font-medium\">实际解决方案</span>、
-                <span className=\"font-medium\">后续跟进指导</span>。
+                <span className="font-medium">心理疗愈支持</span>、
+                <span className="font-medium">实际解决方案</span>、
+                <span className="font-medium">后续跟进指导</span>。
                 每个阶段都将结合您的具体情况和多模态输入进行个性化分析。
               </p>
             </div>
@@ -264,7 +262,7 @@ export function RoleSelection({ onRoleSelected, selectedRole }: RoleSelectionPro
       </Card>
 
       {/* Help Text */}
-      <div className=\"text-center text-sm text-gray-500\">
+      <div className="text-center text-sm text-gray-500">
         <p>选择角色后，您可以随时在个人设置中修改身份信息</p>
       </div>
     </div>
