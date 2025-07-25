@@ -55,7 +55,7 @@ export async function getCurrentUser() {
     // Decrypt sensitive data for display (handles field-level encryption)
     user.decryptSensitiveData();
 
-    // Return formatted user data for frontend consumption
+    // Return formatted user data for frontend consumption (ensure all data is serializable)
     return {
       id: user._id.toString(),
       email: user.email,
@@ -63,16 +63,20 @@ export async function getCurrentUser() {
       firstName: user.profile.firstName,
       lastName: user.profile.lastName,
       role: user.profile.role,
-      avatar: user.profile.avatar,
-      phoneNumber: user.profile.phoneNumber,
-      dateOfBirth: user.profile.dateOfBirth?.toISOString() || null,
-      preferences: user.preferences,
-      security: {
-        twoFactorEnabled: user.security.twoFactorEnabled,
-        lastLogin: user.security.lastLogin?.toISOString() || null
+      avatar: user.profile.avatar || null,
+      phoneNumber: user.profile.phoneNumber || null,
+      dateOfBirth: user.profile.dateOfBirth ? user.profile.dateOfBirth.toISOString() : null,
+      preferences: {
+        language: user.preferences.language || 'zh-CN',
+        notifications: Boolean(user.preferences.notifications),
+        dataSharing: Boolean(user.preferences.dataSharing)
       },
-      createdAt: user.createdAt?.toISOString() || null,
-      updatedAt: user.updatedAt?.toISOString() || null
+      security: {
+        twoFactorEnabled: Boolean(user.security.twoFactorEnabled),
+        lastLogin: user.security.lastLogin ? user.security.lastLogin.toISOString() : null
+      },
+      createdAt: user.createdAt ? user.createdAt.toISOString() : null,
+      updatedAt: user.updatedAt ? user.updatedAt.toISOString() : null
     };
   } catch (error) {
     // Log error for debugging but don't expose details to client
@@ -112,7 +116,7 @@ export async function getUserById(userId: string) {
     // Decrypt sensitive data for display
     user.decryptSensitiveData();
 
-    // Return formatted user data
+    // Return formatted user data (ensure all data is serializable)
     return {
       id: user._id.toString(),
       email: user.email,
@@ -120,16 +124,20 @@ export async function getUserById(userId: string) {
       firstName: user.profile.firstName,
       lastName: user.profile.lastName,
       role: user.profile.role,
-      avatar: user.profile.avatar,
-      phoneNumber: user.profile.phoneNumber,
-      dateOfBirth: user.profile.dateOfBirth?.toISOString() || null,
-      preferences: user.preferences,
-      security: {
-        twoFactorEnabled: user.security.twoFactorEnabled,
-        lastLogin: user.security.lastLogin?.toISOString() || null
+      avatar: user.profile.avatar || null,
+      phoneNumber: user.profile.phoneNumber || null,
+      dateOfBirth: user.profile.dateOfBirth ? user.profile.dateOfBirth.toISOString() : null,
+      preferences: {
+        language: user.preferences.language || 'zh-CN',
+        notifications: Boolean(user.preferences.notifications),
+        dataSharing: Boolean(user.preferences.dataSharing)
       },
-      createdAt: user.createdAt?.toISOString() || null,
-      updatedAt: user.updatedAt?.toISOString() || null
+      security: {
+        twoFactorEnabled: Boolean(user.security.twoFactorEnabled),
+        lastLogin: user.security.lastLogin ? user.security.lastLogin.toISOString() : null
+      },
+      createdAt: user.createdAt ? user.createdAt.toISOString() : null,
+      updatedAt: user.updatedAt ? user.updatedAt.toISOString() : null
     };
   } catch (error) {
     console.error('Error getting user by ID:', error);
@@ -198,7 +206,7 @@ export async function updateUserProfile(userId: string, updates: any) {
     // Save changes to database (triggers pre-save hooks for encryption)
     await user.save();
 
-    // Return updated user data for confirmation
+    // Return updated user data for confirmation (ensure all data is serializable)
     return {
       id: user._id.toString(),
       email: user.email,
@@ -206,9 +214,13 @@ export async function updateUserProfile(userId: string, updates: any) {
       firstName: user.profile.firstName,
       lastName: user.profile.lastName,
       role: user.profile.role,
-      avatar: user.profile.avatar,
-      preferences: user.preferences,
-      updatedAt: user.updatedAt?.toISOString() || null
+      avatar: user.profile.avatar || null,
+      preferences: {
+        language: user.preferences.language || 'zh-CN',
+        notifications: Boolean(user.preferences.notifications),
+        dataSharing: Boolean(user.preferences.dataSharing)
+      },
+      updatedAt: user.updatedAt ? user.updatedAt.toISOString() : null
     };
   } catch (error) {
     console.error('Error updating user profile:', error);

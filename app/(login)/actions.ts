@@ -37,7 +37,7 @@
 import { z } from 'zod';
 import { connectDB } from '@/lib/db/mongodb';
 import User from '@/lib/db/models/User';
-import { comparePasswords, hashPassword, setSession } from '@/lib/auth/session';
+import { setSession } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import { getCurrentUser } from '@/lib/auth/mongodb-queries';
@@ -104,6 +104,12 @@ export const signIn = validatedAction(signInSchema, async (data, formData) => {
 
     redirect('/');
   } catch (error) {
+    // Check if this is a redirect error (expected behavior)
+    if (error && typeof error === 'object' && 'digest' in error &&
+      typeof error.digest === 'string' && error.digest.includes('NEXT_REDIRECT')) {
+      // Re-throw redirect errors to allow them to work properly
+      throw error;
+    }
     console.error('Sign in error:', error);
     return {
       error: 'An error occurred during sign in. Please try again.',
@@ -161,6 +167,12 @@ export const signUp = validatedAction(signUpSchema, async (data, formData) => {
 
     redirect('/');
   } catch (error) {
+    // Check if this is a redirect error (expected behavior)
+    if (error && typeof error === 'object' && 'digest' in error &&
+      typeof error.digest === 'string' && error.digest.includes('NEXT_REDIRECT')) {
+      // Re-throw redirect errors to allow them to work properly
+      throw error;
+    }
     console.error('Sign up error:', error);
     return {
       error: 'Failed to create user. Please try again.',
@@ -273,6 +285,12 @@ export const deleteAccount = validatedActionWithUser(
 
       redirect('/sign-in');
     } catch (error) {
+      // Check if this is a redirect error (expected behavior)
+      if (error && typeof error === 'object' && 'digest' in error &&
+        typeof error.digest === 'string' && error.digest.includes('NEXT_REDIRECT')) {
+        // Re-throw redirect errors to allow them to work properly
+        throw error;
+      }
       console.error('Delete account error:', error);
       return {
         error: 'Failed to delete account. Please try again.'
