@@ -132,9 +132,11 @@ export default function DashboardContent({ user }: DashboardContentProps) {
           <TabsTrigger value="settings">设置</TabsTrigger>           {/* 账户设置 */}
         </TabsList>
 
+        {/* 概览标签页内容 - 显示用户数据统计和快速操作 */}
         <TabsContent value="overview" className="space-y-6">
+          {/* 数据统计卡片网格布局 */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Stats Cards */}
+            {/* 总经历数统计卡片 */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">总经历数</CardTitle>
@@ -148,6 +150,7 @@ export default function DashboardContent({ user }: DashboardContentProps) {
               </CardContent>
             </Card>
 
+            {/* AI方案数统计卡片 */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">AI方案数</CardTitle>
@@ -161,6 +164,7 @@ export default function DashboardContent({ user }: DashboardContentProps) {
               </CardContent>
             </Card>
 
+            {/* 成长指数统计卡片 */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">成长指数</CardTitle>
@@ -175,7 +179,7 @@ export default function DashboardContent({ user }: DashboardContentProps) {
             </Card>
           </div>
 
-          {/* Quick Actions */}
+          {/* 快速操作区域 - 提供主要功能的快捷入口 */}
           <Card>
             <CardHeader>
               <CardTitle>快速开始</CardTitle>
@@ -184,16 +188,19 @@ export default function DashboardContent({ user }: DashboardContentProps) {
               </CardDescription>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* 添加新经历按钮 */}
               <Button className="h-20 flex-col space-y-2" variant="outline">
                 <Plus className="h-6 w-6 text-primary" />
                 <span>添加新经历</span>
               </Button>
 
+              {/* 心理疗愈功能按钮 */}
               <Button className="h-20 flex-col space-y-2" variant="outline">
                 <Heart className="h-6 w-6 text-primary" />
                 <span>心理疗愈</span>
               </Button>
 
+              {/* AI咨询功能按钮 */}
               <Button className="h-20 flex-col space-y-2" variant="outline">
                 <MessageSquare className="h-6 w-6 text-primary" />
                 <span>AI咨询</span>
@@ -202,7 +209,9 @@ export default function DashboardContent({ user }: DashboardContentProps) {
           </Card>
         </TabsContent>
 
+        {/* 我的经历标签页内容 - 管理用户的人生经历记录 */}
         <TabsContent value="experiences" className="space-y-6">
+          {/* 经历页面标题和添加按钮 */}
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold">我的人生经历</h3>
             <Button>
@@ -211,6 +220,7 @@ export default function DashboardContent({ user }: DashboardContentProps) {
             </Button>
           </div>
 
+          {/* 空状态卡片 - 当用户还没有添加经历时显示 */}
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-12">
               <BookOpen className="h-12 w-12 text-muted-foreground mb-4" />
@@ -223,25 +233,29 @@ export default function DashboardContent({ user }: DashboardContentProps) {
           </Card>
         </TabsContent>
 
+        {/* AI方案标签页内容 - 显示AI生成的解决方案 */}
         <TabsContent value="solutions" className="space-y-6">
+          {/* 方案页面标题和类型标签 */}
           <div className="flex justify-between items-center">
             <h3 className="text-lg font-semibold">AI解决方案</h3>
+            {/* AI处理的三个阶段标签 */}
             <div className="flex space-x-2">
               <Badge variant="outline">
                 <Heart className="w-3 h-3 mr-1" />
-                心理疗愈
+                心理疗愈                {/* 第一阶段：心理支持 */}
               </Badge>
               <Badge variant="outline">
                 <Brain className="w-3 h-3 mr-1" />
-                实用方案
+                实用方案                {/* 第二阶段：实际解决方案 */}
               </Badge>
               <Badge variant="outline">
                 <Clock className="w-3 h-3 mr-1" />
-                后续支持
+                后续支持                {/* 第三阶段：跟进支持 */}
               </Badge>
             </div>
           </div>
 
+          {/* 空状态卡片 - 当还没有AI方案时显示 */}
           <Card>
             <CardContent className="flex flex-col items-center justify-center py-12">
               <Brain className="h-12 w-12 text-muted-foreground mb-4" />
@@ -254,6 +268,7 @@ export default function DashboardContent({ user }: DashboardContentProps) {
           </Card>
         </TabsContent>
 
+        {/* 设置标签页内容 - 账户管理和偏好设置 */}
         <TabsContent value="settings" className="space-y-6">
           <Card>
             <CardHeader>
@@ -263,31 +278,40 @@ export default function DashboardContent({ user }: DashboardContentProps) {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
+              {/* 账户信息网格显示 */}
               <div className="grid grid-cols-2 gap-4">
+                {/* 用户姓名显示 */}
                 <div>
                   <label className="text-sm font-medium">姓名</label>
                   <p className="text-muted-foreground">{user.firstName} {user.lastName}</p>
                 </div>
+                {/* 用户邮箱显示 */}
                 <div>
                   <label className="text-sm font-medium">邮箱</label>
                   <p className="text-muted-foreground">{user.email}</p>
                 </div>
+                {/* 用户角色显示 */}
                 <div>
                   <label className="text-sm font-medium">角色</label>
                   <p className="text-muted-foreground">{getRoleDisplayName(user.role)}</p>
                 </div>
+                {/* 语言设置显示 */}
                 <div>
                   <label className="text-sm font-medium">语言</label>
                   <p className="text-muted-foreground">简体中文</p>
                 </div>
               </div>
 
+              {/* 账户操作按钮组 */}
               <div className="flex space-x-2 pt-4">
+                {/* 编辑资料按钮 */}
                 <Button variant="outline">
                   <Settings className="w-4 h-4 mr-2" />
                   编辑资料
                 </Button>
+                {/* 修改密码按钮 */}
                 <Button variant="outline">修改密码</Button>
+                {/* 删除账户按钮 - 危险操作 */}
                 <Button variant="destructive">删除账户</Button>
               </div>
             </CardContent>
