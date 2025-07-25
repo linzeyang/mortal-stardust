@@ -76,8 +76,9 @@ npm install
 3. **Install backend dependencies**
 
 ```bash
+python -m venv .venv
+source .venv/bin/activate  # or `.venv\Scripts\activate` on Windows
 cd backend
-pip install -r requirements.txt
 pip install -r requirements-media.txt
 ```
 
@@ -89,7 +90,12 @@ cp .env.example .env
 cp backend/.env.example backend/.env
 ```
 
-5. **Configure your environment variables**
+5. Prepare MongoDB
+
+- option 1: Install MongoDB locally (may refer to the [documentation](https://www.mongodb.com/docs/manual/administration/install-community/))
+- option 2: Use cloud MongoDB service (eg. MongoDB Atlas)
+
+6. **Configure your environment variables**
 
    - Update `.env` with your MongoDB connection string
    - Set up OpenAI API keys for AI processing

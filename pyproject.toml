@@ -20,7 +20,7 @@ python_files = ["test_*.py"]
 console_output_style = "count"
 
 [tool.ruff]
-src = ["src"]
+src = ["backend"]
 line-length = 88
 target-version = "py312"
 output-format = "full"
