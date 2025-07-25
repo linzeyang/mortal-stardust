@@ -1,5 +1,7 @@
-import { Suspense } from 'react';
-import { Metadata } from 'next';
+'use client';
+
+import React, { Suspense, useState, useRef } from 'react';
+import { z } from 'zod';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -11,13 +13,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { useToast } from '@/hooks/use-toast';
+import { SettingsProvider, useSettings, UserRole } from '@/contexts/settings-context';
 import {
   User,
   Bell,
   Shield,
   Palette,
-  Globe,
-  Download,
   Trash2,
   Key,
   AlertTriangle,
@@ -28,19 +30,144 @@ import {
   EyeOff,
   Smartphone,
   Mail,
-  Calendar,
-  MapPin,
-  Languages
+  Upload
 } from 'lucide-react';
 
-export const metadata: Metadata = {
-  title: '设置 - 人生经历收集与AI辅导平台',
-  description: '管理您的账户设置、隐私偏好和个性化配置',
-};
+// Form validation schemas
+const profileSchema = z.object({
+  firstName: z.string().min(1, '姓不能为空').max(50, '姓不能超过50个字符'),
+  lastName: z.string().min(1, '名不能为空').max(50, '名不能超过50个字符'),
+  role: z.enum(['student', 'workplace_newcomer', 'entrepreneur', 'other'] as const),
+  phoneNumber: z.string().optional(),
+  dateOfBirth: z.string().optional(),
+  bio: z.string().max(500, '个人简介不能超过500个字符').optional()
+});
+
+type ProfileFormData = z.infer<typeof profileSchema>;
 
 function ProfileSettings() {
+  const { user, loading, errors, updateProfile, uploadAvatar } = useSettings();
+  const { toast } = useToast();
+  const [formData, setFormData] = useState<ProfileFormData>({
+    firstName: '',
+    lastName: '',
+    role: 'student',
+    phoneNumber: '',
+    dateOfBirth: '',
+    bio: ''
+  });
+  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Update form data when user data loads
+  React.useEffect(() => {
+    if (user) {
+      setFormData({
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        role: user.role || 'student',
+        phoneNumber: user.phoneNumber || '',
+        dateOfBirth: user.dateOfBirth ? new Date(user.dateOfBirth).toISOString().split('T')[0] : '',
+        bio: '' // bio not available in current API structure
+      });
+    }
+  }, [user]);
+
+  const handleInputChange = (field: keyof ProfileFormData, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    // Clear field error when user starts typing
+    if (formErrors[field]) {
+      setFormErrors(prev => ({ ...prev, [field]: '' }));
+    }
+  };
+
+  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type and size
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: '文件类型错误',
+        description: '请选择图片文件',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) { // 5MB limit
+      toast({
+        title: '文件过大',
+        description: '图片大小不能超过5MB',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    try {
+      await uploadAvatar(file);
+      toast({
+        title: '头像更新成功',
+        description: '您的头像已成功更新'
+      });
+    } catch (error) {
+      toast({
+        title: '头像上传失败',
+        description: error instanceof Error ? error.message : '请稍后重试',
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setIsSubmitting(true);
+    setFormErrors({});
+
+    try {
+      // Validate form data
+      const validatedData = profileSchema.parse(formData);
+
+      // Convert date string to Date object if provided
+      const updateData = {
+        ...validatedData,
+        dateOfBirth: validatedData.dateOfBirth ? new Date(validatedData.dateOfBirth) : undefined
+      };
+
+      await updateProfile(updateData);
+
+      toast({
+        title: '个人资料更新成功',
+        description: '您的个人信息已保存'
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        // Handle validation errors
+        const errors: Record<string, string> = {};
+        error.errors.forEach(err => {
+          if (err.path[0]) {
+            errors[err.path[0] as string] = err.message;
+          }
+        });
+        setFormErrors(errors);
+      } else {
+        toast({
+          title: '更新失败',
+          description: error instanceof Error ? error.message : '请稍后重试',
+          variant: 'destructive'
+        });
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (loading.profile && !user) {
+    return <LoadingSpinner size="lg" />;
+  }
   return (
-    <div className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-6">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
@@ -49,98 +176,186 @@ function ProfileSettings() {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
+          {/* Avatar Section */}
           <div className="flex items-center space-x-4">
-            <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold">
-              JD
+            <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-2xl font-bold overflow-hidden">
+              {user?.avatar ? (
+                <img
+                  src={user.avatar}
+                  alt="Avatar"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                user?.name?.split(' ').map((n: string) => n[0]).join('').toUpperCase() || 'U'
+              )}
             </div>
             <div className="flex-1">
-              <Button variant="outline" size="sm">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarUpload}
+                className="hidden"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={loading.profile}
+              >
+                <Upload className="h-4 w-4 mr-1" />
                 更换头像
               </Button>
-              <p className="text-sm text-gray-500 mt-1">推荐尺寸: 200x200像素</p>
+              <p className="text-sm text-gray-500 mt-1">推荐尺寸: 200x200像素，最大5MB</p>
             </div>
           </div>
 
+          {/* Name Fields */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="firstName">姓</Label>
-              <Input id="firstName" defaultValue="张" />
+              <Label htmlFor="firstName">姓 *</Label>
+              <Input
+                id="firstName"
+                value={formData.firstName}
+                onChange={(e) => handleInputChange('firstName', e.target.value)}
+                className={formErrors.firstName ? 'border-red-500' : ''}
+              />
+              {formErrors.firstName && (
+                <p className="text-sm text-red-500">{formErrors.firstName}</p>
+              )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="lastName">名</Label>
-              <Input id="lastName" defaultValue="三" />
+              <Label htmlFor="lastName">名 *</Label>
+              <Input
+                id="lastName"
+                value={formData.lastName}
+                onChange={(e) => handleInputChange('lastName', e.target.value)}
+                className={formErrors.lastName ? 'border-red-500' : ''}
+              />
+              {formErrors.lastName && (
+                <p className="text-sm text-red-500">{formErrors.lastName}</p>
+              )}
             </div>
           </div>
 
+          {/* Email Field (Read-only) */}
           <div className="space-y-2">
             <Label htmlFor="email">邮箱地址</Label>
             <div className="flex space-x-2">
-              <Input id="email" defaultValue="zhangsan@example.com" className="flex-1" />
-              <Button variant="outline" size="sm">
+              <Input
+                id="email"
+                value={user?.email || ''}
+                className="flex-1"
+                disabled
+              />
+              <Button variant="outline" size="sm" type="button">
                 <Mail className="h-4 w-4 mr-1" />
                 验证
               </Button>
             </div>
+            <p className="text-sm text-gray-500">邮箱地址不可修改</p>
           </div>
 
+          {/* Phone Number */}
           <div className="space-y-2">
             <Label htmlFor="phone">手机号码</Label>
             <div className="flex space-x-2">
-              <Input id="phone" defaultValue="+86 138****8888" className="flex-1" />
-              <Button variant="outline" size="sm">
+              <Input
+                id="phone"
+                value={formData.phoneNumber}
+                onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
+                placeholder="请输入手机号码"
+                className="flex-1"
+              />
+              <Button variant="outline" size="sm" type="button">
                 <Smartphone className="h-4 w-4 mr-1" />
                 验证
               </Button>
             </div>
           </div>
 
+          {/* Date of Birth and Role */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="birthDate">出生日期</Label>
-              <Input id="birthDate" type="date" defaultValue="1995-06-15" />
+              <Input
+                id="birthDate"
+                type="date"
+                value={formData.dateOfBirth}
+                onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
+              />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="location">所在地区</Label>
-              <Select defaultValue="beijing">
-                <SelectTrigger>
+              <Label htmlFor="role">当前角色 *</Label>
+              <Select
+                value={formData.role}
+                onValueChange={(value) => handleInputChange('role', value as UserRole)}
+              >
+                <SelectTrigger className={formErrors.role ? 'border-red-500' : ''}>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="beijing">北京</SelectItem>
-                  <SelectItem value="shanghai">上海</SelectItem>
-                  <SelectItem value="guangzhou">广州</SelectItem>
-                  <SelectItem value="shenzhen">深圳</SelectItem>
+                  <SelectItem value="student">学生</SelectItem>
+                  <SelectItem value="workplace_newcomer">职场新人</SelectItem>
+                  <SelectItem value="entrepreneur">创业者</SelectItem>
+                  <SelectItem value="other">其他</SelectItem>
                 </SelectContent>
               </Select>
+              {formErrors.role && (
+                <p className="text-sm text-red-500">{formErrors.role}</p>
+              )}
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="role">当前角色</Label>
-            <Select defaultValue="student">
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="student">学生</SelectItem>
-                <SelectItem value="workplace_newcomer">职场新人</SelectItem>
-                <SelectItem value="entrepreneur">创业者</SelectItem>
-                <SelectItem value="other">其他</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
+          {/* Bio */}
           <div className="space-y-2">
             <Label htmlFor="bio">个人简介</Label>
             <Textarea
               id="bio"
               placeholder="简单介绍一下自己..."
-              defaultValue="计算机专业大三学生，对AI和心理学很感兴趣，希望通过这个平台更好地了解自己并获得成长建议。"
+              value={formData.bio || ''}
+              onChange={(e) => handleInputChange('bio', e.target.value)}
+              className={formErrors.bio ? 'border-red-500' : ''}
             />
+            {formErrors.bio && (
+              <p className="text-sm text-red-500">{formErrors.bio}</p>
+            )}
+            <p className="text-sm text-gray-500">
+              {(formData.bio || '').length}/500 字符
+            </p>
+          </div>
+
+          {/* Error Display */}
+          {errors.profile && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+              <p className="text-sm text-red-600">{errors.profile}</p>
+            </div>
+          )}
+
+          {/* Submit Button */}
+          <div className="flex justify-end">
+            <Button
+              type="submit"
+              disabled={isSubmitting || loading.profile}
+              className="min-w-[120px]"
+            >
+              {isSubmitting ? (
+                <>
+                  <LoadingSpinner size="sm" className="mr-2" />
+                  保存中...
+                </>
+              ) : (
+                <>
+                  <CheckCircle className="h-4 w-4 mr-2" />
+                  保存更改
+                </>
+              )}
+            </Button>
           </div>
         </CardContent>
       </Card>
-    </div>
+    </form>
   );
 }
 
@@ -550,7 +765,9 @@ function PreferencesSettings() {
   );
 }
 
-export default function SettingsPage() {
+function SettingsContent() {
+  const { unsavedChanges, resetChanges } = useSettings();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
       <div className="container mx-auto px-4 py-8">
@@ -563,6 +780,11 @@ export default function SettingsPage() {
             <p className="text-gray-600">
               管理您的账户信息、隐私偏好和个性化设置
             </p>
+            {unsavedChanges && (
+              <div className="mt-2 p-2 bg-yellow-50 border border-yellow-200 rounded-md">
+                <p className="text-sm text-yellow-700">您有未保存的更改</p>
+              </div>
+            )}
           </div>
 
           {/* Settings Tabs */}
@@ -613,18 +835,26 @@ export default function SettingsPage() {
             </TabsContent>
           </Tabs>
 
-          {/* Save Button */}
+          {/* Global Actions */}
           <div className="mt-8 flex justify-end space-x-4">
-            <Button variant="outline">
+            <Button
+              variant="outline"
+              onClick={resetChanges}
+              disabled={!unsavedChanges}
+            >
               重置更改
-            </Button>
-            <Button>
-              <CheckCircle className="h-4 w-4 mr-2" />
-              保存设置
             </Button>
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SettingsPage() {
+  return (
+    <SettingsProvider>
+      <SettingsContent />
+    </SettingsProvider>
   );
 }
