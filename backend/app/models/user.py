@@ -62,6 +62,8 @@ class UserProfile(BaseModel):
             Format validation handled by client, stored as string for flexibility.
         dateOfBirth: Optional birth date for age-appropriate guidance and analytics.
             Used to customize advice relevance and track generational patterns.
+        bio: Optional personal biography or description for profile display.
+            Validation: Maximum 500 characters for concise personal introduction.
     """
 
     firstName: str = Field(..., min_length=1, max_length=50)
@@ -70,25 +72,141 @@ class UserProfile(BaseModel):
     avatar: Optional[str] = None
     phoneNumber: Optional[str] = None
     dateOfBirth: Optional[datetime] = None
+    bio: Optional[str] = Field(None, max_length=500)
+
+
+class NotificationPreferences(BaseModel):
+    """User notification preferences for communication control.
+
+    Manages how and when users receive notifications from the platform,
+    including AI completion alerts, email reminders, and feature updates.
+    Supports granular control over notification types and timing.
+
+    Attributes:
+        ai_solution_complete: Notify when AI completes experience analysis.
+            Default: True for immediate feedback on AI processing completion.
+        email_reminders: Send email notifications for important updates.
+            Default: True for engagement, but user-controllable for privacy.
+        push_notifications: Enable browser/mobile push notifications.
+            Default: False to avoid intrusion, requires explicit user opt-in.
+        weekly_digest: Send weekly summary of user progress and insights.
+            Default: True for engagement and progress tracking.
+        feature_updates: Notify about new platform features and improvements.
+            Default: False to avoid marketing-like communications.
+        morning_time: Preferred time for morning notifications (HH:MM format).
+            Default: "09:00" for typical work day start time.
+        evening_time: Preferred time for evening notifications (HH:MM format).
+            Default: "20:00" for typical evening availability.
+    """
+
+    ai_solution_complete: bool = True
+    email_reminders: bool = True
+    push_notifications: bool = False
+    weekly_digest: bool = True
+    feature_updates: bool = False
+    morning_time: str = "09:00"
+    evening_time: str = "20:00"
+
+
+class PrivacySettings(BaseModel):
+    """User privacy and data sharing preferences.
+
+    Controls how user data is used by the platform, including analytics,
+    personalization, and third-party integrations. Ensures GDPR compliance
+    and provides granular privacy control.
+
+    Attributes:
+        data_sharing: Allow anonymized data for AI model improvement.
+            Default: False to ensure explicit opt-in for privacy compliance.
+        personalized_recommendations: Enable personalized AI suggestions.
+            Default: True as core platform feature, but user-controllable.
+        marketing_communications: Receive product updates and marketing.
+            Default: False to avoid unsolicited marketing communications.
+        third_party_integrations: Allow integration with external services.
+            Default: False for maximum privacy protection.
+        data_retention_period: How long to keep user data before deletion.
+            Default: "never" - user must explicitly choose retention period.
+            Options: "never", "1year", "2years", "5years"
+    """
+
+    data_sharing: bool = False
+    personalized_recommendations: bool = True
+    marketing_communications: bool = False
+    third_party_integrations: bool = False
+    data_retention_period: str = "never"
+
+
+class SecuritySettings(BaseModel):
+    """Enhanced user security settings and account protection.
+
+    Manages advanced security features including two-factor authentication,
+    session management, and password policies. Provides comprehensive
+    account protection against unauthorized access.
+
+    Attributes:
+        two_factor_enabled: Whether 2FA is active for the account.
+            Default: False to avoid friction, but recommended for security.
+        password_change_required: Force password change on next login.
+            Default: False, set to True for security incidents or policy.
+        session_timeout: Session timeout in seconds for automatic logout.
+            Default: 3600 (1 hour) for balance of security and usability.
+        last_password_change: Timestamp of most recent password change.
+            Used for password age policies and security monitoring.
+    """
+
+    two_factor_enabled: bool = False
+    password_change_required: bool = False
+    session_timeout: int = 3600  # seconds
+    last_password_change: Optional[datetime] = None
+
+
+class UIPreferences(BaseModel):
+    """User interface and experience preferences.
+
+    Controls the visual appearance and behavior of the platform interface,
+    including theme, language, and AI assistant customization. Enables
+    personalized user experience across devices and sessions.
+
+    Attributes:
+        theme: Visual theme preference (light, dark, system).
+            Default: "light" for broad compatibility and readability.
+        language: Interface language preference (ISO 639-1 codes).
+            Default: "zh-CN" for primary target market (Simplified Chinese).
+        date_format: Preferred date display format.
+            Default: "YYYY-MM-DD" for international standard format.
+        timezone: User's timezone for proper time display and scheduling.
+            Default: "Asia/Shanghai" for primary target market.
+        ai_assistant_style: AI communication style preference.
+            Default: "balanced" for appropriate tone and formality.
+            Options: "professional", "friendly", "balanced", "encouraging"
+        detailed_analysis: Prefer detailed AI analysis and explanations.
+            Default: True for comprehensive guidance and insights.
+        quick_response: Prioritize speed over detail in AI responses.
+            Default: False - prefer quality over speed for better guidance.
+    """
+
+    theme: str = "light"
+    language: str = "zh-CN"
+    date_format: str = "YYYY-MM-DD"
+    timezone: str = "Asia/Shanghai"
+    ai_assistant_style: str = "balanced"
+    detailed_analysis: bool = True
+    quick_response: bool = False
 
 
 class UserPreferences(BaseModel):
-    """User preference settings for platform customization and privacy control.
+    """Legacy user preference settings for backward compatibility.
 
-    Manages user-configurable settings that affect the overall platform experience,
-    communication preferences, and data handling policies. These preferences
-    influence AI response language, notification delivery, and privacy compliance.
+    Maintains existing preference structure while new settings are migrated
+    to dedicated models. Will be deprecated in favor of specific settings models.
 
     Attributes:
         language: User's preferred language for AI responses and interface.
             Default: "zh-CN" (Simplified Chinese) as primary target market.
-            Affects AI prompt language and response localization.
         notifications: Whether user wants to receive system notifications.
             Default: True to enable engagement, but user-controllable for privacy.
-            Controls email alerts, progress updates, and feature announcements.
         dataSharing: User consent for anonymized data usage in AI improvement.
             Default: False to ensure explicit opt-in for privacy compliance.
-            Required for GDPR compliance and ethical data usage practices.
     """
 
     language: str = "zh-CN"
@@ -122,6 +240,55 @@ class UserSecurity(BaseModel):
     lastLogin: datetime = Field(default_factory=datetime.utcnow)
     loginAttempts: int = 0
     lockUntil: Optional[datetime] = None
+
+
+class UserSettings(BaseModel):
+    """Comprehensive user settings container for all preference categories.
+
+    Organizes all user settings into logical categories for better management
+    and API organization. Provides default values for all settings to ensure
+    consistent user experience from account creation.
+
+    Attributes:
+        notifications: Notification preferences and timing settings.
+            Controls how and when users receive platform communications.
+        privacy: Privacy and data sharing preferences.
+            Manages user consent and data usage policies.
+        security: Enhanced security settings beyond basic authentication.
+            Controls advanced security features and session management.
+        ui_preferences: User interface and experience customization.
+            Controls visual appearance and AI assistant behavior.
+    """
+
+    notifications: NotificationPreferences = Field(
+        default_factory=NotificationPreferences
+    )
+    privacy: PrivacySettings = Field(default_factory=PrivacySettings)
+    security: SecuritySettings = Field(default_factory=SecuritySettings)
+    ui_preferences: UIPreferences = Field(default_factory=UIPreferences)
+
+
+class Session(BaseModel):
+    """Active user session information for security management.
+
+    Represents an active user session with device and location information
+    for security monitoring and session management features.
+
+    Attributes:
+        id: Unique session identifier for termination operations.
+        device: Device information (browser, OS, etc.) for user recognition.
+        location: Geographic location or IP-based location for security.
+        last_active: Timestamp of most recent session activity.
+        current: Whether this is the current session (for UI indication).
+        created_at: Session creation timestamp for age tracking.
+    """
+
+    id: str
+    device: str
+    location: str
+    last_active: datetime
+    current: bool = False
+    created_at: datetime = Field(default_factory=datetime.utcnow)
 
 
 class UserCreate(BaseModel):
@@ -193,8 +360,12 @@ class UserUpdate(BaseModel):
             Can be set to None to remove existing phone number.
         dateOfBirth: Updated birth date for age-appropriate guidance.
             Can be set to None to remove existing date of birth.
+        bio: Updated user biography or personal description.
+            Can be set to None to remove existing bio.
         preferences: Updated user preferences for platform customization.
             Partial updates supported through nested model validation.
+        settings: Updated comprehensive user settings.
+            Allows updating any category of user settings independently.
     """
 
     firstName: Optional[str] = Field(None, min_length=1, max_length=50)
@@ -203,7 +374,9 @@ class UserUpdate(BaseModel):
     avatar: Optional[str] = None
     phoneNumber: Optional[str] = None
     dateOfBirth: Optional[datetime] = None
+    bio: Optional[str] = Field(None, max_length=500)
     preferences: Optional[UserPreferences] = None
+    settings: Optional[UserSettings] = None
 
 
 class UserResponse(BaseModel):
@@ -219,12 +392,18 @@ class UserResponse(BaseModel):
             Used for all user-related database operations and references.
         email: User's email address for display and account management.
             Safe to include in responses as it's not sensitive authentication data.
+        name: User's full name for display purposes.
+            Computed from firstName and lastName for convenience.
         profile: Complete user profile information for personalization.
             Includes name, role, avatar, and optional contact information.
         preferences: User's platform preferences for client-side customization.
             Language, notification, and data sharing settings for UI adaptation.
+        settings: Comprehensive user settings for all preference categories.
+            Includes notifications, privacy, security, and UI preferences.
         security: Non-sensitive security information for account status display.
             Excludes sensitive data like password hashes or security tokens.
+        activeSessions: List of active user sessions for security management.
+            Includes device and location information for session monitoring.
         createdAt: Account creation timestamp for analytics and display.
             ISO format for consistent client-side date handling.
         updatedAt: Last profile modification timestamp for change tracking.
@@ -233,9 +412,12 @@ class UserResponse(BaseModel):
 
     id: str = Field(..., alias="_id")
     email: EmailStr
+    name: str
     profile: UserProfile
     preferences: UserPreferences
+    settings: UserSettings = Field(default_factory=UserSettings)
     security: UserSecurity
+    activeSessions: list[Session] = Field(default_factory=list)
     createdAt: datetime
     updatedAt: datetime
 
@@ -349,8 +531,12 @@ class UserInDB(BaseModel):
             Includes name, role, avatar, and optional contact information.
         preferences: User's platform preferences for customization.
             Language, notification, and data sharing settings.
+        settings: Comprehensive user settings for all preference categories.
+            Includes notifications, privacy, security, and UI preferences.
         security: User's security settings and authentication state.
             Login tracking, attempt limiting, and account protection data.
+        activeSessions: List of active user sessions for security management.
+            Stored as encrypted session data for security monitoring.
         createdAt: Account creation timestamp, set automatically on creation.
             Used for analytics, account age calculations, and audit trails.
         updatedAt: Last modification timestamp, updated on any profile changes.
@@ -362,7 +548,9 @@ class UserInDB(BaseModel):
     passwordHash: str  # Sensitive: bcrypt hash of user password
     profile: UserProfile
     preferences: UserPreferences
+    settings: UserSettings = Field(default_factory=UserSettings)
     security: UserSecurity
+    activeSessions: list[Session] = Field(default_factory=list)
     createdAt: datetime = Field(default_factory=datetime.utcnow)
     updatedAt: datetime = Field(default_factory=datetime.utcnow)
 

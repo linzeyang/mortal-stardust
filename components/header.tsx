@@ -27,8 +27,9 @@
 
 import Link from 'next/link';
 import { useState, Suspense } from 'react';
+import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { CircleIcon, LogOut, User as UserIcon, FileText, Brain, BarChart3, Star, Shield, Sparkles, UserCheck } from 'lucide-react';
+import { CircleIcon, LogOut, User as UserIcon, FileText, Brain, BarChart3, Star, Shield, Sparkles, UserCheck, Settings } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,7 +40,22 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { signOut } from '@/app/(login)/actions';
 import { useRouter } from 'next/navigation';
-import { User } from '@/lib/db/schema';
+// User type definition for API responses
+type User = {
+  id: string;
+  email: string;
+  name: string;
+  firstName: string;
+  lastName: string;
+  role: string;
+  avatar?: string;
+  phoneNumber?: string;
+  dateOfBirth?: Date;
+  preferences: any;
+  security: any;
+  createdAt: Date;
+  updatedAt: Date;
+};
 import useSWR, { mutate } from 'swr';
 import ThemeControls from './theme-controls';
 import { siteConfig } from '@/lib/config';
@@ -78,7 +94,7 @@ function UserMenu() {
           <AvatarFallback>
             {user.email
               .split(' ')
-              .map((n) => n[0])
+              .map((n: string) => n[0])
               .join('')}
           </AvatarFallback>
         </Avatar>
@@ -90,6 +106,17 @@ function UserMenu() {
             <span className="truncate">{user.name || user.email}</span>
           </div>
         </div>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link
+            href="/settings"
+            className="flex items-center"
+            aria-label="访问账户设置页面"
+          >
+            <Settings className="mr-2 h-4 w-4" />
+            <span>账户设置</span>
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <form action={handleSignOut} className="w-full">
           <button type="submit" className="flex w-full">
@@ -106,10 +133,14 @@ function UserMenu() {
 
 function NavigationMenu() {
   const { data: user } = useSWR<User>('/api/user', fetcher);
+  const pathname = usePathname();
 
   if (!user) {
     return null;
   }
+
+  // Active state detection for navigation items
+  const isSettingsActive = pathname === '/settings';
 
   return (
     <nav className="hidden md:flex items-center space-x-6">
@@ -161,6 +192,18 @@ function NavigationMenu() {
       >
         <UserCheck className="h-4 w-4" />
         <span>隐私中心</span>
+      </Link>
+      <Link
+        href="/settings"
+        className={`flex items-center space-x-2 text-sm font-medium transition-colors ${isSettingsActive
+            ? 'text-foreground font-semibold'
+            : 'text-foreground/80 hover:text-foreground'
+          }`}
+        aria-label="访问设置页面管理账户偏好"
+        aria-current={isSettingsActive ? 'page' : undefined}
+      >
+        <Settings className="h-4 w-4" />
+        <span>设置</span>
       </Link>
     </nav>
   );
