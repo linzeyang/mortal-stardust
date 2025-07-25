@@ -12,7 +12,6 @@
 
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
-import { Manrope } from 'next/font/google';
 import { getCurrentUser } from '@/lib/auth/mongodb-queries';
 import { SWRConfig } from 'swr';
 import Header from '@/components/header';
@@ -37,10 +36,9 @@ export const viewport: Viewport = {
 };
 
 /**
- * Google Fonts configuration
- * Loads the Manrope font family with Latin subset for optimal performance
+ * 字体配置
+ * 使用系统字体以确保在网络受限环境下的可靠性
  */
-const manrope = Manrope({ subsets: ['latin'] });
 
 /**
  * Root Layout Component
@@ -75,8 +73,8 @@ export default function RootLayout({
 }) {
   return (
     <html
-      lang="en"
-      className={`${manrope.className}`}
+      lang="zh-CN"
+      className="font-sans"
     >
       <body className="min-h-[100dvh] bg-background text-foreground">
         {/* Theme Provider - Enables light/dark mode switching throughout the app */}
