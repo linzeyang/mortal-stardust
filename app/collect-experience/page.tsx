@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
-import ExperienceForm from '@/components/forms/experience-form';
+import { ExperienceForm } from '@/components/forms/experience-form';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import {
   BookOpen,
@@ -235,7 +235,12 @@ export default function CollectExperiencePage() {
             </CardHeader>
             <CardContent>
               <Suspense fallback={<LoadingSpinner size="lg" />}>
-                <ExperienceForm />
+                <ExperienceForm 
+                  onSubmit={(data) => {
+                    console.log('经历提交:', data);
+                    // 这里可以添加提交逻辑
+                  }}
+                />
               </Suspense>
             </CardContent>
           </Card>
