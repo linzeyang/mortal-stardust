@@ -121,7 +121,7 @@ function NavigationMenu() {
         <span>经历收集</span>
       </Link>
       <Link
-        href="/solutions"
+        href="/ai-solutions"
         className="flex items-center space-x-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
       >
         <Brain className="h-4 w-4" />
