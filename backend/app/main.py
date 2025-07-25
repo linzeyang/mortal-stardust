@@ -45,6 +45,7 @@ from .api import (
     media,
     privacy_compliance,
     secure_data,
+    settings,
     solution_analytics,
     solution_rating,
     solutions,
@@ -162,6 +163,7 @@ async def health_check():
 # Core user management and authentication
 app.include_router(auth.router, prefix="/api/auth", tags=["authentication"])
 app.include_router(users.router, prefix="/api/users", tags=["users"])
+app.include_router(settings.router, prefix="/api/settings", tags=["settings"])
 
 # Experience and solution management - core business logic
 app.include_router(experiences.router, prefix="/api/experiences", tags=["experiences"])
