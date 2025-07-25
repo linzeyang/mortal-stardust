@@ -1,48 +1,61 @@
 'use client';
 
+// React hooks导入
 import { useState } from 'react';
+// UI组件导入
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+// 图标组件导入
 import {
-  User,
-  BookOpen,
-  Brain,
-  TrendingUp,
-  Settings,
-  Plus,
-  Heart,
-  MessageSquare,
-  Clock
+  User,        // 用户图标
+  BookOpen,    // 书本图标 - 代表经历
+  Brain,       // 大脑图标 - 代表AI方案
+  TrendingUp,  // 趋势上升图标 - 代表成长指数
+  Settings,    // 设置图标
+  Plus,        // 加号图标 - 代表添加操作
+  Heart,       // 心形图标 - 代表心理疗愈
+  MessageSquare, // 消息框图标 - 代表AI咨询
+  Clock        // 时钟图标 - 代表后续支持
 } from 'lucide-react';
 
+// 用户数据接口定义
 interface DashboardUser {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  role: string;
-  preferences: any;
-  createdAt: Date;
+  id: string;                    // 用户唯一标识
+  email: string;                 // 用户邮箱
+  firstName: string;             // 用户名字
+  lastName: string;              // 用户姓氏
+  role: string;                  // 用户角色（学生/职场新人/创业者）
+  preferences: any;              // 用户偏好设置
+  createdAt: string | null;      // 账户创建时间
+  updatedAt?: string | null;     // 账户更新时间
+  name?: string;                 // 用户全名（可选）
+  avatar?: string | null;        // 用户头像URL（可选）
+  phoneNumber?: string | null;   // 用户手机号（可选）
 }
 
+// 仪表板内容组件的属性接口
 interface DashboardContentProps {
-  user: DashboardUser;
+  user: DashboardUser;           // 传入的用户数据
 }
 
+// 仪表板内容主组件
 export default function DashboardContent({ user }: DashboardContentProps) {
+  // 当前激活的标签页状态管理
   const [activeTab, setActiveTab] = useState('overview');
 
+  // 根据用户角色返回对应的徽章颜色
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
-      case 'student': return 'default';
-      case 'workplace_newcomer': return 'secondary';
-      case 'entrepreneur': return 'destructive';
-      default: return 'outline';
+      case 'student': return 'default';           // 学生 - 默认颜色
+      case 'workplace_newcomer': return 'secondary'; // 职场新人 - 次要颜色
+      case 'entrepreneur': return 'destructive';     // 创业者 - 强调颜色
+      default: return 'outline';                     // 其他 - 轮廓颜色
     }
   };
 
+  // 根据用户角色返回中文显示名称
   const getRoleDisplayName = (role: string) => {
     switch (role) {
       case 'student': return '学生';
@@ -54,42 +67,51 @@ export default function DashboardContent({ user }: DashboardContentProps) {
 
   return (
     <div className="space-y-6">
-      {/* User Info Card */}
+      {/* 用户信息卡片 - 显示用户基本信息和设置 */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
+            {/* 用户头像和基本信息区域 */}
             <div className="flex items-center space-x-4">
+              {/* 用户头像占位符 */}
               <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
                 <User className="w-6 h-6 text-primary" />
               </div>
+              {/* 用户姓名和邮箱 */}
               <div>
                 <CardTitle>{user.firstName} {user.lastName}</CardTitle>
                 <CardDescription>{user.email}</CardDescription>
               </div>
             </div>
+            {/* 用户角色徽章 */}
             <Badge variant={getRoleBadgeColor(user.role)}>
               {getRoleDisplayName(user.role)}
             </Badge>
           </div>
         </CardHeader>
         <CardContent>
+          {/* 用户详细信息网格布局 */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+            {/* 注册时间信息 */}
             <div>
               <span className="text-muted-foreground">注册时间</span>
               <p className="font-medium">
-                {new Date(user.createdAt).toLocaleDateString('zh-CN')}
+                {user.createdAt ? new Date(user.createdAt).toLocaleDateString('zh-CN') : '未知'}
               </p>
             </div>
+            {/* 语言偏好设置 */}
             <div>
               <span className="text-muted-foreground">语言偏好</span>
               <p className="font-medium">{user.preferences?.language || 'zh-CN'}</p>
             </div>
+            {/* 通知设置状态 */}
             <div>
               <span className="text-muted-foreground">通知设置</span>
               <p className="font-medium">
                 {user.preferences?.notifications ? '已开启' : '已关闭'}
               </p>
             </div>
+            {/* 数据共享同意状态 */}
             <div>
               <span className="text-muted-foreground">数据共享</span>
               <p className="font-medium">
@@ -100,13 +122,14 @@ export default function DashboardContent({ user }: DashboardContentProps) {
         </CardContent>
       </Card>
 
-      {/* Main Dashboard Tabs */}
+      {/* 主要仪表板标签页导航 */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
+        {/* 标签页导航栏 - 四个主要功能模块 */}
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="overview">概览</TabsTrigger>
-          <TabsTrigger value="experiences">我的经历</TabsTrigger>
-          <TabsTrigger value="solutions">AI方案</TabsTrigger>
-          <TabsTrigger value="settings">设置</TabsTrigger>
+          <TabsTrigger value="overview">概览</TabsTrigger>           {/* 数据概览页面 */}
+          <TabsTrigger value="experiences">我的经历</TabsTrigger>    {/* 用户经历管理 */}
+          <TabsTrigger value="solutions">AI方案</TabsTrigger>        {/* AI生成的解决方案 */}
+          <TabsTrigger value="settings">设置</TabsTrigger>           {/* 账户设置 */}
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
