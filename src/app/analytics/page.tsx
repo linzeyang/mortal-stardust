@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import SolutionAnalytics from '@/components/analytics/SolutionAnalytics';
+import SolutionAnalytics from '@/src/components/analytics/SolutionAnalytics';
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 

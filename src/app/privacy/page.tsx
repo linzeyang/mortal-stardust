@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import PrivacyCenter from '@/components/privacy/PrivacyCenter';
+import PrivacyCenter from '@/src/components/privacy/PrivacyCenter';
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 

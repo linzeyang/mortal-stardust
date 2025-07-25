@@ -218,8 +218,8 @@ export function Stage1Processor({ experienceId, onStageComplete, onError }: Stag
       pollProcessingStatus(data.solution_id);
 
       toast({
-        title: \"AI分析已开始\",
-        description: \"正在为您生成心理疗愈方案，请稍候...\"
+        title: "AI分析已开始",
+        description: "正在为您生成心理疗愈方案，请稍候..."
       });
 
     } catch (error) {
@@ -230,9 +230,9 @@ export function Stage1Processor({ experienceId, onStageComplete, onError }: Stag
       setIsProcessing(false);
 
       toast({
-        title: \"启动失败\",
+        title: "启动失败",
         description: errorMessage,
-        variant: \"destructive\"
+        variant: "destructive"
       });
     }
   };
@@ -334,7 +334,7 @@ export function Stage1Processor({ experienceId, onStageComplete, onError }: Stag
       onStageComplete?.(resultData);
 
       toast({
-        title: \"心理疗愈方案已生成\",
+        title: "心理疗愈方案已生成",
         description: `AI分析完成，信心指数：${Math.round(resultData.metadata.confidence_score * 100)}%`
       });
 
@@ -386,8 +386,8 @@ export function Stage1Processor({ experienceId, onStageComplete, onError }: Stag
       pollProcessingStatus(result.solution_id);
 
       toast({
-        title: \"重新生成中\",
-        description: \"正在为您重新生成心理疗愈方案...\"
+        title: "重新生成中",
+        description: "正在为您重新生成心理疗愈方案..."
       });
 
     } catch (error) {
@@ -397,9 +397,9 @@ export function Stage1Processor({ experienceId, onStageComplete, onError }: Stag
       setIsProcessing(false);
 
       toast({
-        title: \"重新生成失败\",
+        title: "重新生成失败",
         description: errorMessage,
-        variant: \"destructive\"
+        variant: "destructive"
       });
     }
   };
@@ -416,37 +416,37 @@ export function Stage1Processor({ experienceId, onStageComplete, onError }: Stag
    */
   const renderProcessingState = () => (
     <Card>
-      <CardHeader className=\"text-center\">
-        <div className=\"mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4\">
-          <Brain className=\"w-8 h-8 text-blue-600 animate-pulse\" />
+      <CardHeader className="text-center">
+        <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+          <Brain className="w-8 h-8 text-blue-600 animate-pulse" />
         </div>
-        <CardTitle className=\"text-xl\">AI正在分析您的经历</CardTitle>
+        <CardTitle className="text-xl">AI正在分析您的经历</CardTitle>
         <CardDescription>
           第一阶段：心理疗愈方案生成中...
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className=\"space-y-4\">
-          <div className=\"space-y-2\">
-            <div className=\"flex justify-between text-sm\">
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
               <span>分析进度</span>
               <span>{progress}%</span>
             </div>
-            <Progress value={progress} className=\"w-full\" />
+            <Progress value={progress} className="w-full" />
           </div>
 
-          <div className=\"bg-blue-50 p-4 rounded-lg\">
-            <div className=\"flex items-center space-x-2 text-blue-800\">
-              <Heart className=\"w-4 h-4\" />
-              <span className=\"text-sm font-medium\">正在进行情感分析...</span>
+          <div className="bg-blue-50 p-4 rounded-lg">
+            <div className="flex items-center space-x-2 text-blue-800">
+              <Heart className="w-4 h-4" />
+              <span className="text-sm font-medium">正在进行情感分析...</span>
             </div>
-            <p className=\"text-xs text-blue-600 mt-1\">
+            <p className="text-xs text-blue-600 mt-1">
               AI正在深度理解您的情感状态和心理需求
             </p>
           </div>
 
           {processingStatus && (
-            <div className=\"text-xs text-gray-500 text-center\">
+            <div className="text-xs text-gray-500 text-center">
               处理ID: {processingStatus.solution_id.slice(-8)}
             </div>
           )}
@@ -465,17 +465,17 @@ export function Stage1Processor({ experienceId, onStageComplete, onError }: Stag
    * @returns {JSX.Element} Error state UI component
    */
   const renderErrorState = () => (
-    <Card className=\"border-red-200\">
+    <Card className="border-red-200">
       <CardHeader>
-        <div className=\"flex items-center space-x-2\">
-          <AlertCircle className=\"w-6 h-6 text-red-600\" />
-          <CardTitle className=\"text-red-900 text-lg\">处理失败</CardTitle>
+        <div className="flex items-center space-x-2">
+          <AlertCircle className="w-6 h-6 text-red-600" />
+          <CardTitle className="text-red-900 text-lg">处理失败</CardTitle>
         </div>
       </CardHeader>
       <CardContent>
-        <p className=\"text-red-700 mb-4\">{error}</p>
-        <Button onClick={startStage1Processing} variant=\"outline\">
-          <RefreshCw className=\"w-4 h-4 mr-2\" />
+        <p className="text-red-700 mb-4">{error}</p>
+        <Button onClick={startStage1Processing} variant="outline">
+          <RefreshCw className="w-4 h-4 mr-2" />
           重试
         </Button>
       </CardContent>
@@ -503,17 +503,17 @@ export function Stage1Processor({ experienceId, onStageComplete, onError }: Stag
     if (!result) return null;
 
     return (
-      <div className=\"space-y-6\">
+      <div className="space-y-6">
         {/* Header */}
         <Card>
           <CardHeader>
-            <div className=\"flex items-center justify-between\">
-              <div className=\"flex items-center space-x-3\">
-                <div className=\"w-12 h-12 bg-green-100 rounded-full flex items-center justify-center\">
-                  <CheckCircle className=\"w-6 h-6 text-green-600\" />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                  <CheckCircle className="w-6 h-6 text-green-600" />
                 </div>
                 <div>
-                  <CardTitle className=\"text-xl text-green-900\">
+                  <CardTitle className="text-xl text-green-900">
                     {result.content.title}
                   </CardTitle>
                   <CardDescription>
@@ -521,8 +521,8 @@ export function Stage1Processor({ experienceId, onStageComplete, onError }: Stag
                   </CardDescription>
                 </div>
               </div>
-              <Button onClick={regenerateSolution} variant=\"outline\" size=\"sm\">
-                <RefreshCw className=\"w-4 h-4 mr-2\" />
+              <Button onClick={regenerateSolution} variant="outline" size="sm">
+                <RefreshCw className="w-4 h-4 mr-2" />
                 重新生成
               </Button>
             </div>
@@ -532,14 +532,14 @@ export function Stage1Processor({ experienceId, onStageComplete, onError }: Stag
         {/* Main Content */}
         <Card>
           <CardHeader>
-            <CardTitle className=\"flex items-center space-x-2\">
-              <Heart className=\"w-5 h-5 text-pink-600\" />
+            <CardTitle className="flex items-center space-x-2">
+              <Heart className="w-5 h-5 text-pink-600" />
               <span>心理疗愈方案</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className=\"prose prose-sm max-w-none\">
-              <div className=\"whitespace-pre-wrap text-gray-700 leading-relaxed\">
+            <div className="prose prose-sm max-w-none">
+              <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
                 {result.content.content}
               </div>
             </div>
@@ -549,19 +549,19 @@ export function Stage1Processor({ experienceId, onStageComplete, onError }: Stag
         {/* Recommendations */}
         <Card>
           <CardHeader>
-            <CardTitle className=\"flex items-center space-x-2\">
-              <Lightbulb className=\"w-5 h-5 text-yellow-600\" />
+            <CardTitle className="flex items-center space-x-2">
+              <Lightbulb className="w-5 h-5 text-yellow-600" />
               <span>核心建议</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className=\"grid gap-3\">
+            <div className="grid gap-3">
               {result.content.recommendations.map((rec, index) => (
-                <div key={index} className=\"flex items-start space-x-3 p-3 bg-yellow-50 rounded-lg\">
-                  <div className=\"w-6 h-6 bg-yellow-200 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5\">
-                    <span className=\"text-xs font-medium text-yellow-800\">{index + 1}</span>
+                <div key={index} className="flex items-start space-x-3 p-3 bg-yellow-50 rounded-lg">
+                  <div className="w-6 h-6 bg-yellow-200 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <span className="text-xs font-medium text-yellow-800">{index + 1}</span>
                   </div>
-                  <p className=\"text-sm text-yellow-900\">{rec}</p>
+                  <p className="text-sm text-yellow-900">{rec}</p>
                 </div>
               ))}
             </div>
@@ -571,17 +571,17 @@ export function Stage1Processor({ experienceId, onStageComplete, onError }: Stag
         {/* Coping Strategies */}
         <Card>
           <CardHeader>
-            <CardTitle className=\"flex items-center space-x-2\">
-              <Users className=\"w-5 h-5 text-blue-600\" />
+            <CardTitle className="flex items-center space-x-2">
+              <Users className="w-5 h-5 text-blue-600" />
               <span>应对策略</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className=\"grid gap-2\">
+            <div className="grid gap-2">
               {result.content.coping_strategies.map((strategy, index) => (
-                <div key={index} className=\"flex items-center space-x-3 p-2 hover:bg-blue-50 rounded\">
-                  <CheckCircle className=\"w-4 h-4 text-blue-600 flex-shrink-0\" />
-                  <span className=\"text-sm text-gray-700\">{strategy}</span>
+                <div key={index} className="flex items-center space-x-3 p-2 hover:bg-blue-50 rounded">
+                  <CheckCircle className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                  <span className="text-sm text-gray-700">{strategy}</span>
                 </div>
               ))}
             </div>
@@ -591,16 +591,16 @@ export function Stage1Processor({ experienceId, onStageComplete, onError }: Stag
         {/* Emotional Support */}
         <Card>
           <CardHeader>
-            <CardTitle className=\"flex items-center space-x-2\">
-              <Heart className=\"w-5 h-5 text-red-600\" />
+            <CardTitle className="flex items-center space-x-2">
+              <Heart className="w-5 h-5 text-red-600" />
               <span>情感支持</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className=\"space-y-3\">
+            <div className="space-y-3">
               {result.content.emotional_support.map((support, index) => (
-                <div key={index} className=\"p-3 bg-red-50 rounded-lg border-l-4 border-red-200\">
-                  <p className=\"text-sm text-red-900 italic\">\"{support}\"</p>
+                <div key={index} className="p-3 bg-red-50 rounded-lg border-l-4 border-red-200">
+                  <p className="text-sm text-red-900 italic">"{support}"</p>
                 </div>
               ))}
             </div>
@@ -611,30 +611,30 @@ export function Stage1Processor({ experienceId, onStageComplete, onError }: Stag
         {result.content.resources.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle className=\"flex items-center space-x-2\">
-                <BookOpen className=\"w-5 h-5 text-purple-600\" />
+              <CardTitle className="flex items-center space-x-2">
+                <BookOpen className="w-5 h-5 text-purple-600" />
                 <span>推荐资源</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className=\"grid gap-3 md:grid-cols-2\">
+              <div className="grid gap-3 md:grid-cols-2">
                 {result.content.resources.map((resource, index) => (
-                  <div key={index} className=\"p-3 bg-purple-50 rounded-lg border border-purple-200\">
-                    <div className=\"flex items-start justify-between\">
-                      <div className=\"flex-1\">
-                        <div className=\"flex items-center space-x-2 mb-1\">
-                          <Badge variant=\"secondary\" className=\"text-xs\">
+                  <div key={index} className="p-3 bg-purple-50 rounded-lg border border-purple-200">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2 mb-1">
+                          <Badge variant="secondary" className="text-xs">
                             {resource.category}
                           </Badge>
-                          <Badge variant=\"outline\" className=\"text-xs\">
+                          <Badge variant="outline" className="text-xs">
                             {resource.type}
                           </Badge>
                         </div>
-                        <h4 className=\"font-medium text-purple-900 text-sm\">{resource.title}</h4>
-                        <p className=\"text-xs text-purple-700 mt-1\">{resource.description}</p>
+                        <h4 className="font-medium text-purple-900 text-sm">{resource.title}</h4>
+                        <p className="text-xs text-purple-700 mt-1">{resource.description}</p>
                       </div>
                       {resource.url !== '#' && (
-                        <ExternalLink className=\"w-4 h-4 text-purple-600 flex-shrink-0 ml-2\" />
+                        <ExternalLink className="w-4 h-4 text-purple-600 flex-shrink-0 ml-2" />
                       )}
                     </div>
                   </div>
@@ -645,20 +645,20 @@ export function Stage1Processor({ experienceId, onStageComplete, onError }: Stag
         )}
 
         {/* Metadata */}
-        <Card className=\"bg-gray-50\">
-          <CardContent className=\"pt-4\">
-            <div className=\"flex items-center justify-between text-sm text-gray-600\">
-              <div className=\"flex items-center space-x-4\">
-                <div className=\"flex items-center space-x-1\">
-                  <Clock className=\"w-4 h-4\" />
+        <Card className="bg-gray-50">
+          <CardContent className="pt-4">
+            <div className="flex items-center justify-between text-sm text-gray-600">
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-1">
+                  <Clock className="w-4 h-4" />
                   <span>处理时间: {result.metadata.processing_time.toFixed(1)}秒</span>
                 </div>
-                <div className=\"flex items-center space-x-1\">
-                  <Brain className=\"w-4 h-4\" />
+                <div className="flex items-center space-x-1">
+                  <Brain className="w-4 h-4" />
                   <span>信心指数: {Math.round(result.metadata.confidence_score * 100)}%</span>
                 </div>
               </div>
-              <div className=\"text-xs\">
+              <div className="text-xs">
                 生成时间: {new Date(result.metadata.generated_at).toLocaleString('zh-CN')}
               </div>
             </div>
@@ -695,21 +695,21 @@ export function Stage1Processor({ experienceId, onStageComplete, onError }: Stag
   // Initial state - start button
   return (
     <Card>
-      <CardHeader className=\"text-center\">
-        <div className=\"mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4\">
-          <Brain className=\"w-8 h-8 text-blue-600\" />
+      <CardHeader className="text-center">
+        <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+          <Brain className="w-8 h-8 text-blue-600" />
         </div>
-        <CardTitle className=\"text-xl\">第一阶段：心理疗愈分析</CardTitle>
+        <CardTitle className="text-xl">第一阶段：心理疗愈分析</CardTitle>
         <CardDescription>
           AI将深度分析您的经历，为您提供专业的心理疗愈支持和情感指导
         </CardDescription>
       </CardHeader>
-      <CardContent className=\"text-center\">
-        <Button onClick={startStage1Processing} size=\"lg\" className=\"px-8 py-3\">
-          <Brain className=\"w-5 h-5 mr-2\" />
+      <CardContent className="text-center">
+        <Button onClick={startStage1Processing} size="lg" className="px-8 py-3">
+          <Brain className="w-5 h-5 mr-2" />
           开始心理疗愈分析
         </Button>
-        <p className=\"text-xs text-gray-500 mt-3\">
+        <p className="text-xs text-gray-500 mt-3">
           预计处理时间：2-3分钟
         </p>
       </CardContent>

@@ -18,14 +18,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import {
   ChevronLeft,
   ChevronRight,
   Save,
-  Upload,
   Check,
   AlertCircle,
   User,
@@ -357,16 +356,833 @@ export function ExperienceInputForm({
                 required: true,
                 defaultValue: 5,
                 helpText: '1表示无压力，10表示压力极大'
+              },
+              {
+                id: 'impact_areas',
+                label: '影响领域',
+                type: 'multiselect' as const,
+                required: false,
+                options: [
+                  { value: 'work_performance', label: '工作表现' },
+                  { value: 'mental_health', label: '心理健康' },
+                  { value: 'physical_health', label: '身体健康' },
+                  { value: 'relationships', label: '人际关系' },
+                  { value: 'personal_life', label: '个人生活' },
+                  { value: 'future_plans', label: '未来规划' }
+                ]
+              }
+            ]
+          },
+          {
+            id: 'context_details',
+            title: '情境详情',
+            description: '提供更多背景信息帮助AI更好地理解您的情况',
+            icon: 'info',
+            order: 3,
+            fields: [
+              {
+                id: 'specific_situation',
+                label: '具体情况描述',
+                type: 'textarea' as const,
+                placeholder: '请详细描述具体发生了什么，涉及哪些人或事...',
+                required: true
+              },
+              {
+                id: 'attempted_solutions',
+                label: '已尝试的解决方法',
+                type: 'textarea' as const,
+                placeholder: '描述您已经尝试过的解决方法及其效果...',
+                required: false
+              },
+              {
+                id: 'support_system',
+                label: '支持系统',
+                type: 'multiselect' as const,
+                required: false,
+                options: [
+                  { value: 'mentor', label: '导师/前辈' },
+                  { value: 'colleagues', label: '同事' },
+                  { value: 'manager', label: '直属上级' },
+                  { value: 'hr', label: '人力资源部' },
+                  { value: 'family', label: '家人朋友' },
+                  { value: 'none', label: '暂无支持' }
+                ]
+              },
+              {
+                id: 'desired_outcome',
+                label: '期望结果',
+                type: 'textarea' as const,
+                placeholder: '您希望通过AI咨询达到什么目标？',
+                required: true
+              }
+            ]
+          },
+          {
+            id: 'multimedia_evidence',
+            title: '相关材料',
+            description: '可选择上传相关的文件、录音或图片',
+            icon: 'upload',
+            order: 4,
+            collapsible: true,
+            fields: [
+              {
+                id: 'media_files',
+                label: '文件上传',
+                type: 'file_upload' as const,
+                required: false,
+                helpText: '可上传邮件截图、工作文档、录音记录等相关材料'
+              },
+              {
+                id: 'media_description',
+                label: '材料说明',
+                type: 'textarea' as const,
+                placeholder: '简要说明上传材料的内容和相关性...',
+                required: false,
+                conditional: { dependsOn: 'media_files', hasValue: true }
               }
             ]
           }
         ],
         tags: ['职场适应', '新人指导', '压力管理', '技能提升']
+      },
+      student: {
+        id: 'student_v1',
+        role: 'student',
+        name: '学生经历模板',
+        description: '专为学生设计，帮助处理学习、生活、职业规划等各方面的挑战和困扰',
+        icon: 'graduation-cap',
+        sections: [
+          {
+            id: 'academic_info',
+            title: '学业信息',
+            description: '请提供您的学业基本信息',
+            icon: 'book-open',
+            order: 1,
+            fields: [
+              {
+                id: 'education_level',
+                label: '教育阶段',
+                type: 'select' as const,
+                required: true,
+                options: [
+                  { value: 'high_school', label: '高中' },
+                  { value: 'undergraduate', label: '本科' },
+                  { value: 'graduate', label: '研究生' },
+                  { value: 'phd', label: '博士' },
+                  { value: 'vocational', label: '职业教育' },
+                  { value: 'other', label: '其他' }
+                ]
+              },
+              {
+                id: 'academic_year',
+                label: '年级',
+                type: 'select' as const,
+                required: true,
+                options: [
+                  { value: 'freshman', label: '一年级/大一' },
+                  { value: 'sophomore', label: '二年级/大二' },
+                  { value: 'junior', label: '三年级/大三' },
+                  { value: 'senior', label: '四年级/大四' },
+                  { value: 'graduate_1', label: '研一' },
+                  { value: 'graduate_2', label: '研二' },
+                  { value: 'graduate_3', label: '研三' },
+                  { value: 'beyond', label: '延期/其他' }
+                ]
+              },
+              {
+                id: 'major_field',
+                label: '专业领域',
+                type: 'text' as const,
+                placeholder: '如：计算机科学、心理学、经济学等',
+                required: false
+              },
+              {
+                id: 'academic_performance',
+                label: '学习成绩',
+                type: 'select' as const,
+                required: false,
+                options: [
+                  { value: 'excellent', label: '优秀' },
+                  { value: 'good', label: '良好' },
+                  { value: 'average', label: '中等' },
+                  { value: 'below_average', label: '偏低' },
+                  { value: 'struggling', label: '困难' }
+                ]
+              }
+            ]
+          },
+          {
+            id: 'challenge_situation',
+            title: '面临挑战',
+            description: '描述您当前遇到的主要困难和挑战',
+            icon: 'alert-circle',
+            order: 2,
+            fields: [
+              {
+                id: 'main_concern',
+                label: '主要困扰',
+                type: 'textarea' as const,
+                placeholder: '详细描述您目前面临的主要问题或困扰...',
+                required: true,
+                validations: [
+                  {
+                    type: 'min_length',
+                    value: 50,
+                    message: '请详细描述，至少50个字符'
+                  }
+                ]
+              },
+              {
+                id: 'problem_categories',
+                label: '问题类型',
+                type: 'multiselect' as const,
+                required: true,
+                options: [
+                  { value: 'academic_pressure', label: '学业压力' },
+                  { value: 'social_relationships', label: '人际关系' },
+                  { value: 'family_expectations', label: '家庭期望' },
+                  { value: 'career_planning', label: '职业规划' },
+                  { value: 'mental_health', label: '心理健康' },
+                  { value: 'financial_stress', label: '经济压力' },
+                  { value: 'time_management', label: '时间管理' },
+                  { value: 'identity_crisis', label: '身份认同' },
+                  { value: 'romantic_relationships', label: '恋爱关系' },
+                  { value: 'future_uncertainty', label: '未来迷茫' }
+                ]
+              },
+              {
+                id: 'stress_intensity',
+                label: '压力强度',
+                type: 'slider' as const,
+                required: true,
+                defaultValue: 5,
+                helpText: '1表示轻微压力，10表示极度压力'
+              },
+              {
+                id: 'impact_on_life',
+                label: '生活影响',
+                type: 'multiselect' as const,
+                required: false,
+                options: [
+                  { value: 'sleep_quality', label: '睡眠质量' },
+                  { value: 'appetite', label: '食欲状况' },
+                  { value: 'social_activities', label: '社交活动' },
+                  { value: 'academic_performance', label: '学习表现' },
+                  { value: 'mood_stability', label: '情绪稳定性' },
+                  { value: 'motivation', label: '学习动力' }
+                ]
+              }
+            ]
+          },
+          {
+            id: 'situation_context',
+            title: '具体情况',
+            description: '提供更详细的背景信息和具体情况',
+            icon: 'file-text',
+            order: 3,
+            fields: [
+              {
+                id: 'detailed_situation',
+                label: '详细情况描述',
+                type: 'textarea' as const,
+                placeholder: '请详细描述具体发生了什么，时间、地点、涉及的人等...',
+                required: true
+              },
+              {
+                id: 'trigger_events',
+                label: '触发事件',
+                type: 'textarea' as const,
+                placeholder: '是否有特定的事件或情况引发了这个问题？',
+                required: false
+              },
+              {
+                id: 'attempted_solutions',
+                label: '已尝试的方法',
+                type: 'textarea' as const,
+                placeholder: '描述您已经尝试过的解决方法及其效果...',
+                required: false
+              },
+              {
+                id: 'support_network',
+                label: '支持网络',
+                type: 'multiselect' as const,
+                required: false,
+                options: [
+                  { value: 'family', label: '家人' },
+                  { value: 'friends', label: '朋友' },
+                  { value: 'classmates', label: '同学' },
+                  { value: 'teachers', label: '老师/导师' },
+                  { value: 'counselors', label: '心理咨询师' },
+                  { value: 'online_communities', label: '网络社群' },
+                  { value: 'limited_support', label: '支持有限' }
+                ]
+              },
+              {
+                id: 'goals_and_expectations',
+                label: '期望目标',
+                type: 'textarea' as const,
+                placeholder: '您希望通过咨询达到什么目标或改善什么情况？',
+                required: true
+              }
+            ]
+          },
+          {
+            id: 'personal_development',
+            title: '个人发展',
+            description: '关于个人成长和未来规划的信息',
+            icon: 'trending-up',
+            order: 4,
+            collapsible: true,
+            fields: [
+              {
+                id: 'interests_and_passions',
+                label: '兴趣爱好',
+                type: 'textarea' as const,
+                placeholder: '描述您的兴趣爱好和热情所在...',
+                required: false
+              },
+              {
+                id: 'strengths_and_skills',
+                label: '优势技能',
+                type: 'textarea' as const,
+                placeholder: '您认为自己的优势和已掌握的技能有哪些？',
+                required: false
+              },
+              {
+                id: 'future_aspirations',
+                label: '未来规划',
+                type: 'textarea' as const,
+                placeholder: '对未来的职业或人生有什么计划和想法？',
+                required: false
+              },
+              {
+                id: 'learning_preferences',
+                label: '学习偏好',
+                type: 'multiselect' as const,
+                required: false,
+                options: [
+                  { value: 'visual_learning', label: '视觉学习' },
+                  { value: 'auditory_learning', label: '听觉学习' },
+                  { value: 'hands_on_learning', label: '实践学习' },
+                  { value: 'group_learning', label: '小组学习' },
+                  { value: 'independent_learning', label: '独立学习' }
+                ]
+              }
+            ]
+          },
+          {
+            id: 'multimedia_materials',
+            title: '相关材料',
+            description: '可选择上传相关的文件、图片或录音',
+            icon: 'paperclip',
+            order: 5,
+            collapsible: true,
+            fields: [
+              {
+                id: 'supporting_files',
+                label: '文件上传',
+                type: 'file_upload' as const,
+                required: false,
+                helpText: '可上传成绩单、作品集、日记记录等相关材料'
+              },
+              {
+                id: 'file_descriptions',
+                label: '材料说明',
+                type: 'textarea' as const,
+                placeholder: '简要说明上传材料的内容和相关性...',
+                required: false,
+                conditional: { dependsOn: 'supporting_files', hasValue: true }
+              }
+            ]
+          }
+        ],
+        tags: ['学生支持', '学业指导', '心理健康', '个人成长']
+      },
+      entrepreneur: {
+        id: 'entrepreneur_v1',
+        role: 'entrepreneur',
+        name: '创业者经历模板',
+        description: '专为创业者和企业家设计，帮助处理创业过程中的各种挑战和决策困扰',
+        icon: 'rocket',
+        sections: [
+          {
+            id: 'business_info',
+            title: '创业基础信息',
+            description: '请提供您的创业项目基本信息',
+            icon: 'building',
+            order: 1,
+            fields: [
+              {
+                id: 'business_stage',
+                label: '创业阶段',
+                type: 'select' as const,
+                required: true,
+                options: [
+                  { value: 'idea', label: '想法阶段' },
+                  { value: 'planning', label: '规划阶段' },
+                  { value: 'early_startup', label: '初创阶段' },
+                  { value: 'growth', label: '成长阶段' },
+                  { value: 'scaling', label: '扩张阶段' },
+                  { value: 'pivot', label: '转型阶段' }
+                ]
+              },
+              {
+                id: 'business_type',
+                label: '业务类型',
+                type: 'select' as const,
+                required: true,
+                options: [
+                  { value: 'tech_startup', label: '科技创业' },
+                  { value: 'ecommerce', label: '电商业务' },
+                  { value: 'service_business', label: '服务业务' },
+                  { value: 'manufacturing', label: '制造业' },
+                  { value: 'retail', label: '零售业' },
+                  { value: 'consulting', label: '咨询服务' },
+                  { value: 'other', label: '其他' }
+                ]
+              },
+              {
+                id: 'team_size',
+                label: '团队规模',
+                type: 'select' as const,
+                required: true,
+                options: [
+                  { value: 'solo', label: '单人创业' },
+                  { value: '2_5', label: '2-5人' },
+                  { value: '6_15', label: '6-15人' },
+                  { value: '16_50', label: '16-50人' },
+                  { value: '50plus', label: '50人以上' }
+                ]
+              },
+              {
+                id: 'funding_status',
+                label: '资金状况',
+                type: 'select' as const,
+                required: true,
+                options: [
+                  { value: 'self_funded', label: '自筹资金' },
+                  { value: 'friends_family', label: '亲友投资' },
+                  { value: 'angel', label: '天使投资' },
+                  { value: 'vc', label: '风险投资' },
+                  { value: 'seeking', label: '正在寻求投资' },
+                  { value: 'revenue_funded', label: '收入自给' }
+                ]
+              },
+              {
+                id: 'funding_amount',
+                label: '融资金额',
+                type: 'text' as const,
+                placeholder: '如：100万人民币',
+                required: false,
+                conditional: { dependsOn: 'funding_status', hasValue: true }
+              },
+              {
+                id: 'business_model',
+                label: '商业模式',
+                type: 'textarea' as const,
+                placeholder: '简要描述您的商业模式和盈利方式...',
+                required: false,
+                conditional: { dependsOn: 'business_stage', hasValue: true }
+              }
+            ]
+          },
+          {
+            id: 'current_challenge',
+            title: '当前挑战',
+            description: '描述您目前在创业中面临的主要困难',
+            icon: 'target',
+            order: 2,
+            fields: [
+              {
+                id: 'primary_challenge',
+                label: '核心挑战',
+                type: 'textarea' as const,
+                placeholder: '详细描述您当前面临的最关键挑战...',
+                required: true,
+                validations: [
+                  {
+                    type: 'min_length',
+                    value: 100,
+                    message: '请详细描述，至少100个字符'
+                  }
+                ]
+              },
+              {
+                id: 'challenge_areas',
+                label: '挑战领域',
+                type: 'multiselect' as const,
+                required: true,
+                options: [
+                  { value: 'product_development', label: '产品开发' },
+                  { value: 'market_validation', label: '市场验证' },
+                  { value: 'customer_acquisition', label: '客户获取' },
+                  { value: 'funding', label: '资金筹措' },
+                  { value: 'team_building', label: '团队建设' },
+                  { value: 'operations', label: '运营管理' },
+                  { value: 'competition', label: '竞争压力' },
+                  { value: 'scaling', label: '规模扩张' },
+                  { value: 'work_life_balance', label: '工作生活平衡' }
+                ]
+              },
+              {
+                id: 'urgency_level',
+                label: '紧急程度',
+                type: 'slider' as const,
+                required: true,
+                defaultValue: 5,
+                helpText: '1表示不紧急，10表示极其紧急'
+              },
+              {
+                id: 'business_impact',
+                label: '对业务的影响',
+                type: 'multiselect' as const,
+                required: false,
+                options: [
+                  { value: 'revenue_loss', label: '收入损失' },
+                  { value: 'customer_churn', label: '客户流失' },
+                  { value: 'team_morale', label: '团队士气' },
+                  { value: 'growth_stagnation', label: '增长停滞' },
+                  { value: 'investor_relations', label: '投资者关系' },
+                  { value: 'personal_stress', label: '个人压力' }
+                ]
+              }
+            ]
+          },
+          {
+            id: 'business_context',
+            title: '业务背景',
+            description: '提供更多业务背景和市场环境信息',
+            icon: 'chart-bar',
+            order: 3,
+            fields: [
+              {
+                id: 'market_situation',
+                label: '市场环境描述',
+                type: 'textarea' as const,
+                placeholder: '描述当前的市场环境、竞争情况、客户需求等...',
+                required: true
+              },
+              {
+                id: 'previous_attempts',
+                label: '已尝试的解决方案',
+                type: 'textarea' as const,
+                placeholder: '描述您已经尝试过的解决方法及其结果...',
+                required: false
+              },
+              {
+                id: 'available_resources',
+                label: '可用资源',
+                type: 'multiselect' as const,
+                required: false,
+                options: [
+                  { value: 'mentor', label: '导师指导' },
+                  { value: 'advisor', label: '顾问团队' },
+                  { value: 'network', label: '人脉网络' },
+                  { value: 'capital', label: '资金支持' },
+                  { value: 'technology', label: '技术资源' },
+                  { value: 'partnerships', label: '合作伙伴' },
+                  { value: 'limited', label: '资源有限' }
+                ]
+              },
+              {
+                id: 'success_metrics',
+                label: '成功指标',
+                type: 'textarea' as const,
+                placeholder: '您如何定义问题解决的成功标准？',
+                required: true
+              }
+            ]
+          },
+          {
+            id: 'strategic_considerations',
+            title: '战略考虑',
+            description: '长远规划和战略决策相关信息',
+            icon: 'compass',
+            order: 4,
+            collapsible: true,
+            fields: [
+              {
+                id: 'long_term_vision',
+                label: '长期愿景',
+                type: 'textarea' as const,
+                placeholder: '描述您对企业3-5年后的愿景和目标...',
+                required: false
+              },
+              {
+                id: 'risk_tolerance',
+                label: '风险承受能力',
+                type: 'select' as const,
+                required: false,
+                options: [
+                  { value: 'conservative', label: '保守型' },
+                  { value: 'moderate', label: '平衡型' },
+                  { value: 'aggressive', label: '激进型' }
+                ]
+              },
+              {
+                id: 'timeline_constraints',
+                label: '时间限制',
+                type: 'textarea' as const,
+                placeholder: '是否有特定的时间限制或截止日期？',
+                required: false
+              },
+              {
+                id: 'scaling_strategy',
+                label: '扩张策略',
+                type: 'textarea' as const,
+                placeholder: '描述您的扩张计划和策略...',
+                required: false,
+                conditional: { dependsOn: 'business_stage', hasValue: true }
+              },
+              {
+                id: 'exit_strategy',
+                label: '退出策略',
+                type: 'select' as const,
+                required: false,
+                options: [
+                  { value: 'ipo', label: '公开上市' },
+                  { value: 'acquisition', label: '被收购' },
+                  { value: 'management_buyout', label: '管理层收购' },
+                  { value: 'long_term_hold', label: '长期持有' },
+                  { value: 'undecided', label: '尚未决定' }
+                ],
+                conditional: { dependsOn: 'business_stage', hasValue: true }
+              }
+            ]
+          }
+        ],
+        tags: ['创业指导', '商业策略', '压力管理', '决策支持']
+      },
+      other: {
+        id: 'other_v1',
+        role: 'other',
+        name: '通用经历模板',
+        description: '适用于各种生活情况的灵活模板，帮助处理不同类型的个人挑战和困扰',
+        icon: 'user',
+        sections: [
+          {
+            id: 'general_info',
+            title: '基本信息',
+            description: '请提供您的基本情况',
+            icon: 'user',
+            order: 1,
+            fields: [
+              {
+                id: 'life_situation',
+                label: '生活状况',
+                type: 'select' as const,
+                required: true,
+                options: [
+                  { value: 'working_professional', label: '在职人员' },
+                  { value: 'job_seeker', label: '求职者' },
+                  { value: 'retiree', label: '退休人员' },
+                  { value: 'homemaker', label: '家庭主妇/主夫' },
+                  { value: 'freelancer', label: '自由职业者' },
+                  { value: 'caregiver', label: '照护者' },
+                  { value: 'other', label: '其他' }
+                ]
+              },
+              {
+                id: 'current_role',
+                label: '当前角色',
+                type: 'text' as const,
+                placeholder: '简要描述您当前的主要角色或身份...',
+                required: false
+              },
+              {
+                id: 'age_range',
+                label: '年龄段',
+                type: 'select' as const,
+                required: false,
+                options: [
+                  { value: 'under_18', label: '18岁以下' },
+                  { value: '18_25', label: '18-25岁' },
+                  { value: '26_35', label: '26-35岁' },
+                  { value: '36_45', label: '36-45岁' },
+                  { value: '46_55', label: '46-55岁' },
+                  { value: '56_65', label: '56-65岁' },
+                  { value: 'over_65', label: '65岁以上' }
+                ]
+              },
+              {
+                id: 'main_concerns',
+                label: '主要关注领域',
+                type: 'multiselect' as const,
+                required: true,
+                options: [
+                  { value: 'personal_growth', label: '个人成长' },
+                  { value: 'relationships', label: '人际关系' },
+                  { value: 'health_wellness', label: '健康养生' },
+                  { value: 'financial_planning', label: '财务规划' },
+                  { value: 'life_transitions', label: '人生转变' },
+                  { value: 'family_issues', label: '家庭问题' },
+                  { value: 'mental_health', label: '心理健康' },
+                  { value: 'life_purpose', label: '人生目标' }
+                ]
+              }
+            ]
+          },
+          {
+            id: 'challenge_description',
+            title: '挑战描述',
+            description: '详细描述您当前面临的挑战或困扰',
+            icon: 'alert-circle',
+            order: 2,
+            fields: [
+              {
+                id: 'detailed_problem',
+                label: '详细问题描述',
+                type: 'textarea' as const,
+                placeholder: '请详细描述您目前面临的问题或挑战...',
+                required: true,
+                validations: [
+                  {
+                    type: 'min_length',
+                    value: 50,
+                    message: '请详细描述，至少50个字符'
+                  }
+                ]
+              },
+              {
+                id: 'impact_areas',
+                label: '影响领域',
+                type: 'multiselect' as const,
+                required: true,
+                options: [
+                  { value: 'emotional_wellbeing', label: '情绪健康' },
+                  { value: 'daily_functioning', label: '日常生活' },
+                  { value: 'work_performance', label: '工作表现' },
+                  { value: 'social_relationships', label: '社交关系' },
+                  { value: 'family_dynamics', label: '家庭关系' },
+                  { value: 'physical_health', label: '身体健康' },
+                  { value: 'financial_stability', label: '经济状况' },
+                  { value: 'future_planning', label: '未来规划' }
+                ]
+              },
+              {
+                id: 'stress_level',
+                label: '困扰程度',
+                type: 'slider' as const,
+                required: true,
+                defaultValue: 5,
+                helpText: '1表示轻微困扰，10表示严重困扰'
+              },
+              {
+                id: 'duration',
+                label: '持续时间',
+                type: 'select' as const,
+                required: false,
+                options: [
+                  { value: 'recent', label: '最近出现' },
+                  { value: 'few_weeks', label: '几周' },
+                  { value: 'few_months', label: '几个月' },
+                  { value: 'half_year', label: '半年' },
+                  { value: 'over_year', label: '一年以上' },
+                  { value: 'long_term', label: '长期存在' }
+                ]
+              }
+            ]
+          },
+          {
+            id: 'context_background',
+            title: '背景情况',
+            description: '提供更多背景信息和具体情况',
+            icon: 'file-text',
+            order: 3,
+            fields: [
+              {
+                id: 'specific_situation',
+                label: '具体情况',
+                type: 'textarea' as const,
+                placeholder: '请描述具体的情况、事件或环境因素...',
+                required: true
+              },
+              {
+                id: 'attempted_solutions',
+                label: '已尝试的方法',
+                type: 'textarea' as const,
+                placeholder: '描述您已经尝试过的解决方法及其效果...',
+                required: false
+              },
+              {
+                id: 'support_system',
+                label: '支持系统',
+                type: 'multiselect' as const,
+                required: false,
+                options: [
+                  { value: 'family', label: '家人' },
+                  { value: 'friends', label: '朋友' },
+                  { value: 'colleagues', label: '同事' },
+                  { value: 'professionals', label: '专业人士' },
+                  { value: 'community', label: '社区支持' },
+                  { value: 'online_groups', label: '网络群体' },
+                  { value: 'limited', label: '支持有限' }
+                ]
+              },
+              {
+                id: 'external_factors',
+                label: '外部因素',
+                type: 'textarea' as const,
+                placeholder: '是否有外部环境、社会或经济因素影响这个问题？',
+                required: false
+              }
+            ]
+          },
+          {
+            id: 'goals_expectations',
+            title: '目标与期望',
+            description: '您希望达到的目标和期望的改善',
+            icon: 'target',
+            order: 4,
+            fields: [
+              {
+                id: 'desired_outcomes',
+                label: '期望结果',
+                type: 'textarea' as const,
+                placeholder: '描述您希望通过咨询达到的具体目标...',
+                required: true
+              },
+              {
+                id: 'success_metrics',
+                label: '成功标准',
+                type: 'textarea' as const,
+                placeholder: '您如何判断问题得到了改善或解决？',
+                required: false
+              },
+              {
+                id: 'timeline_expectations',
+                label: '时间期望',
+                type: 'select' as const,
+                required: false,
+                options: [
+                  { value: 'immediate', label: '立即见效' },
+                  { value: 'few_weeks', label: '几周内' },
+                  { value: 'few_months', label: '几个月内' },
+                  { value: 'long_term', label: '长期改善' },
+                  { value: 'flexible', label: '时间灵活' }
+                ]
+              },
+              {
+                id: 'motivation_level',
+                label: '改变动机',
+                type: 'slider' as const,
+                required: false,
+                defaultValue: 7,
+                helpText: '1表示动机很低，10表示动机很强'
+              }
+            ]
+          }
+        ],
+        tags: ['通用支持', '个人成长', '生活指导', '问题解决']
       }
-      // Add other role templates here
     };
 
-    return templates[role as keyof typeof templates] || templates.workplace_newcomer;
+    // Return the specific template for the role, or throw an error if not found
+    const template = templates[role as keyof typeof templates];
+    if (!template) {
+      throw new Error(`Template not found for role: ${role}`);
+    }
+    return template;
   };
 
   /**
@@ -417,7 +1233,7 @@ export function ExperienceInputForm({
     const currentSectionData = template.sections[currentSection];
     console.log(`🔍 验证section ${currentSection}: ${currentSectionData.title}`);
     console.log('📋 Section字段:', currentSectionData.fields);
-    
+
     const errors: Record<string, string> = {};
 
     currentSectionData.fields.forEach(field => {
@@ -474,7 +1290,7 @@ export function ExperienceInputForm({
     setValidationErrors(errors);
     const isValid = Object.keys(errors).length === 0;
     console.log(`${isValid ? '✅' : '❌'} Section ${currentSection} 最终验证结果:`, isValid);
-    
+
     return isValid;
   };
 
@@ -564,29 +1380,29 @@ export function ExperienceInputForm({
     // Validate all sections
     let allValid = true;
     const validationResults: Record<number, boolean> = {};
-    
+
     if (template) {
       console.log('🔍 开始验证所有sections...');
-      
+
       for (let i = 0; i < template.sections.length; i++) {
         console.log(`🔍 验证section ${i}: ${template.sections[i].title}`);
-        
+
         // 临时设置section进行验证，但不触发UI更新
         const tempCurrentSection = currentSection;
         setCurrentSection(i);
-        
+
         const isValid = validateCurrentSection();
         validationResults[i] = isValid;
-        
+
         console.log(`${isValid ? '✅' : '❌'} Section ${i} 验证结果:`, isValid);
-        
+
         if (!isValid) {
           allValid = false;
           console.log('❌ 发现验证错误，停止验证');
           break;
         }
       }
-      
+
       // 恢复原始section
       setCurrentSection(originalSection);
     }
@@ -607,16 +1423,16 @@ export function ExperienceInputForm({
 
     try {
       setIsLoading(true);
-      
+
       const submitData = {
         templateId: template?.id,
         role: selectedRole,
         data: formData,
         submittedAt: new Date().toISOString()
       };
-      
+
       console.log('📤 准备提交的数据:', submitData);
-      
+
       await onSubmit(submitData);
 
       console.log('✅ 表单提交成功');
