@@ -33,7 +33,24 @@ const nextConfig: NextConfig = {
     'localhost',         // Local development server
     '127.0.0.1',        // IPv4 loopback address
     '0.0.0.0'           // All network interfaces (for Docker/container environments)
-  ]
+  ],
+
+  // 防止水合错误的配置
+  reactStrictMode: true,
+  
+  // 编译器配置
+  compiler: {
+    // 生产环境移除console.log
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+
+  // 确保客户端和服务器端渲染一致性
+  poweredByHeader: false,
+  
+  // 优化图片处理
+  images: {
+    formats: ['image/webp', 'image/avif'],
+  }
 };
 
 export default nextConfig;
