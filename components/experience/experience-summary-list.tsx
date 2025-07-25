@@ -141,58 +141,58 @@ export function ExperienceSummaryList({ onViewSummary }: ExperienceSummaryListPr
 
   if (loading) {
     return (
-      <div className=\"flex items-center justify-center p-8\">
-        <RefreshCw className=\"w-6 h-6 animate-spin mr-2\" />
+      <div className="flex items-center justify-center p-8">
+        <RefreshCw className="w-6 h-6 animate-spin mr-2" />
         Loading summaries...
       </div>
     )
   }
 
   return (
-    <div className=\"w-full max-w-6xl mx-auto space-y-6\">
+    <div className="w-full max-w-6xl mx-auto space-y-6">
       {/* Analytics Overview */}
       {analytics && (
         <Card>
           <CardHeader>
-            <CardTitle className=\"flex items-center gap-2\">
-              <BarChart3 className=\"w-5 h-5\" />
+            <CardTitle className="flex items-center gap-2">
+              <BarChart3 className="w-5 h-5" />
               Summary Analytics
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className=\"grid grid-cols-2 md:grid-cols-4 gap-4\">
-              <div className=\"text-center\">
-                <div className=\"text-2xl font-bold text-blue-600\">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-blue-600">
                   {analytics.total_summaries}
                 </div>
-                <div className=\"text-sm text-gray-600\">Total Summaries</div>
+                <div className="text-sm text-gray-600">Total Summaries</div>
               </div>
-              <div className=\"text-center\">
+              <div className="text-center">
                 <div className={`text-2xl font-bold ${getSeverityColor(analytics.average_score)}`}>
                   {analytics.average_score}%
                 </div>
-                <div className=\"text-sm text-gray-600\">Average Score</div>
+                <div className="text-sm text-gray-600">Average Score</div>
               </div>
-              <div className=\"text-center\">
-                <div className=\"text-2xl font-bold text-purple-600\">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-purple-600">
                   {Object.keys(analytics.stage_distribution).length}
                 </div>
-                <div className=\"text-sm text-gray-600\">Active Stages</div>
+                <div className="text-sm text-gray-600">Active Stages</div>
               </div>
-              <div className=\"text-center\">
-                <div className=\"text-2xl font-bold text-green-600\">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-600">
                   {Object.keys(analytics.tag_distribution).length}
                 </div>
-                <div className=\"text-sm text-gray-600\">Unique Tags</div>
+                <div className="text-sm text-gray-600">Unique Tags</div>
               </div>
             </div>
 
             {/* Stage Distribution */}
-            <div className=\"mt-4\">
-              <h4 className=\"font-medium mb-2\">Stage Distribution</h4>
-              <div className=\"flex flex-wrap gap-2\">
+            <div className="mt-4">
+              <h4 className="font-medium mb-2">Stage Distribution</h4>
+              <div className="flex flex-wrap gap-2">
                 {Object.entries(analytics.stage_distribution).map(([stage, count]) => (
-                  <Badge key={stage} variant=\"outline\">
+                  <Badge key={stage} variant="outline">
                     {stage}: {count as number}
                   </Badge>
                 ))}
@@ -204,33 +204,33 @@ export function ExperienceSummaryList({ onViewSummary }: ExperienceSummaryListPr
 
       {/* Search and Filters */}
       <Card>
-        <CardContent className=\"p-4\">
-          <div className=\"flex flex-col md:flex-row gap-4\">
-            <div className=\"flex-1\">
-              <div className=\"relative\">
-                <Search className=\"absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4\" />
+        <CardContent className="p-4">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <Input
-                  placeholder=\"Search summaries...\"
+                  placeholder="Search summaries..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className=\"pl-10\"
+                  className="pl-10"
                 />
               </div>
             </div>
-            <div className=\"flex gap-2\">
+            <div className="flex gap-2">
               <select
                 value={stageFilter}
                 onChange={(e) => setStageFilter(e.target.value)}
-                className=\"px-3 py-2 border rounded-md text-sm\"
+                className="px-3 py-2 border rounded-md text-sm"
               >
-                <option value=\"all\">All Stages</option>
-                <option value=\"stage1\">Stage 1</option>
-                <option value=\"stage2\">Stage 2</option>
-                <option value=\"stage3\">Stage 3</option>
-                <option value=\"all\">Complete</option>
+                <option value="all">All Stages</option>
+                <option value="stage1">Stage 1</option>
+                <option value="stage2">Stage 2</option>
+                <option value="stage3">Stage 3</option>
+                <option value="all">Complete</option>
               </select>
-              <Button variant=\"outline\" size=\"sm\" onClick={loadSummaries}>
-                <RefreshCw className=\"w-4 h-4 mr-2\" />
+              <Button variant="outline" size="sm" onClick={loadSummaries}>
+                <RefreshCw className="w-4 h-4 mr-2" />
                 Refresh
               </Button>
             </div>
@@ -241,7 +241,7 @@ export function ExperienceSummaryList({ onViewSummary }: ExperienceSummaryListPr
       {/* Summaries List */}
       {error && (
         <Card>
-          <CardContent className=\"p-4 text-center text-red-600\">
+          <CardContent className="p-4 text-center text-red-600">
             {error}
           </CardContent>
         </Card>
@@ -249,16 +249,16 @@ export function ExperienceSummaryList({ onViewSummary }: ExperienceSummaryListPr
 
       {filteredSummaries.length === 0 ? (
         <Card>
-          <CardContent className=\"p-8 text-center\">
-            <Brain className=\"w-12 h-12 mx-auto mb-4 text-gray-400\" />
-            <p className=\"text-gray-600 mb-4\">
+          <CardContent className="p-8 text-center">
+            <Brain className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+            <p className="text-gray-600 mb-4">
               {summaries.length === 0
-                ? \"No experience summaries found. Generate your first summary from an experience page.\"
-                : \"No summaries match your current filters.\"
+                ? "No experience summaries found. Generate your first summary from an experience page."
+                : "No summaries match your current filters."
               }
             </p>
             {searchTerm || stageFilter !== 'all' ? (
-              <Button variant=\"outline\" onClick={() => {
+              <Button variant="outline" onClick={() => {
                 setSearchTerm('')
                 setStageFilter('all')
               }}>
@@ -268,16 +268,16 @@ export function ExperienceSummaryList({ onViewSummary }: ExperienceSummaryListPr
           </CardContent>
         </Card>
       ) : (
-        <div className=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4\">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredSummaries.map((summary) => (
-            <Card key={summary.summary_id} className=\"hover:shadow-md transition-shadow\">
-              <CardHeader className=\"pb-3\">
-                <div className=\"flex justify-between items-start\">
-                  <div className=\"flex-1\">
-                    <Badge variant=\"outline\" className=\"mb-2\">
+            <Card key={summary.summary_id} className="hover:shadow-md transition-shadow">
+              <CardHeader className="pb-3">
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <Badge variant="outline" className="mb-2">
                       {summary.stage === 'all' ? 'Complete' : `Stage ${summary.stage.slice(-1)}`}
                     </Badge>
-                    <div className=\"text-sm text-gray-600\">
+                    <div className="text-sm text-gray-600">
                       Experience: {summary.experience_id.slice(-8)}...
                     </div>
                   </div>
@@ -289,17 +289,17 @@ export function ExperienceSummaryList({ onViewSummary }: ExperienceSummaryListPr
                 </div>
               </CardHeader>
 
-              <CardContent className=\"pt-0\">
+              <CardContent className="pt-0">
                 {/* Tags */}
                 {summary.tags.length > 0 && (
-                  <div className=\"flex flex-wrap gap-1 mb-3\">
+                  <div className="flex flex-wrap gap-1 mb-3">
                     {summary.tags.slice(0, 3).map((tag, index) => (
-                      <Badge key={index} variant={getTagVariant(tag)} className=\"text-xs\">
+                      <Badge key={index} variant={getTagVariant(tag)} className="text-xs">
                         {tag.replace('_', ' ')}
                       </Badge>
                     ))}
                     {summary.tags.length > 3 && (
-                      <Badge variant=\"outline\" className=\"text-xs\">
+                      <Badge variant="outline" className="text-xs">
                         +{summary.tags.length - 3}
                       </Badge>
                     )}
@@ -307,36 +307,36 @@ export function ExperienceSummaryList({ onViewSummary }: ExperienceSummaryListPr
                 )}
 
                 {/* Timestamps */}
-                <div className=\"space-y-1 mb-4 text-xs text-gray-500\">
-                  <div className=\"flex items-center gap-1\">
-                    <Calendar className=\"w-3 h-3\" />
+                <div className="space-y-1 mb-4 text-xs text-gray-500">
+                  <div className="flex items-center gap-1">
+                    <Calendar className="w-3 h-3" />
                     Created: {new Date(summary.created_at).toLocaleDateString()}
                   </div>
                   {summary.updated_at !== summary.created_at && (
-                    <div className=\"flex items-center gap-1\">
-                      <RefreshCw className=\"w-3 h-3\" />
+                    <div className="flex items-center gap-1">
+                      <RefreshCw className="w-3 h-3" />
                       Updated: {new Date(summary.updated_at).toLocaleDateString()}
                     </div>
                   )}
                 </div>
 
                 {/* Actions */}
-                <div className=\"flex gap-2\">
+                <div className="flex gap-2">
                   <Button
-                    size=\"sm\"
-                    variant=\"outline\"
-                    className=\"flex-1\"
+                    size="sm"
+                    variant="outline"
+                    className="flex-1"
                     onClick={() => onViewSummary?.(summary.summary_id, summary.experience_id)}
                   >
-                    <Eye className=\"w-4 h-4 mr-2\" />
+                    <Eye className="w-4 h-4 mr-2" />
                     View
                   </Button>
                   <Button
-                    size=\"sm\"
-                    variant=\"outline\"
+                    size="sm"
+                    variant="outline"
                     onClick={() => deleteSummary(summary.summary_id)}
                   >
-                    <Trash2 className=\"w-4 h-4\" />
+                    <Trash2 className="w-4 h-4" />
                   </Button>
                 </div>
               </CardContent>

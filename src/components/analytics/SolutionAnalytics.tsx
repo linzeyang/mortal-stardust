@@ -268,7 +268,7 @@ const SolutionAnalytics: React.FC<SolutionAnalyticsProps> = ({ userId }) => {
                 <div key={key} className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="capitalize">{key.replace('_', ' ')}</span>
-                    <span>{typeof value === 'number' ? `${value.toFixed(1)}%` : value}</span>
+                    <span>{typeof value === 'number' ? `${value.toFixed(1)}%` : String(value)}</span>
                   </div>
                   {typeof value === 'number' && (
                     <Progress value={value} className="h-2" />

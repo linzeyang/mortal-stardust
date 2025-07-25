@@ -78,8 +78,8 @@ export function RoleSelection({ onRoleSelected, selectedRole }: RoleSelectionPro
             icon: 'target',
             tags: ['商业策略', '团队管理', '融资决策', '风险控制'],
             preview: {
-              sectionCount: 5,
-              fieldCount: 18,
+              sectionCount: 4,
+              fieldCount: 17,
               estimatedTime: '20-25分钟'
             }
           },

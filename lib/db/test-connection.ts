@@ -19,7 +19,7 @@ async function testConnection() {
       console.log('✅ MongoDB connection successful!');
 
       // List collections
-      const collections = await mongoose.connection.db.listCollections().toArray();
+      const collections = await mongoose.connection.db?.listCollections().toArray() || [];
       console.log('📚 Available collections:', collections.map(c => c.name));
 
     } else {

@@ -910,11 +910,320 @@ student_template = RoleTemplate(
     version="1.0",
 )
 
+# Other/General Template
+other_template = RoleTemplate(
+    id="other_v1",
+    role=UserRole.OTHER,
+    name="通用经历模板",
+    description="适用于各种生活情况的灵活模板，帮助处理不同类型的个人挑战和困扰",
+    icon="user",
+    sections=[
+        TemplateSection(
+            id="general_info",
+            title="基本信息",
+            description="请提供您的基本情况",
+            icon="user",
+            order=1,
+            fields=[
+                InputField(
+                    id="life_situation",
+                    label="生活状况",
+                    type=InputFieldType.SELECT,
+                    required=True,
+                    options=[
+                        {"value": "working_professional", "label": "在职人员"},
+                        {"value": "job_seeker", "label": "求职者"},
+                        {"value": "retiree", "label": "退休人员"},
+                        {"value": "homemaker", "label": "家庭主妇/主夫"},
+                        {"value": "freelancer", "label": "自由职业者"},
+                        {"value": "caregiver", "label": "照护者"},
+                        {"value": "other", "label": "其他"},
+                    ],
+                ),
+                InputField(
+                    id="current_role",
+                    label="当前角色",
+                    type=InputFieldType.TEXT,
+                    placeholder="简要描述您当前的主要角色或身份...",
+                    required=False,
+                ),
+                InputField(
+                    id="age_range",
+                    label="年龄段",
+                    type=InputFieldType.SELECT,
+                    required=False,
+                    options=[
+                        {"value": "under_18", "label": "18岁以下"},
+                        {"value": "18_25", "label": "18-25岁"},
+                        {"value": "26_35", "label": "26-35岁"},
+                        {"value": "36_45", "label": "36-45岁"},
+                        {"value": "46_55", "label": "46-55岁"},
+                        {"value": "56_65", "label": "56-65岁"},
+                        {"value": "over_65", "label": "65岁以上"},
+                    ],
+                ),
+                InputField(
+                    id="main_concerns",
+                    label="主要关注领域",
+                    type=InputFieldType.MULTISELECT,
+                    required=True,
+                    options=[
+                        {"value": "personal_growth", "label": "个人成长"},
+                        {"value": "relationships", "label": "人际关系"},
+                        {"value": "health_wellness", "label": "健康养生"},
+                        {"value": "financial_planning", "label": "财务规划"},
+                        {"value": "life_transitions", "label": "人生转变"},
+                        {"value": "family_issues", "label": "家庭问题"},
+                        {"value": "mental_health", "label": "心理健康"},
+                        {"value": "life_purpose", "label": "人生目标"},
+                    ],
+                ),
+            ],
+        ),
+        TemplateSection(
+            id="challenge_description",
+            title="挑战描述",
+            description="详细描述您当前面临的挑战或困扰",
+            icon="alert-circle",
+            order=2,
+            fields=[
+                InputField(
+                    id="detailed_problem",
+                    label="详细问题描述",
+                    type=InputFieldType.TEXTAREA,
+                    placeholder="请详细描述您目前面临的问题或挑战...",
+                    required=True,
+                    validations=[
+                        ValidationRule(
+                            type="min_length",
+                            value=50,
+                            message="请详细描述，至少50个字符",
+                        )
+                    ],
+                ),
+                InputField(
+                    id="impact_areas",
+                    label="影响领域",
+                    type=InputFieldType.MULTISELECT,
+                    required=True,
+                    options=[
+                        {"value": "emotional_wellbeing", "label": "情绪健康"},
+                        {"value": "daily_functioning", "label": "日常生活"},
+                        {"value": "work_performance", "label": "工作表现"},
+                        {"value": "social_relationships", "label": "社交关系"},
+                        {"value": "family_dynamics", "label": "家庭关系"},
+                        {"value": "physical_health", "label": "身体健康"},
+                        {"value": "financial_stability", "label": "经济状况"},
+                        {"value": "future_planning", "label": "未来规划"},
+                    ],
+                ),
+                InputField(
+                    id="stress_level",
+                    label="困扰程度",
+                    type=InputFieldType.SLIDER,
+                    required=True,
+                    defaultValue=5,
+                    validations=[
+                        ValidationRule(
+                            type="range", value="1-10", message="请选择1-10之间的数值"
+                        )
+                    ],
+                    helpText="1表示轻微困扰，10表示严重困扰",
+                ),
+                InputField(
+                    id="duration",
+                    label="持续时间",
+                    type=InputFieldType.SELECT,
+                    required=False,
+                    options=[
+                        {"value": "recent", "label": "最近出现"},
+                        {"value": "few_weeks", "label": "几周"},
+                        {"value": "few_months", "label": "几个月"},
+                        {"value": "half_year", "label": "半年"},
+                        {"value": "over_year", "label": "一年以上"},
+                        {"value": "long_term", "label": "长期存在"},
+                    ],
+                ),
+            ],
+        ),
+        TemplateSection(
+            id="context_background",
+            title="背景情况",
+            description="提供更多背景信息和具体情况",
+            icon="file-text",
+            order=3,
+            fields=[
+                InputField(
+                    id="specific_situation",
+                    label="具体情况",
+                    type=InputFieldType.TEXTAREA,
+                    placeholder="请描述具体的情况、事件或环境因素...",
+                    required=True,
+                ),
+                InputField(
+                    id="attempted_solutions",
+                    label="已尝试的方法",
+                    type=InputFieldType.TEXTAREA,
+                    placeholder="描述您已经尝试过的解决方法及其效果...",
+                    required=False,
+                ),
+                InputField(
+                    id="support_system",
+                    label="支持系统",
+                    type=InputFieldType.MULTISELECT,
+                    required=False,
+                    options=[
+                        {"value": "family", "label": "家人"},
+                        {"value": "friends", "label": "朋友"},
+                        {"value": "colleagues", "label": "同事"},
+                        {"value": "professionals", "label": "专业人士"},
+                        {"value": "community", "label": "社区支持"},
+                        {"value": "online_groups", "label": "网络群体"},
+                        {"value": "limited", "label": "支持有限"},
+                    ],
+                ),
+                InputField(
+                    id="external_factors",
+                    label="外部因素",
+                    type=InputFieldType.TEXTAREA,
+                    placeholder="是否有外部环境、社会或经济因素影响这个问题？",
+                    required=False,
+                ),
+            ],
+        ),
+        TemplateSection(
+            id="goals_expectations",
+            title="目标与期望",
+            description="您希望达到的目标和期望的改善",
+            icon="target",
+            order=4,
+            fields=[
+                InputField(
+                    id="desired_outcomes",
+                    label="期望结果",
+                    type=InputFieldType.TEXTAREA,
+                    placeholder="描述您希望通过咨询达到的具体目标...",
+                    required=True,
+                ),
+                InputField(
+                    id="success_metrics",
+                    label="成功标准",
+                    type=InputFieldType.TEXTAREA,
+                    placeholder="您如何判断问题得到了改善或解决？",
+                    required=False,
+                ),
+                InputField(
+                    id="timeline_expectations",
+                    label="时间期望",
+                    type=InputFieldType.SELECT,
+                    required=False,
+                    options=[
+                        {"value": "immediate", "label": "立即见效"},
+                        {"value": "few_weeks", "label": "几周内"},
+                        {"value": "few_months", "label": "几个月内"},
+                        {"value": "long_term", "label": "长期改善"},
+                        {"value": "flexible", "label": "时间灵活"},
+                    ],
+                ),
+                InputField(
+                    id="motivation_level",
+                    label="改变动机",
+                    type=InputFieldType.SLIDER,
+                    required=False,
+                    defaultValue=7,
+                    validations=[
+                        ValidationRule(
+                            type="range", value="1-10", message="请选择1-10之间的数值"
+                        )
+                    ],
+                    helpText="1表示动机很低，10表示动机很强",
+                ),
+            ],
+        ),
+    ],
+    aiPrompts=AIPromptTemplate(
+        stage1_prompt="""你是一位经验丰富的心理咨询师和生活指导专家，专门帮助人们处理各种生活挑战和个人困扰。
+
+用户背景：
+- 生活状况：{life_situation}
+- 当前角色：{current_role}
+- 年龄段：{age_range}
+- 主要关注领域：{main_concerns}
+
+面临挑战：
+- 详细问题：{detailed_problem}
+- 影响领域：{impact_areas}
+- 困扰程度：{stress_level}/10
+- 持续时间：{duration}
+
+具体情况：{specific_situation}
+
+请提供以下心理疗愈和情感支持：
+1. 情绪调节和压力缓解策略
+2. 认知重构，帮助重新审视问题
+3. 自我关怀和心理建设方法
+4. 建立积极心态和应对机制
+5. 情感支持和鼓励
+
+请用温暖、理解和专业的语调回应，帮助用户获得心理平衡。""",
+        stage2_prompt="""基于之前的心理疗愈支持，现在请提供具体的实用解决方案：
+
+已尝试方法：{attempted_solutions}
+可用支持：{support_system}
+外部因素：{external_factors}
+期望结果：{desired_outcomes}
+成功标准：{success_metrics}
+时间期望：{timeline_expectations}
+改变动机：{motivation_level}/10
+
+请提供：
+1. 具体的行动步骤和实施计划
+2. 问题解决的多种策略选择
+3. 资源利用和支持系统建设
+4. 生活方式调整和改善建议
+5. 可衡量的短期和长期目标
+6. 预防问题复发的长期策略
+
+每个建议都要具体可行，并提供实施的优先级和时间安排。""",
+        stage3_prompt="""这是后续跟进阶段，请根据用户的实施情况提供：
+
+1. 进展评估和效果分析
+2. 策略调整和优化建议
+3. 新出现问题的应对方案
+4. 长期发展和成长规划
+5. 预防类似问题的系统性方法
+6. 持续改进和自我提升建议
+
+请保持持续关注和支持的态度，帮助用户建立长期的应对能力。""",
+        context_variables=[
+            "life_situation",
+            "current_role",
+            "age_range",
+            "main_concerns",
+            "detailed_problem",
+            "impact_areas",
+            "stress_level",
+            "duration",
+            "specific_situation",
+            "attempted_solutions",
+            "support_system",
+            "external_factors",
+            "desired_outcomes",
+            "success_metrics",
+            "timeline_expectations",
+            "motivation_level",
+        ],
+    ),
+    tags=["通用支持", "个人成长", "生活指导", "问题解决"],
+    version="1.0",
+)
+
 # Template registry for easy access
 TEMPLATE_REGISTRY = {
     UserRole.WORKPLACE_NEWCOMER: workplace_newcomer_template,
     UserRole.ENTREPRENEUR: entrepreneur_template,
     UserRole.STUDENT: student_template,
+    UserRole.OTHER: other_template,
 }
 
 

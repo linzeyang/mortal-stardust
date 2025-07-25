@@ -96,7 +96,7 @@ export default function RatingAnalytics() {
       }
     } catch (error) {
       console.error('Failed to load analytics:', error);
-      
+
       // 即使出错也提供模拟数据，确保组件能正常显示
       const fallbackData: RatingAnalytics = {
         total_ratings: 0,
@@ -106,7 +106,7 @@ export default function RatingAnalytics() {
         low_ratings: 0,
         success_rate: 0
       };
-      
+
       setAnalytics(fallbackData);
       setError('无法加载统计数据，显示默认数据');
     } finally {
@@ -258,7 +258,7 @@ export default function RatingAnalytics() {
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="value" fill={(entry) => entry.color} />
+                <Bar dataKey="value" fill="#8884d8" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -279,7 +279,7 @@ export default function RatingAnalytics() {
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="value"
-                  label={({ name, value, percent }) => `${name}: ${value} (${(percent * 100).toFixed(0)}%)`}
+                  label={({ name, value, percent }: any) => `${name}: ${value} (${((percent || 0) * 100).toFixed(0)}%)`}
                 >
                   {pieData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />

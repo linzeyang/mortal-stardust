@@ -36,7 +36,7 @@ export function ExperienceForm({ onSubmit, initialData, role }: ExperienceFormPr
   };
 
   const handleInputChange = (field: string, value: any) => {
-    setFormData(prev => ({
+    setFormData((prev: any) => ({
       ...prev,
       [field]: value
     }));

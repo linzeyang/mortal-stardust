@@ -123,7 +123,7 @@ export default function SolutionRating({
   // 内部事件处理函数
   const handleRatingCompleteInternal = (rating: number, regenerated?: boolean) => {
     console.log(`Solution ${solutionId} rated: ${rating}%, regenerated: ${regenerated}`);
-    
+
     // 发送分析数据
     if (typeof window !== 'undefined' && window.gtag) {
       window.gtag('event', 'solution_rated', {
@@ -136,7 +136,7 @@ export default function SolutionRating({
 
   const handleRegenerateRequestInternal = (newSolutionId: string) => {
     console.log(`Solution ${solutionId} regenerated: ${newSolutionId}`);
-    
+
     // 发送分析数据
     if (typeof window !== 'undefined' && window.gtag) {
       window.gtag('event', 'solution_regenerated', {
@@ -247,7 +247,7 @@ export default function SolutionRating({
         feedback_text: ratingData.feedback_text,
         helpful_aspects: ratingData.helpful_aspects,
         improvement_suggestions: ratingData.improvement_suggestions,
-        would_recommend: ratingData.would_recommend,
+        would_recommend: ratingData.would_recommend ?? undefined,
         implementation_difficulty: ratingData.implementation_difficulty,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
