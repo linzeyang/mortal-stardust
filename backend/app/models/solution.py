@@ -99,6 +99,7 @@ class SolutionStatus(str, Enum):
     REGENERATING = "regenerating"
     ARCHIVED = "archived"
     COMPLETED = "completed"
+    FAILED = "failed"
 
 
 class UserRating(int, Enum):
