@@ -14,7 +14,7 @@ from ..dependencies import get_current_user
 from ..models.solution import SolutionStatus
 from ..models.user import User
 from ..services.enhanced_ai_service import enhanced_ai_service
-from ..utils.encryption import decrypt_data
+from ..utils.field_encryption import decrypt_solution_data, encrypt_solution_data
 
 router = APIRouter(prefix="/api/ai/stage2", tags=["ai-stage2"])
 
@@ -183,38 +183,17 @@ async def get_stage2_status(
                 detail="Stage 2 solution not found",
             )
 
-        # Decrypt content if needed
-        content = solution_doc.get("content", {})
-        if content and solution_doc.get("status") == SolutionStatus.COMPLETED:
+        # Decrypt solution data using field-level decryption
+        decrypted_solution = solution_doc
+        if solution_doc.get("status") == SolutionStatus.COMPLETED:
             try:
-                if isinstance(content.get("title"), str) and content[
-                    "title"
-                ].startswith("encrypted:"):
-                    content["title"] = decrypt_data(content["title"])
-                if isinstance(content.get("description"), str) and content[
-                    "description"
-                ].startswith("encrypted:"):
-                    content["description"] = decrypt_data(content["description"])
-                if isinstance(content.get("recommendations"), list):
-                    content["recommendations"] = [
-                        (
-                            decrypt_data(rec)
-                            if isinstance(rec, str) and rec.startswith("encrypted:")
-                            else rec
-                        )
-                        for rec in content["recommendations"]
-                    ]
-                if isinstance(content.get("actionSteps"), list):
-                    content["actionSteps"] = [
-                        (
-                            decrypt_data(step)
-                            if isinstance(step, str) and step.startswith("encrypted:")
-                            else step
-                        )
-                        for step in content["actionSteps"]
-                    ]
+                decrypted_solution = decrypt_solution_data(dict(solution_doc))
             except Exception as e:
                 print(f"Decryption warning: {e}")
+                # Fall back to original data if decryption fails
+                decrypted_solution = solution_doc
+
+        content = decrypted_solution.get("content", {})
 
         return {
             "solution_id": str(solution_doc["_id"]),
@@ -325,36 +304,29 @@ async def process_stage2_background(
         # Calculate total processing time including AI API calls and data processing
         processing_time = (datetime.utcnow() - start_time).total_seconds()
 
-        # Update solution record with AI-generated results and metadata
-        # Content is encrypted by the AI service before storage
+        solution_data = {
+            "status": SolutionStatus.COMPLETED,  # Mark as successfully completed
+            "content": processing_result["content"],  # AI-generated content
+            "aiMetadata": processing_result["aiMetadata"],  # AI processing details
+            "metadata": {
+                "confidence_score": processing_result.get(
+                    "confidence_score", 0.8
+                ),  # AI confidence in solution quality
+                "processing_time": processing_time,  # Total processing duration
+                "stage1_integration": bool(stage1_solution_doc),  # Used Stage 1 context
+                "context_provided": bool(additional_context),  # Had additional context
+            },
+            "processingTime": processing_time,  # Duplicate for compatibility
+            "updatedAt": datetime.utcnow(),  # Last update timestamp
+            "completedAt": datetime.utcnow(),  # Completion timestamp
+        }
+
+        # Apply field-level encryption
+        encrypted_solution_data = encrypt_solution_data(solution_data)
+
         await db.solutions.update_one(
             {"_id": ObjectId(solution_id)},
-            {
-                "$set": {
-                    "status": SolutionStatus.COMPLETED,  # Mark as successfully completed
-                    "content": processing_result[
-                        "content"
-                    ],  # Encrypted AI-generated content
-                    "aiMetadata": processing_result[
-                        "ai_metadata"
-                    ],  # AI processing details
-                    "metadata": {
-                        "confidence_score": processing_result.get(
-                            "confidence_score", 0.8
-                        ),  # AI confidence in solution quality
-                        "processing_time": processing_time,  # Total processing duration
-                        "stage1_integration": bool(
-                            stage1_solution_doc
-                        ),  # Used Stage 1 context
-                        "context_provided": bool(
-                            additional_context
-                        ),  # Had additional context
-                    },
-                    "processingTime": processing_time,  # Duplicate for compatibility
-                    "updatedAt": datetime.utcnow(),  # Last update timestamp
-                    "completedAt": datetime.utcnow(),  # Completion timestamp
-                }
-            },
+            {"$set": encrypted_solution_data},
         )
 
         # Log successful completion for monitoring and debugging

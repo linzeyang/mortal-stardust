@@ -126,6 +126,11 @@ async def get_solutions_for_experience(
         # Decrypt sensitive data for authorized user response
         decrypted_solution = decrypt_solution_data(dict(solution))
         decrypted_solution["id"] = str(solution["_id"])
+
+        # Remove the original _id field to avoid serialization issues
+        if "_id" in decrypted_solution:
+            del decrypted_solution["_id"]
+
         solutions.append(decrypted_solution)
 
     return solutions

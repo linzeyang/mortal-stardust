@@ -31,6 +31,7 @@ Usage Patterns:
 - Monitor encryption metadata for system health and debugging
 """
 
+import copy
 import logging
 from functools import wraps
 from typing import Any, Dict
@@ -129,7 +130,7 @@ class FieldEncryptor:
         if schema_name not in ENCRYPTION_SCHEMA:
             return document
 
-        encrypted_doc = document.copy()
+        encrypted_doc = copy.deepcopy(document)
         schema = ENCRYPTION_SCHEMA[schema_name]
 
         for field_path, should_encrypt in schema.items():
@@ -186,7 +187,7 @@ class FieldEncryptor:
         if schema_name not in ENCRYPTION_SCHEMA:
             return document
 
-        decrypted_doc = document.copy()
+        decrypted_doc = copy.deepcopy(document)
         schema = ENCRYPTION_SCHEMA[schema_name]
 
         for field_path, should_encrypt in schema.items():
