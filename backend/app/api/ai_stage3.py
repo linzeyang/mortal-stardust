@@ -66,7 +66,7 @@ async def process_stage3(
         experience_doc = await db.experiences.find_one(
             {
                 "_id": ObjectId(request.experience_id),
-                "userId": ObjectId(current_user.id),
+                "userId": current_user.id,
             }
         )
 
@@ -79,9 +79,9 @@ async def process_stage3(
         # Check if Stage 3 solution already exists
         existing_solution = await db.solutions.find_one(
             {
-                "experienceId": ObjectId(request.experience_id),
+                "experienceId": request.experience_id,
                 "stage": 3,
-                "userId": ObjectId(current_user.id),
+                "userId": current_user.id,
             }
         )
 
@@ -92,8 +92,8 @@ async def process_stage3(
         if request.stage1_solution_id:
             stage1_solution = await db.solutions.find_one(
                 {
-                    "_id": ObjectId(request.stage1_solution_id),
-                    "userId": ObjectId(current_user.id),
+                    "_id": request.stage1_solution_id,
+                    "userId": current_user.id,
                     "stage": 1,
                 }
             )
@@ -101,8 +101,8 @@ async def process_stage3(
         if request.stage2_solution_id:
             stage2_solution = await db.solutions.find_one(
                 {
-                    "_id": ObjectId(request.stage2_solution_id),
-                    "userId": ObjectId(current_user.id),
+                    "_id": request.stage2_solution_id,
+                    "userId": current_user.id,
                     "stage": 2,
                 }
             )
@@ -130,21 +130,17 @@ async def process_stage3(
         else:
             # Create new solution record
             solution_doc = {
-                "userId": ObjectId(current_user.id),
-                "experienceId": ObjectId(request.experience_id),
+                "userId": current_user.id,
+                "experienceId": request.experience_id,
                 "stage": 3,
                 "stageName": "follow_up_support",
                 "status": SolutionStatus.PROCESSING,
                 "priority": request.priority,
                 "stage1SolutionId": (
-                    ObjectId(request.stage1_solution_id)
-                    if request.stage1_solution_id
-                    else None
+                    request.stage1_solution_id if request.stage1_solution_id else None
                 ),
                 "stage2SolutionId": (
-                    ObjectId(request.stage2_solution_id)
-                    if request.stage2_solution_id
-                    else None
+                    request.stage2_solution_id if request.stage2_solution_id else None
                 ),
                 "followUpData": (
                     request.follow_up_data.dict() if request.follow_up_data else None
@@ -203,7 +199,7 @@ async def get_stage3_status(
         solution_doc = await db.solutions.find_one(
             {
                 "_id": ObjectId(solution_id),
-                "userId": ObjectId(current_user.id),
+                "userId": current_user.id,
                 "stage": 3,
             }
         )
@@ -291,7 +287,7 @@ async def submit_follow_up(
         solution_doc = await db.solutions.find_one(
             {
                 "_id": ObjectId(solution_id),
-                "userId": ObjectId(current_user.id),
+                "userId": current_user.id,
                 "stage": 3,
             }
         )
@@ -401,7 +397,7 @@ async def process_stage3_background(
 
     try:
         # Get database connection for background task processing
-        db = await get_database()
+        db = get_database()
 
         # Get original experience data for context continuity
         # This maintains connection to the user's initial situation
@@ -494,7 +490,7 @@ async def process_stage3_background(
         # Update solution with error status and preserve processing attempt data
         # Status is set to GENERATED (not FAILED) to allow retry attempts
         try:
-            db = await get_database()
+            db = get_database()
             await db.solutions.update_one(
                 {"_id": ObjectId(solution_id)},
                 {
@@ -556,7 +552,7 @@ async def process_follow_up_background(
     """
     try:
         # Get database connection for follow-up processing
-        db = await get_database()
+        db = get_database()
 
         # Get current Stage 3 solution for context and baseline
         # This provides the foundation for adaptive recommendations

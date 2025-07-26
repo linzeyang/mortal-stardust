@@ -345,6 +345,59 @@ class EnhancedAIService:
             },
         }
 
+    def _extract_form_data(self, experience_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Extract form data from experience data."""
+        return experience_data.get("data", {})
+
+    async def _analyze_multimodal_content(
+        self, experience_data: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Analyze multimodal content (text, audio, images, video)"""
+        content = experience_data.get("content", {})
+
+        analysis = {"content_types": [], "media_summary": {}, "multimodal_insights": []}
+
+        # Analyze different content types
+        if content.get("text"):
+            analysis["content_types"].append("text")
+            analysis["media_summary"]["text"] = {
+                "word_count": len(content["text"].split()),
+                "sentiment": "mixed",  # Could integrate sentiment analysis
+            }
+
+        if content.get("audio"):
+            analysis["content_types"].append("audio")
+            audio_data = content["audio"]
+            if isinstance(audio_data, list):
+                analysis["media_summary"]["audio"] = {
+                    "file_count": len(audio_data),
+                    "total_duration": sum(
+                        item.get("duration", 0)
+                        for item in audio_data
+                        if isinstance(item, dict)
+                    ),
+                }
+
+        if content.get("images"):
+            analysis["content_types"].append("images")
+            images_data = content["images"]
+            if isinstance(images_data, list):
+                analysis["media_summary"]["images"] = {"image_count": len(images_data)}
+
+        if content.get("videos"):
+            analysis["content_types"].append("videos")
+            videos_data = content["videos"]
+            if isinstance(videos_data, list):
+                analysis["media_summary"]["videos"] = {"video_count": len(videos_data)}
+
+        # Generate multimodal insights
+        if len(analysis["content_types"]) > 1:
+            analysis["multimodal_insights"].append(
+                f"Rich multimodal experience with {len(analysis['content_types'])} content types"
+            )
+
+        return analysis
+
     def _extract_context_value(
         self, context: Dict[str, Any], variable_name: str
     ) -> str:
@@ -731,7 +784,7 @@ class EnhancedAIService:
             formatted_prompt = base_prompt
 
         # Add multimodal insights
-        if context["multimodal_insights"]["audio_insights"]:
+        if context["multimodal_insights"].get("audio_insights", []):
             formatted_prompt += "\n\n语音分析显示的实际需求："
             for insight in context["multimodal_insights"]["audio_insights"]:
                 formatted_prompt += (
