@@ -29,9 +29,11 @@ from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from ..api.auth import get_current_user
+from bson import ObjectId
+from ..dependencies import get_current_user
 from ..core.database import get_experiences_collection
 from ..models.experience import ExperienceCreate
+from ..models.user import User
 from ..utils.field_encryption import decrypt_experience_data, encrypt_experience_data
 
 router = APIRouter()
@@ -39,7 +41,7 @@ router = APIRouter()
 
 @router.post("/", response_model=dict)
 async def create_experience(
-    experience_data: ExperienceCreate, current_user: dict = Depends(get_current_user)
+    experience_data: ExperienceCreate, current_user: User = Depends(get_current_user)
 ):
     """
     Create a new life experience entry for the authenticated user.
@@ -121,7 +123,7 @@ async def create_experience(
 
     # Create document structure with user association
     experience_doc = {
-        "userId": str(current_user["_id"]),
+        "userId": ObjectId(current_user.id),
         "title": experience_data.title,
         "content": {
             "text": experience_data.content.text,
@@ -156,7 +158,7 @@ async def create_experience(
 
 @router.get("/", response_model=List[dict])
 async def get_user_experiences(
-    current_user: dict = Depends(get_current_user), skip: int = 0, limit: int = 20
+    current_user: User = Depends(get_current_user), skip: int = 0, limit: int = 20
 ):
     """
     Retrieve a paginated list of the authenticated user's experiences.
