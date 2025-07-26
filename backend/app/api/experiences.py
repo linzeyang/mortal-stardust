@@ -27,6 +27,7 @@ Security Considerations:
 from datetime import datetime
 from typing import List
 
+from bson import ObjectId
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from ..api.auth import get_current_user
@@ -241,6 +242,11 @@ async def get_user_experiences(
         # Decrypt sensitive data for authorized user response
         decrypted_experience = decrypt_experience_data(dict(experience))
         decrypted_experience["id"] = str(experience["_id"])
+
+        # Remove the original _id field to avoid serialization issues
+        if "_id" in decrypted_experience:
+            del decrypted_experience["_id"]
+
         experiences.append(decrypted_experience)
 
     return experiences
@@ -330,7 +336,7 @@ async def get_experience(
 
     # Query with user isolation for security
     experience = await experiences_collection.find_one(
-        {"_id": experience_id, "userId": str(current_user["_id"])}
+        {"_id": ObjectId(experience_id), "userId": str(current_user["_id"])}
     )
 
     if not experience:
@@ -342,5 +348,9 @@ async def get_experience(
     # Decrypt sensitive data for authorized user
     decrypted_experience = decrypt_experience_data(dict(experience))
     decrypted_experience["id"] = str(experience["_id"])
+
+    # Remove the original _id field to avoid serialization issues
+    if "_id" in decrypted_experience:
+        del decrypted_experience["_id"]
 
     return decrypted_experience

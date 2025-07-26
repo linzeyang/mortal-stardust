@@ -1,5 +1,6 @@
+'use client';
+
 import { Suspense } from 'react';
-import { Metadata } from 'next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,7 @@ import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { EmptyState } from '@/components/ui/empty-state';
+import { useSolutions, Solution } from '@/hooks/use-solutions';
 import {
   Brain,
   Heart,
@@ -22,11 +24,6 @@ import {
   Eye,
   TrendingUp
 } from 'lucide-react';
-
-export const metadata: Metadata = {
-  title: 'AI解决方案 - 人生经历收集与AI辅导平台',
-  description: '查看个性化的AI分析和解决方案建议',
-};
 
 const solutionStages = [
   {
@@ -59,17 +56,7 @@ const solutionStages = [
 ];
 
 interface SolutionCardProps {
-  solution: {
-    id: string;
-    title: string;
-    content: string;
-    rating?: number;
-    stage: string;
-    createdAt: string;
-    status: 'pending' | 'completed' | 'needs_regeneration';
-    aiModel: string;
-    experienceType: string;
-  };
+  solution: Solution;
 }
 
 function SolutionCard({ solution }: SolutionCardProps) {
@@ -148,33 +135,42 @@ function SolutionCard({ solution }: SolutionCardProps) {
   );
 }
 
-function SolutionStats() {
+function SolutionStats({ solutions }: { solutions: Solution[] }) {
+  const totalSolutions = solutions.length;
+  const completedSolutions = solutions.filter(s => s.status === 'completed').length;
+  const ratedSolutions = solutions.filter(s => s.rating !== null && s.rating !== undefined);
+  const averageRating = ratedSolutions.length > 0
+    ? Math.round(ratedSolutions.reduce((sum, s) => sum + (s.rating || 0), 0) / ratedSolutions.length)
+    : 0;
+  const completionRate = totalSolutions > 0 ? Math.round((completedSolutions / totalSolutions) * 100) : 0;
+  const activeSessions = solutions.filter(s => s.status === 'pending').length;
+
   const stats = [
     {
       label: '总解决方案',
-      value: '24',
-      change: '+3',
+      value: totalSolutions.toString(),
+      change: totalSolutions > 0 ? `+${totalSolutions}` : '0',
       icon: Brain,
       color: 'text-blue-500'
     },
     {
       label: '平均评分',
-      value: '78%',
-      change: '+5%',
+      value: averageRating > 0 ? `${averageRating}%` : '暂无',
+      change: averageRating > 0 ? `${averageRating}%` : '0%',
       icon: Star,
       color: 'text-yellow-500'
     },
     {
       label: '完成率',
-      value: '85%',
-      change: '+2%',
+      value: `${completionRate}%`,
+      change: `${completionRate}%`,
       icon: CheckCircle,
       color: 'text-green-500'
     },
     {
-      label: '活跃会话',
-      value: '7',
-      change: '+1',
+      label: '处理中',
+      value: activeSessions.toString(),
+      change: activeSessions > 0 ? `${activeSessions}个` : '0',
       icon: MessageCircle,
       color: 'text-purple-500'
     }
@@ -205,7 +201,13 @@ function SolutionStats() {
   );
 }
 
-function ProcessingIndicator() {
+function ProcessingIndicator({ solutions }: { solutions: Solution[] }) {
+  const pendingSolutions = solutions.filter(s => s.status === 'pending');
+
+  if (pendingSolutions.length === 0) {
+    return null;
+  }
+
   return (
     <Card className="mb-8 border-blue-200 bg-gradient-to-r from-blue-50 to-purple-50">
       <CardContent className="p-6">
@@ -219,7 +221,9 @@ function ProcessingIndicator() {
               我们的AI系统正在深度分析您提交的人生经历，预计需要2-3分钟完成三个阶段的处理。
             </p>
             <Progress value={65} className="w-full" />
-            <p className="text-xs text-blue-600 mt-2">第2阶段：生成实际解决方案 (65%)</p>
+            <p className="text-xs text-blue-600 mt-2">
+              正在处理 {pendingSolutions.length} 个解决方案...
+            </p>
           </div>
         </div>
       </CardContent>
@@ -227,44 +231,61 @@ function ProcessingIndicator() {
   );
 }
 
-// Mock data for demonstration
-const mockSolutions = [
-  {
-    id: '1',
-    title: '学业压力缓解方案',
-    content: '基于您的学习压力情况，建议采用番茄工作法来提高学习效率，同时建立合理的学习目标和时间规划。建议每天保持7-8小时的睡眠，适当的运动有助于释放压力...',
-    rating: 85,
-    stage: 'stage1',
-    createdAt: '2024-01-15',
-    status: 'completed' as const,
-    aiModel: 'GPT-4',
-    experienceType: 'academic_stress'
-  },
-  {
-    id: '2',
-    title: '时间管理优化建议',
-    content: '针对您提到的时间管理困扰，推荐使用GTD方法论。首先将所有任务收集到一个统一的清单中，然后按照紧急程度和重要性进行分类处理...',
-    rating: 92,
-    stage: 'stage2',
-    createdAt: '2024-01-14',
-    status: 'completed' as const,
-    aiModel: 'GPT-4',
-    experienceType: 'time_management'
-  },
-  {
-    id: '3',
-    title: '社交焦虑应对策略',
-    content: '社交焦虑是很常见的心理现象。建议从小的社交场合开始练习，逐步建立自信。可以尝试深呼吸放松技巧，以及认知行为疗法的一些方法...',
-    rating: 45,
-    stage: 'stage1',
-    createdAt: '2024-01-13',
-    status: 'needs_regeneration' as const,
-    aiModel: 'GPT-4',
-    experienceType: 'social_anxiety'
-  }
-];
+function AISolutionsContent() {
+  const { solutions, loading, error, refetch } = useSolutions();
 
-export default function AISolutionsPage() {
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-12">
+              <h1 className="text-4xl font-bold text-gray-900 mb-4">
+                您的AI解决方案
+              </h1>
+              <p className="text-xl text-gray-600 mb-6">
+                基于深度分析的个性化建议和心理支持方案
+              </p>
+            </div>
+            <div className="flex justify-center items-center py-20">
+              <LoadingSpinner />
+              <span className="ml-3 text-gray-600">正在加载您的解决方案...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-12">
+              <h1 className="text-4xl font-bold text-gray-900 mb-4">
+                您的AI解决方案
+              </h1>
+              <p className="text-xl text-gray-600 mb-6">
+                基于深度分析的个性化建议和心理支持方案
+              </p>
+            </div>
+            <Card className="border-red-200 bg-red-50">
+              <CardContent className="p-6 text-center">
+                <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-red-900 mb-2">加载失败</h3>
+                <p className="text-red-700 mb-4">{error}</p>
+                <Button onClick={refetch} variant="outline">
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  重试
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
       <div className="container mx-auto px-4 py-8">
@@ -280,10 +301,10 @@ export default function AISolutionsPage() {
           </div>
 
           {/* Stats */}
-          <SolutionStats />
+          <SolutionStats solutions={solutions} />
 
           {/* Processing Indicator */}
-          <ProcessingIndicator />
+          <ProcessingIndicator solutions={solutions} />
 
           {/* Solutions Tabs */}
           <Tabs defaultValue="all" className="w-full">
@@ -296,20 +317,28 @@ export default function AISolutionsPage() {
 
             <TabsContent value="all" className="mt-6">
               <div className="space-y-6">
-                {mockSolutions.map((solution) => (
-                  <SolutionCard key={solution.id} solution={solution} />
-                ))}
+                {solutions.length > 0 ? (
+                  solutions.map((solution) => (
+                    <SolutionCard key={solution.id} solution={solution} />
+                  ))
+                ) : (
+                  <EmptyState
+                    icon={<Brain className="h-12 w-12" />}
+                    title="暂无AI解决方案"
+                    description="当您提交新的经历后，AI将为您生成个性化的解决方案"
+                  />
+                )}
               </div>
             </TabsContent>
 
             <TabsContent value="stage1" className="mt-6">
               <div className="space-y-6">
-                {mockSolutions
+                {solutions
                   .filter(s => s.stage === 'stage1')
                   .map((solution) => (
                     <SolutionCard key={solution.id} solution={solution} />
                   ))}
-                {mockSolutions.filter(s => s.stage === 'stage1').length === 0 && (
+                {solutions.filter(s => s.stage === 'stage1').length === 0 && (
                   <EmptyState
                     icon={<Heart className="h-12 w-12" />}
                     title="暂无心理疗愈方案"
@@ -321,20 +350,36 @@ export default function AISolutionsPage() {
 
             <TabsContent value="stage2" className="mt-6">
               <div className="space-y-6">
-                {mockSolutions
+                {solutions
                   .filter(s => s.stage === 'stage2')
                   .map((solution) => (
                     <SolutionCard key={solution.id} solution={solution} />
                   ))}
+                {solutions.filter(s => s.stage === 'stage2').length === 0 && (
+                  <EmptyState
+                    icon={<Target className="h-12 w-12" />}
+                    title="暂无实际解决方案"
+                    description="当您提交新的经历后，AI将为您生成具体可行的解决策略"
+                  />
+                )}
               </div>
             </TabsContent>
 
             <TabsContent value="stage3" className="mt-6">
-              <EmptyState
-                icon={<Users className="h-12 w-12" />}
-                title="后续支持方案开发中"
-                description="我们正在完善长期跟进功能，敬请期待"
-              />
+              <div className="space-y-6">
+                {solutions
+                  .filter(s => s.stage === 'stage3')
+                  .map((solution) => (
+                    <SolutionCard key={solution.id} solution={solution} />
+                  ))}
+                {solutions.filter(s => s.stage === 'stage3').length === 0 && (
+                  <EmptyState
+                    icon={<Users className="h-12 w-12" />}
+                    title="暂无后续支持方案"
+                    description="当您提交新的经历后，AI将为您提供长期指导建议"
+                  />
+                )}
+              </div>
             </TabsContent>
           </Tabs>
 
@@ -344,13 +389,21 @@ export default function AISolutionsPage() {
               <MessageCircle className="h-5 w-5 mr-2" />
               新增经历
             </Button>
-            <Button size="lg" variant="outline" className="px-8">
-              <Download className="h-5 w-5 mr-2" />
-              导出所有方案
+            <Button size="lg" variant="outline" className="px-8" onClick={refetch}>
+              <RefreshCw className="h-5 w-5 mr-2" />
+              刷新数据
             </Button>
           </div>
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AISolutionsPage() {
+  return (
+    <Suspense fallback={<LoadingSpinner />}>
+      <AISolutionsContent />
+    </Suspense>
   );
 }
