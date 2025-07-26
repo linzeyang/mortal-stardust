@@ -39,7 +39,7 @@ from ..models.user import User
 from ..services.enhanced_ai_service import enhanced_ai_service
 from ..utils.encryption import decrypt_data
 
-router = APIRouter(prefix="/api/ai/stage1", tags=["ai-stage1"])
+router = APIRouter()
 
 
 class Stage1ProcessingRequest(BaseModel):
@@ -79,6 +79,12 @@ class Stage1ProcessingResponse(BaseModel):
     processing_time: float
     confidence_score: float
     message: str
+
+
+@router.options("/process")
+async def process_stage1_options():
+    """Handle preflight OPTIONS request for CORS."""
+    return {"message": "OK"}
 
 
 @router.post("/process", response_model=Stage1ProcessingResponse)
