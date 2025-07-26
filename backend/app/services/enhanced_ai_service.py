@@ -17,11 +17,18 @@ from ..utils.encryption import encrypt_data, encrypt_object
 
 class EnhancedAIService:
     def __init__(self):
+        # 配置异步OpenAI客户端以支持Kimi API
         self.client = (
-            openai.OpenAI(api_key=settings.OPENAI_API_KEY)
+            openai.AsyncOpenAI(
+                api_key=settings.OPENAI_API_KEY,
+                base_url=settings.OPENAI_API_URL,
+                timeout=30.0,  # 增加超时时间
+                max_retries=2   # 设置重试次数
+            )
             if settings.OPENAI_API_KEY
             else None
         )
+        self.model_name = settings.OPENAI_MODEL_NAME
         self.media_processor = media_processor
 
     async def process_experience_stage1(
@@ -206,6 +213,10 @@ class EnhancedAIService:
 
         return indicators
 
+    def _extract_form_data(self, experience_data: Dict[str, Any]) -> Dict[str, Any]:
+        """Extract form data from experience data."""
+        return experience_data.get("data", {})
+
     async def _generate_stage1_solution(
         self, context: Dict[str, Any], role_template
     ) -> Dict[str, Any]:
@@ -242,21 +253,29 @@ class EnhancedAIService:
                     f"\n- 视觉情绪指标: {insight.get('emotional_indicators', [])}"
                 )
 
-        # Make API call
-        response = await self.client.chat.completions.create(
-            model="gpt-4-turbo-preview",
-            messages=[
-                {
-                    "role": "system",
-                    "content": "你是一位经验丰富的心理健康专家，专门提供温暖、专业的心理疗愈支持。你的回应应该体现深度理解、共情和实用的心理健康指导。",
-                },
-                {"role": "user", "content": formatted_prompt},
-            ],
-            temperature=0.7,
-            max_tokens=2000,
-            presence_penalty=0.1,
-            frequency_penalty=0.1,
-        )
+        # Make API call to Kimi
+        try:
+            print(f"🤖 调用Kimi API - 模型: {self.model_name}")
+            print(f"🤖 API端点: {self.client.base_url}")
+            
+            response = await self.client.chat.completions.create(
+                model=self.model_name,  # 使用配置的Kimi模型
+                messages=[
+                    {
+                        "role": "system",
+                        "content": "你是一位经验丰富的心理健康专家，专门提供温暖、专业的心理疗愈支持。你的回应应该体现深度理解、共情和实用的心理健康指导。请用中文回复，语言要温和、有同理心，提供具体可行的建议。",
+                    },
+                    {"role": "user", "content": formatted_prompt},
+                ],
+                temperature=0.7,
+                max_tokens=3000,  # Kimi支持更长的输出
+                stream=False
+            )
+            print(f"✅ Kimi API调用成功")
+            
+        except Exception as api_error:
+            print(f"❌ Kimi API调用失败: {type(api_error).__name__}: {str(api_error)}")
+            raise Exception(f"Kimi API调用失败: {str(api_error)}")
 
         content = response.choices[0].message.content
 
@@ -271,7 +290,7 @@ class EnhancedAIService:
             "confidence_score": 0.85,
             "prompt_used": formatted_prompt,
             "model_params": {
-                "model": "gpt-4-turbo-preview",
+                "model": self.model_name,
                 "temperature": 0.7,
                 "max_tokens": 2000,
             },
@@ -546,8 +565,13 @@ class EnhancedAIService:
         start_time = datetime.utcnow()
 
         try:
+            print(f"🔄 Stage 2处理开始，用户角色: {user_role}")
+            print(f"📊 Experience数据: {experience_data.get('_id', 'No ID')}")
+            print(f"🔗 Stage1解决方案: {'存在' if stage1_solution else '不存在'}")
+            
             # Get user role template
             role_template = get_template_by_role(UserRole(user_role))
+            print(f"✅ 获取角色模板成功: {role_template.name if role_template else 'None'}")
 
             # Build context for Stage 2 processing
             context = await self._build_stage2_context(
@@ -558,10 +582,15 @@ class EnhancedAIService:
             )
 
             # Generate Stage 2 practical solution
+            print(f"🤖 AI客户端状态: {'可用' if self.client else '不可用'}")
             if self.client:  # Use real AI if available
+                print(f"🔄 调用真实AI服务...")
                 solution = await self._generate_stage2_solution(context, role_template)
+                print(f"✅ AI服务调用完成")
             else:
+                print(f"🔄 使用模拟AI服务...")
                 solution = await self._mock_stage2_solution(context, role_template)
+                print(f"✅ 模拟AI服务完成")
 
             # Calculate processing time
             processing_time = (datetime.utcnow() - start_time).total_seconds()
@@ -602,7 +631,9 @@ class EnhancedAIService:
             }
 
         except Exception as e:
-            print(f"Stage 2 processing error: {e}")
+            print(f"❌ Stage 2 processing error: {type(e).__name__}: {e}")
+            import traceback
+            print(f"📋 错误堆栈: {traceback.format_exc()}")
             raise Exception(f"Stage 2 processing failed: {str(e)}")
 
     async def _build_stage2_context(
@@ -618,7 +649,9 @@ class EnhancedAIService:
         form_data = self._extract_form_data(experience_data)
 
         # Analyze multimodal content
-        multimodal_analysis = await self._analyze_multimodal_content(experience_data)
+        multimodal_analysis = await self._analyze_multimodal_inputs(
+            experience_data.get("media_files", [])
+        )
 
         # Extract practical challenge indicators
         practical_indicators = self._extract_practical_indicators(
@@ -735,7 +768,7 @@ class EnhancedAIService:
 
         # Make API call
         response = await self.client.chat.completions.create(
-            model="gpt-4-turbo-preview",
+            model=self.model_name,  # 使用配置的Kimi模型
             messages=[
                 {
                     "role": "system",
@@ -745,8 +778,6 @@ class EnhancedAIService:
             ],
             temperature=0.6,
             max_tokens=2500,
-            presence_penalty=0.1,
-            frequency_penalty=0.1,
         )
 
         content = response.choices[0].message.content
@@ -762,7 +793,7 @@ class EnhancedAIService:
             "success_metrics": self._define_success_metrics(context),
             "confidence_score": 0.82,
             "model_params": {
-                "model": "gpt-4-turbo-preview",
+                "model": self.model_name,
                 "temperature": 0.6,
                 "max_tokens": 2500,
             },
@@ -1037,7 +1068,9 @@ class EnhancedAIService:
         form_data = self._extract_form_data(experience_data)
 
         # Analyze multimodal content
-        multimodal_analysis = await self._analyze_multimodal_content(experience_data)
+        multimodal_analysis = await self._analyze_multimodal_inputs(
+            experience_data.get("media_files", [])
+        )
 
         # Extract progress indicators from follow-up data
         progress_indicators = self._extract_progress_indicators(
@@ -1162,7 +1195,7 @@ class EnhancedAIService:
 
         # Make API call
         response = await self.client.chat.completions.create(
-            model="gpt-4-turbo-preview",
+            model=self.model_name,  # 使用配置的Kimi模型
             messages=[
                 {
                     "role": "system",
@@ -1172,8 +1205,6 @@ class EnhancedAIService:
             ],
             temperature=0.7,
             max_tokens=2000,
-            presence_penalty=0.1,
-            frequency_penalty=0.1,
         )
 
         content = response.choices[0].message.content
@@ -1190,7 +1221,7 @@ class EnhancedAIService:
             "schedule": self._generate_follow_up_schedule(context),
             "confidence_score": 0.80,
             "model_params": {
-                "model": "gpt-4-turbo-preview",
+                "model": self.model_name,
                 "temperature": 0.7,
                 "max_tokens": 2000,
             },
