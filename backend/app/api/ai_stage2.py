@@ -245,6 +245,89 @@ async def get_stage2_status(
         )
 
 
+@router.get("/result/{solution_id}")
+async def get_stage2_result(
+    solution_id: str,
+    current_user: User = Depends(get_current_user),
+    db=Depends(get_database),
+):
+    """
+    Get the Stage 2 processing result.
+
+    Retrieves the completed AI-generated practical solution.
+    The content is automatically decrypted before being returned.
+    """
+    try:
+        solution_doc = await db.solutions.find_one(
+            {
+                "_id": ObjectId(solution_id),
+                "userId": ObjectId(current_user.id),
+                "stage": 2,
+            }
+        )
+
+        if not solution_doc:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Stage 2 solution not found",
+            )
+
+        if solution_doc["status"] not in [SolutionStatus.COMPLETED, SolutionStatus.GENERATED]:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Stage 2 processing not completed. Current status: {solution_doc['status']}",
+            )
+
+        # Decrypt the solution content
+        content = solution_doc.get("content", {})
+        decrypted_content = {
+            "title": decrypt_data(content.get("title", "")),
+            "description": decrypt_data(content.get("description", "")),
+            "actionSteps": [
+                decrypt_data(step) for step in content.get("actionSteps", [])
+            ],
+            "recommendations": [
+                decrypt_data(rec) for rec in content.get("recommendations", [])
+            ],
+            "implementation_timeline": content.get("implementation_timeline", {}),
+            "resources": content.get("resources", []),  # Resources are not encrypted
+            "success_metrics": content.get("success_metrics", []),
+        }
+
+        return {
+            "solution_id": str(solution_doc["_id"]),
+            "stage": solution_doc["stage"],
+            "stage_name": solution_doc["stageName"],
+            "status": solution_doc["status"],
+            "content": decrypted_content,
+            "metadata": {
+                "confidence_score": solution_doc.get("metadata", {}).get(
+                    "confidence_score", 0.0
+                ),
+                "processing_time": solution_doc.get("metadata", {}).get(
+                    "processing_time", 0.0
+                ),
+                "generated_at": solution_doc.get("metadata", {}).get("generated_at"),
+                "user_role": solution_doc.get("metadata", {}).get("user_role"),
+                "stage1_integration": solution_doc.get("metadata", {}).get("stage1_integration", False),
+            },
+            "created_at": solution_doc["createdAt"].isoformat(),
+            "completed_at": (
+                solution_doc.get("completedAt").isoformat()
+                if solution_doc.get("completedAt")
+                else None
+            ),
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to get Stage 2 result: {str(e)}",
+        )
+
+
 async def process_stage2_background(
     solution_id: str,
     experience_id: str,
@@ -296,9 +379,15 @@ async def process_stage2_background(
     # Track processing time for performance monitoring and user feedback
     start_time = datetime.utcnow()
 
+    from motor.motor_asyncio import AsyncIOMotorClient
+    from ..core.config import settings
+
+    # Create database connection for background task
+    # Background tasks need their own database connection since they run outside request context
+    client = AsyncIOMotorClient(settings.MONGO_URI)
+    db = client[settings.MONGO_DB]
+
     try:
-        # Get database connection for background task processing
-        db = await get_database()
 
         # Get experience data containing user's original input
         # This provides the context for practical solution generation
@@ -369,7 +458,6 @@ async def process_stage2_background(
         # Update solution with error status and details
         # Status is set to GENERATED (not FAILED) to allow retry attempts
         try:
-            db = await get_database()
             await db.solutions.update_one(
                 {"_id": ObjectId(solution_id)},
                 {
@@ -386,3 +474,8 @@ async def process_stage2_background(
         except Exception as db_error:
             # Log database update failures for system monitoring
             print(f"Failed to update solution error status: {db_error}")
+
+    finally:
+        # Always close database connection to prevent connection leaks
+        # Critical for background tasks that create their own connections
+        client.close()
