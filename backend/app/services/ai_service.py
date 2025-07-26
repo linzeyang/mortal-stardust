@@ -66,7 +66,12 @@ class AIService:
         and uses default OpenAI configuration for model access and rate limiting.
         """
         self.client = (
-            openai.OpenAI(api_key=settings.OPENAI_API_KEY)
+            openai.AsyncClient(
+                api_key=settings.OPENAI_API_KEY,
+                base_url=settings.OPENAI_API_URL,
+                timeout=60,
+                max_retries=2,
+            )
             if settings.OPENAI_API_KEY
             else None
         )
@@ -177,7 +182,7 @@ class AIService:
             # Create metadata with processing information
             # Metadata includes performance metrics and encrypted processing details
             metadata = {
-                "model": "gpt-4",  # AI model used for processing
+                "model": settings.MODEL_ID,  # AI model used for processing
                 "prompt": encrypt_data(
                     result["prompt_used"]
                 ),  # Encrypted prompt for security
@@ -305,13 +310,13 @@ class AIService:
         请用温暖、专业且富有同理心的语调回应。
         """
 
-        # Generate AI response using OpenAI GPT-4
+        # Generate AI response using LLM
         if self.client:
             # System message establishes AI persona and expertise
             # Temperature 0.7 balances creativity with consistency for therapeutic responses
             # Max tokens 1000 ensures comprehensive but focused responses
             response = await self.client.chat.completions.create(
-                model="gpt-4",
+                model=settings.MODEL_ID,
                 messages=[
                     {
                         "role": "system",
@@ -411,13 +416,13 @@ class AIService:
         请确保建议具体、可执行且符合用户的角色背景。
         """
 
-        # Generate practical solutions using OpenAI GPT-4
+        # Generate practical solutions using LLM
         if self.client:
             # Life coach persona provides practical, actionable guidance
             # Temperature 0.6 ensures focused, practical responses with some creativity
             # Max tokens 1200 allows for detailed action plans and strategies
             response = await self.client.chat.completions.create(
-                model="gpt-4",
+                model=settings.MODEL_ID,
                 messages=[
                     {
                         "role": "system",
@@ -521,13 +526,13 @@ class AIService:
         重点关注可持续的个人发展和经验积累。
         """
 
-        # Generate follow-up support using OpenAI GPT-4
+        # Generate follow-up support using LLM
         if self.client:
             # Growth advisor persona focuses on sustainable long-term development
             # Temperature 0.5 ensures consistent, structured long-term planning
             # Max tokens 1000 provides comprehensive but focused growth guidance
             response = await self.client.chat.completions.create(
-                model="gpt-4",
+                model=settings.MODEL_ID,
                 messages=[
                     {
                         "role": "system",

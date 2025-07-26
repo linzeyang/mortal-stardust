@@ -90,6 +90,8 @@ class SolutionStatus(str, Enum):
             No longer active but maintained for historical analysis.
         COMPLETED: Solution lifecycle is complete with user satisfaction.
             User has indicated successful resolution and no further action needed.
+        FAILED: Solution lifecycle has ended with user dissatisfaction.
+            User has requested further assistance or a different solution.
     """
 
     PROCESSING = "processing"
@@ -99,6 +101,7 @@ class SolutionStatus(str, Enum):
     REGENERATING = "regenerating"
     ARCHIVED = "archived"
     COMPLETED = "completed"
+    FAILED = "failed"
 
 
 class UserRating(int, Enum):
