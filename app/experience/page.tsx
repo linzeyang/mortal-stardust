@@ -26,6 +26,8 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { experienceService, type ExperienceData } from '@/lib/api/experiences';
+import { aiProcessingService } from '@/lib/api/ai-processing';
+import { useRouter } from 'next/navigation';
 
 /**
  * Interface representing the complete experience data structure
@@ -107,6 +109,8 @@ export default function ExperiencePage() {
   const [isProcessing, setIsProcessing] = useState(false);
   /** Toast notification hook for user feedback */
   const { toast } = useToast();
+  /** Next.js router for navigation */
+  const router = useRouter();
 
   /**
    * Effect hook to load existing draft data on component mount
@@ -235,18 +239,61 @@ export default function ExperiencePage() {
         description: `您的经历已成功保存到数据库 (ID: ${result.id.substring(0, 8)}...)`,
       });
 
-      console.log('⏱️ 开始模拟AI处理...');
-      // 模拟AI处理时间（实际项目中这里会调用AI处理API）
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      console.log('🤖 开始启动AI处理...');
+      
+      try {
+        // 启动Stage 1 AI处理（心理疗愈）
+        const aiResponse = await aiProcessingService.startStage1Processing({
+          experience_id: result.id,
+          priority: 'normal'
+        });
 
-      toast({
-        title: "AI分析完成",
-        description: "您的经历已分析完成，可以查看AI生成的解决方案",
-      });
+        console.log('✅ AI处理启动成功:', aiResponse);
 
-      console.log('🎯 跳转到结果页面');
-      // Redirect to results page
-      setCurrentStep(ExperienceStep.RESULTS);
+        toast({
+          title: "AI分析已启动",
+          description: "Kimi正在为您生成心理疗愈方案，请稍候...",
+        });
+
+        // 轮询AI处理状态直到完成
+        const aiResult = await aiProcessingService.pollUntilComplete(
+          aiResponse.solution_id,
+          1, // Stage 1
+          (status) => {
+            console.log('📊 AI处理进度:', status);
+            // 可以在这里更新进度条
+          }
+        );
+
+        console.log('✅ AI处理完成:', aiResult);
+
+        toast({
+          title: "AI分析完成",
+          description: `Kimi已为您生成心理疗愈方案，信心指数：${Math.round(aiResult.metadata.confidence_score * 100)}%`,
+        });
+
+        // 将AI结果保存到本地状态
+        setExperienceData({
+          ...data,
+          aiResult: aiResult
+        });
+
+        console.log('🎯 跳转到结果页面');
+        // Redirect to results page
+        setCurrentStep(ExperienceStep.RESULTS);
+
+      } catch (aiError) {
+        console.error('❌ AI处理失败:', aiError);
+        
+        toast({
+          title: "AI处理失败",
+          description: "经历已保存，但AI分析失败。您可以稍后重试AI分析。",
+          variant: "destructive"
+        });
+
+        // 即使AI失败，也跳转到结果页面，用户可以手动重试
+        setCurrentStep(ExperienceStep.RESULTS);
+      }
 
     } catch (error) {
       console.error('❌ handleFormSubmit 执行失败:', error);
@@ -426,35 +473,124 @@ export default function ExperiencePage() {
    * Renders the results screen after AI processing completion
    *
    * Displays a success message and provides navigation to view the
-   * generated AI solutions. This is currently a placeholder implementation.
+   * generated AI solutions. Shows AI result if available.
    *
    * @function renderResultsScreen
    * @returns {JSX.Element} The results screen UI component
    */
-  const renderResultsScreen = () => (
-    <div className="w-full max-w-4xl mx-auto space-y-8">
-      <Card>
-        <CardHeader className="text-center">
-          <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
-            <Target className="w-8 h-8 text-green-600" />
-          </div>
-          <CardTitle className="text-2xl">AI分析完成</CardTitle>
-          <CardDescription>
-            为您生成了个性化的三阶段解决方案，点击下方查看详细内容
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="text-center">
-          <Button size="lg" className="text-lg px-8 py-3">
-            <FileText className="w-5 h-5 mr-2" />
-            查看AI解决方案
-          </Button>
-          <p className="mt-4 text-sm text-gray-500">
-            您也可以稍后在"我的方案"中查看和管理所有解决方案
-          </p>
-        </CardContent>
-      </Card>
-    </div>
-  );
+  const renderResultsScreen = () => {
+    const aiResult = experienceData?.aiResult;
+    
+    return (
+      <div className="w-full max-w-4xl mx-auto space-y-8">
+        <Card>
+          <CardHeader className="text-center">
+            <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+              <Target className="w-8 h-8 text-green-600" />
+            </div>
+            <CardTitle className="text-2xl">
+              {aiResult ? 'AI分析完成' : '经历提交成功'}
+            </CardTitle>
+            <CardDescription>
+              {aiResult 
+                ? `Kimi已为您生成个性化的心理疗愈方案，信心指数：${Math.round(aiResult.metadata.confidence_score * 100)}%`
+                : '您的经历已成功保存，可以查看或启动AI分析'
+              }
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-center space-y-4">
+            {aiResult ? (
+              <div className="space-y-4">
+                <Button 
+                  size="lg" 
+                  className="text-lg px-8 py-3"
+                  onClick={() => router.push('/ai-solutions')}
+                >
+                  <FileText className="w-5 h-5 mr-2" />
+                  查看AI解决方案
+                </Button>
+                
+                {/* 显示AI结果预览 */}
+                <Card className="text-left">
+                  <CardHeader>
+                    <CardTitle className="text-lg">{aiResult.content.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-gray-700 line-clamp-3">
+                      {aiResult.content.content.substring(0, 200)}...
+                    </p>
+                    <div className="mt-4 flex items-center justify-between text-sm text-gray-500">
+                      <span>处理时间: {aiResult.metadata.processing_time.toFixed(1)}秒</span>
+                      <span>生成时间: {new Date(aiResult.metadata.generated_at).toLocaleString('zh-CN')}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <Button 
+                  size="lg" 
+                  className="text-lg px-8 py-3"
+                  onClick={async () => {
+                    if (experienceData?.id) {
+                      try {
+                        setIsProcessing(true);
+                        const aiResponse = await aiProcessingService.startStage1Processing({
+                          experience_id: experienceData.id,
+                          priority: 'normal'
+                        });
+                        
+                        const aiResult = await aiProcessingService.pollUntilComplete(
+                          aiResponse.solution_id,
+                          1
+                        );
+                        
+                        setExperienceData({
+                          ...experienceData,
+                          aiResult: aiResult
+                        });
+                        
+                        toast({
+                          title: "AI分析完成",
+                          description: "Kimi已为您生成心理疗愈方案",
+                        });
+                      } catch (error) {
+                        toast({
+                          title: "AI分析失败",
+                          description: "请稍后重试",
+                          variant: "destructive"
+                        });
+                      } finally {
+                        setIsProcessing(false);
+                      }
+                    }
+                  }}
+                  disabled={isProcessing}
+                >
+                  <Brain className="w-5 h-5 mr-2" />
+                  {isProcessing ? '正在分析...' : '启动AI分析'}
+                </Button>
+                
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  className="text-lg px-8 py-3"
+                  onClick={() => router.push('/experience-summary')}
+                >
+                  <FileText className="w-5 h-5 mr-2" />
+                  查看经历详情
+                </Button>
+              </div>
+            )}
+            
+            <p className="mt-4 text-sm text-gray-500">
+              您也可以稍后在"我的方案"中查看和管理所有解决方案
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
