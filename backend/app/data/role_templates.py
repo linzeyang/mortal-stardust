@@ -238,10 +238,6 @@ workplace_newcomer_template = RoleTemplate(
 请用温暖、理解和鼓励的语调回应。""",
         stage2_prompt="""基于之前的心理疗愈建议，现在请提供具体的实操解决方案：
 
-用户已尝试：{attempted_solutions}
-可用支持：{support_system}
-期望结果：{desired_outcome}
-
 请提供：
 1. 具体的行动步骤和时间计划
 2. 技能提升建议和学习资源
@@ -525,12 +521,6 @@ entrepreneur_template = RoleTemplate(
 
 请用理解、鼓励和专业的语调回应，帮助创业者重建信心。""",
         stage2_prompt="""基于心理疗愈支持，现在请提供具体的商业解决方案：
-
-已尝试方案：{previous_attempts}
-可用资源：{available_resources}
-成功指标：{success_metrics}
-长期愿景：{long_term_vision}
-风险承受度：{risk_tolerance}
 
 请提供：
 1. 具体的商业策略和执行计划
@@ -858,12 +848,6 @@ student_template = RoleTemplate(
 请用温暖、理解和鼓励的语调回应，展现对学生处境的共情和支持。""",
         stage2_prompt="""基于心理疗愈支持，现在请提供具体的实用解决方案：
 
-已尝试方法：{attempted_solutions}
-支持网络：{support_network}
-期望目标：{goals_and_expectations}
-个人优势：{strengths_and_skills}
-学习偏好：{learning_preferences}
-
 请提供：
 1. 具体的学习策略和时间管理技巧
 2. 人际关系建设和沟通技能提升
@@ -1167,14 +1151,6 @@ other_template = RoleTemplate(
 
 请用温暖、理解和专业的语调回应，帮助用户获得心理平衡。""",
         stage2_prompt="""基于之前的心理疗愈支持，现在请提供具体的实用解决方案：
-
-已尝试方法：{attempted_solutions}
-可用支持：{support_system}
-外部因素：{external_factors}
-期望结果：{desired_outcomes}
-成功标准：{success_metrics}
-时间期望：{timeline_expectations}
-改变动机：{motivation_level}/10
 
 请提供：
 1. 具体的行动步骤和实施计划

@@ -1,6 +1,6 @@
 /**
  * 经历管理API服务
- * 
+ *
  * 提供与经历相关的所有API调用功能
  * 包括创建、获取、更新经历等操作
  */
@@ -31,6 +31,7 @@ export interface CreateExperienceRequest {
     text: string;
     mediaFiles?: string[];
   };
+  role: string;
   category: string;
   emotionalState: {
     primary: string;
@@ -61,21 +62,21 @@ export class ExperienceService {
    */
   async createExperience(experienceData: ExperienceData): Promise<{id: string, message: string}> {
     console.log('🎯 开始创建经历:', experienceData);
-    
+
     try {
       // 获取认证token
       console.log('🔑 获取认证token...');
       const token = await authHelper.getAuthToken();
-      
+
       if (!token) {
         throw new Error('无法获取认证token，请检查登录状态');
       }
 
       // 将前端的经历数据转换为后端期望的格式
       const requestData = this.transformToBackendFormat(experienceData);
-      
+
       console.log('🔄 转换后的请求数据:', requestData);
-      
+
       // 使用Bearer token进行认证
       const response = await fetch('http://localhost:8000/api/experiences/', {
         method: 'POST',
@@ -92,19 +93,19 @@ export class ExperienceService {
       }
 
       const result = await response.json();
-      
+
       console.log('✅ 经历创建成功:', result);
       return result;
     } catch (error) {
       console.error('❌ 创建经历失败:', error);
-      
+
       // 提供更详细的错误信息
       if (error instanceof Error) {
         const enhancedError = new Error(`创建经历失败: ${error.message}`);
         (enhancedError as any).originalError = error;
         throw enhancedError;
       }
-      
+
       throw new Error('创建经历时发生未知错误');
     }
   }
@@ -148,10 +149,10 @@ export class ExperienceService {
   private transformToBackendFormat(experienceData: ExperienceData): CreateExperienceRequest {
     // 从表单数据中提取关键信息
     const formData = experienceData.data || {};
-    
+
     // 生成标题（如果没有提供的话）
-    const title = formData.title || 
-                 formData.main_challenge || 
+    const title = formData.title ||
+                 formData.main_challenge ||
                  `${this.getRoleDisplayName(experienceData.role)}的经历` ||
                  '我的生活经历';
 
@@ -176,6 +177,7 @@ export class ExperienceService {
       category,
       emotionalState,
       tags,
+      role: experienceData.role, // 添加role字段
       privacy: {
         isPublic: false, // 默认私有
         allowAnalytics: true // 允许分析以改进AI
@@ -204,7 +206,7 @@ export class ExperienceService {
     if (formData.company_type) {
       parts.push(`公司类型: ${this.getOptionLabel('company_type', formData.company_type)}`);
     }
-    
+
     if (formData.position_level) {
       parts.push(`职位级别: ${this.getOptionLabel('position_level', formData.position_level)}`);
     }
@@ -219,7 +221,7 @@ export class ExperienceService {
 
     // 挑战类型
     if (formData.challenge_category && Array.isArray(formData.challenge_category)) {
-      const categories = formData.challenge_category.map((cat: string) => 
+      const categories = formData.challenge_category.map((cat: string) =>
         this.getOptionLabel('challenge_category', cat)
       ).join(', ');
       parts.push(`挑战类型: ${categories}`);
@@ -232,7 +234,7 @@ export class ExperienceService {
 
     // 其他字段
     Object.entries(formData).forEach(([key, value]) => {
-      if (!['main_challenge', 'company_type', 'position_level', 'work_duration', 
+      if (!['main_challenge', 'company_type', 'position_level', 'work_duration',
             'industry', 'challenge_category', 'stress_level'].includes(key) && value) {
         if (typeof value === 'string' && value.trim()) {
           parts.push(`${key}: ${value}`);
@@ -250,7 +252,7 @@ export class ExperienceService {
    */
   private generateEmotionalState(formData: Record<string, any>) {
     const stressLevel = formData.stress_level || 5;
-    
+
     // 根据压力程度确定主要情绪，使用后端期望的枚举值
     let primary = 'confused'; // 默认值
     if (stressLevel >= 8) {
@@ -280,7 +282,7 @@ export class ExperienceService {
 
     // 添加挑战类型作为标签
     if (formData.challenge_category && Array.isArray(formData.challenge_category)) {
-      tags.push(...formData.challenge_category.map((cat: string) => 
+      tags.push(...formData.challenge_category.map((cat: string) =>
         this.getOptionLabel('challenge_category', cat)
       ));
     }
@@ -304,7 +306,7 @@ export class ExperienceService {
   private mapRoleToCategory(role: string): string {
     const roleToCategory: Record<string, string> = {
       'workplace_newcomer': 'career',
-      'student': 'education', 
+      'student': 'education',
       'entrepreneur': 'career',
       'other': 'other'
     };

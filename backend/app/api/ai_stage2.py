@@ -139,7 +139,7 @@ async def process_stage2(
             str(solution_id),
             str(request.experience_id),
             str(request.stage1_solution_id) if request.stage1_solution_id else None,
-            current_user.role,
+            experience_doc["role"],
             request.additional_context or {},
         )
 
@@ -297,7 +297,9 @@ async def process_stage2_background(
         processing_result = await enhanced_ai_service.process_experience_stage2(
             experience_data=experience_doc,  # Original user experience
             stage1_solution=stage1_solution_doc,  # Optional emotional healing context
-            user_role=user_role,  # Personalizes solutions for role-specific needs
+            user_role=experience_doc[
+                "role"
+            ],  # Personalizes solutions for role-specific needs
             additional_context=additional_context,  # User preferences and feedback
         )
 
