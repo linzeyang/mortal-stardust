@@ -37,7 +37,7 @@ from ..dependencies import get_current_user
 from ..models.solution import SolutionStatus
 from ..models.user import User
 from ..services.enhanced_ai_service import enhanced_ai_service
-from ..utils.encryption import decrypt_data
+from ..utils.field_encryption import decrypt_solution_data, encrypt_solution_data
 
 router = APIRouter(prefix="/api/ai/stage1", tags=["ai-stage1"])
 
@@ -406,47 +406,50 @@ async def get_stage1_result(
                 detail=f"Stage 1 processing not completed. Current status: {solution_doc['status']}",
             )
 
-        # Decrypt the solution content
+        # Decrypt the solution content using field-level decryption
         # All sensitive AI-generated content is encrypted at rest for security
-        # Resources are not encrypted as they contain public URLs and references
-        content = solution_doc.get("content", {})
+        decrypted_solution = decrypt_solution_data(dict(solution_doc))
+
+        # Extract the decrypted content
+        content = decrypted_solution.get("content", {})
         decrypted_content = {
-            "title": decrypt_data(content.get("title", "")),
-            "content": decrypt_data(content.get("content", "")),
-            "recommendations": [
-                decrypt_data(rec) for rec in content.get("recommendations", [])
-            ],
-            "coping_strategies": [
-                decrypt_data(strategy)
-                for strategy in content.get("coping_strategies", [])
-            ],
-            "emotional_support": [
-                decrypt_data(support)
-                for support in content.get("emotional_support", [])
-            ],
+            "title": content.get("title", ""),
+            "description": content.get(
+                "description", ""
+            ),  # Maps to old "content" field
+            "recommendations": content.get("recommendations", []),
+            "actionSteps": content.get(
+                "actionSteps", []
+            ),  # Maps to old "coping_strategies"
+            "emotional_support": content.get("emotional_support", []),
             "resources": content.get("resources", []),  # Resources are not encrypted
         }
 
         return {
             "solution_id": str(solution_doc["_id"]),
-            "stage": solution_doc["stage"],
-            "stage_name": solution_doc["stageName"],
-            "status": solution_doc["status"],
+            "stage": decrypted_solution["stage"],
+            "stage_name": decrypted_solution["stageName"],
+            "status": decrypted_solution["status"],
             "content": decrypted_content,
             "metadata": {
-                "confidence_score": solution_doc.get("metadata", {}).get(
+                "confidence_score": decrypted_solution.get("metadata", {}).get(
                     "confidence_score", 0.0
                 ),
-                "processing_time": solution_doc.get("metadata", {}).get(
+                "processing_time": decrypted_solution.get("metadata", {}).get(
                     "processing_time", 0.0
                 ),
-                "generated_at": solution_doc.get("metadata", {}).get("generated_at"),
-                "user_role": solution_doc.get("metadata", {}).get("user_role"),
+                "generated_at": decrypted_solution.get("metadata", {}).get(
+                    "generated_at"
+                ),
+                "user_role": decrypted_solution.get("metadata", {}).get("user_role"),
             },
-            "created_at": solution_doc["createdAt"].isoformat(),
+            "aiMetadata": decrypted_solution.get(
+                "aiMetadata", {}
+            ),  # Include AI metadata
+            "created_at": decrypted_solution["createdAt"].isoformat(),
             "completed_at": (
-                solution_doc.get("completedAt").isoformat()
-                if solution_doc.get("completedAt")
+                decrypted_solution.get("completedAt").isoformat()
+                if decrypted_solution.get("completedAt")
                 else None
             ),
         }
@@ -647,21 +650,22 @@ async def process_stage1_background(
         )
 
         # Update solution with results
-        # AI service returns encrypted content and metadata including confidence scores
-        # completedAt timestamp is used for analytics and user experience tracking
+        solution_data = {
+            "status": SolutionStatus.COMPLETED,
+            "content": result["content"],  # AI-generated content
+            "aiMetadata": result.get(
+                "metadata", {}
+            ),  # Processing stats and confidence scores
+            "completedAt": datetime.utcnow(),
+            "updatedAt": datetime.utcnow(),
+        }
+
+        # Apply field-level encryption
+        encrypted_solution_data = encrypt_solution_data(solution_data)
+
         await db.solutions.update_one(
             {"_id": ObjectId(solution_id)},
-            {
-                "$set": {
-                    "status": SolutionStatus.COMPLETED,
-                    "content": result["content"],  # Encrypted AI-generated content
-                    "metadata": result[
-                        "metadata"
-                    ],  # Processing stats and confidence scores
-                    "completedAt": datetime.utcnow(),
-                    "updatedAt": datetime.utcnow(),
-                }
-            },
+            {"$set": encrypted_solution_data},
         )
 
     except Exception as e:

@@ -552,19 +552,13 @@ class EnhancedAIService:
     ) -> Dict[str, Any]:
         """Format and encrypt Stage 1 response."""
 
-        # Encrypt sensitive content
-        encrypted_content = {
-            "title": encrypt_data(solution["title"]),
-            "content": encrypt_data(solution["content"]),
-            "recommendations": [
-                encrypt_data(rec) for rec in solution["recommendations"]
-            ],
-            "coping_strategies": [
-                encrypt_data(strategy) for strategy in solution["coping_strategies"]
-            ],
-            "emotional_support": [
-                encrypt_data(support) for support in solution["emotional_support"]
-            ],
+        # Return unencrypted content - encryption will be handled by the API endpoint
+        content = {
+            "title": solution["title"],
+            "description": solution["content"],  # Map content to description for schema consistency
+            "recommendations": solution["recommendations"],
+            "actionSteps": solution["coping_strategies"],  # Map to actionSteps for schema consistency
+            "emotional_support": solution["emotional_support"],
             "resources": solution["resources"],  # Resources can remain unencrypted
         }
 
@@ -575,14 +569,14 @@ class EnhancedAIService:
             "user_role": context["user_role"],
             "processing_time": processing_time,
             "confidence_score": solution["confidence_score"],
-            "model_params": encrypt_object(solution["model_params"]),
-            "multimodal_analysis": encrypt_object(context["multimodal_insights"]),
+            "model_params": solution["model_params"],
+            "multimodal_analysis": context["multimodal_insights"],
             "generated_at": datetime.utcnow().isoformat(),
             "version": "1.0",
         }
 
         return {
-            "content": encrypted_content,
+            "content": content,
             "metadata": metadata,
             "stage": 1,
             "success": True,
@@ -624,36 +618,34 @@ class EnhancedAIService:
             # Calculate processing time
             processing_time = (datetime.utcnow() - start_time).total_seconds()
 
-            # Encrypt sensitive content
-            encrypted_content = {
-                "title": encrypt_data(solution["title"]),
-                "description": encrypt_data(solution["description"]),
-                "actionSteps": [encrypt_data(step) for step in solution["actionSteps"]],
-                "recommendations": [
-                    encrypt_data(rec) for rec in solution["recommendations"]
-                ],
+            # Return unencrypted content - encryption will be handled by the API endpoint
+            content = {
+                "title": solution["title"],
+                "description": solution["description"],
+                "actionSteps": solution["actionSteps"],
+                "recommendations": solution["recommendations"],
                 "implementation_timeline": solution["implementation_timeline"],
                 "resources": solution["resources"],
                 "success_metrics": solution["success_metrics"],
             }
 
-            # AI processing metadata
+            # AI processing metadata - will be encrypted by API endpoint
             ai_metadata = {
                 "stage": 2,
                 "stage_name": "practical_solutions",
                 "user_role": context["user_role"],
                 "processing_time": processing_time,
                 "confidence_score": solution["confidence_score"],
-                "model_params": encrypt_object(solution.get("model_params", {})),
+                "model_params": solution.get("model_params", {}),
                 "stage1_integration": bool(stage1_solution),
-                "multimodal_analysis": encrypt_object(context["multimodal_insights"]),
+                "multimodal_analysis": context["multimodal_insights"],
                 "generated_at": datetime.utcnow().isoformat(),
                 "version": "1.0",
             }
 
             return {
-                "content": encrypted_content,
-                "ai_metadata": ai_metadata,
+                "content": content,
+                "aiMetadata": ai_metadata,  # Changed to match schema field name
                 "confidence_score": solution["confidence_score"],
                 "stage": 2,
                 "success": True,
@@ -1038,15 +1030,13 @@ class EnhancedAIService:
             # Calculate processing time
             processing_time = (datetime.utcnow() - start_time).total_seconds()
 
-            # Encrypt sensitive content
-            encrypted_content = {
-                "title": encrypt_data(solution["title"]),
-                "follow_up_plan": encrypt_data(solution["follow_up_plan"]),
-                "progress_assessment": encrypt_data(solution["progress_assessment"]),
-                "adaptive_recommendations": [
-                    encrypt_data(rec) for rec in solution["adaptive_recommendations"]
-                ],
-                "next_steps": solution["next_steps"],
+            # Return unencrypted content - encryption will be handled by the API endpoint
+            content = {
+                "title": solution["title"],
+                "description": solution["follow_up_plan"],  # Map to description for schema consistency
+                "recommendations": solution["adaptive_recommendations"],
+                "actionSteps": solution["next_steps"],  # Map to actionSteps for schema consistency
+                "progress_assessment": solution["progress_assessment"],
                 "milestone_tracking": solution["milestone_tracking"],
                 "support_resources": solution["support_resources"],
                 "schedule": solution["schedule"],
@@ -1059,18 +1049,18 @@ class EnhancedAIService:
                 "user_role": context["user_role"],
                 "processing_time": processing_time,
                 "confidence_score": solution["confidence_score"],
-                "model_params": encrypt_object(solution.get("model_params", {})),
+                "model_params": solution.get("model_params", {}),
                 "has_follow_up_data": bool(follow_up_data),
                 "stage1_integration": bool(stage1_solution),
                 "stage2_integration": bool(stage2_solution),
-                "multimodal_analysis": encrypt_object(context["multimodal_insights"]),
+                "multimodal_analysis": context["multimodal_insights"],
                 "generated_at": datetime.utcnow().isoformat(),
                 "version": "1.0",
             }
 
             return {
-                "content": encrypted_content,
-                "ai_metadata": ai_metadata,
+                "content": content,
+                "aiMetadata": ai_metadata,  # Changed to match schema field name
                 "confidence_score": solution["confidence_score"],
                 "stage": 3,
                 "success": True,

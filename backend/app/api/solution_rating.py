@@ -16,6 +16,7 @@ from ..models.solution import SolutionStatus
 from ..models.user import User
 from ..services.enhanced_ai_service import enhanced_ai_service
 from ..utils.encryption import decrypt_data, encrypt_data
+from ..utils.field_encryption import encrypt_solution_data
 
 router = APIRouter(prefix="/api/solutions", tags=["solution-rating"])
 
@@ -407,7 +408,6 @@ async def regenerate_solution_background(
                 experience_doc, user_doc["role"], regeneration_context
             )
 
-        # Create new solution document
         new_solution_doc = {
             "userId": ObjectId(user_id),
             "experienceId": solution_doc["experienceId"],
@@ -415,7 +415,7 @@ async def regenerate_solution_background(
             "stageName": solution_doc["stageName"],
             "status": SolutionStatus.COMPLETED,
             "priority": solution_doc.get("priority", "normal"),
-            "content": encrypt_data(new_solution["content"]),
+            "content": new_solution["content"],  # Will be encrypted by encrypt_solution_data
             "processingTime": new_solution["processing_time"],
             "confidenceScore": new_solution["confidence_score"],
             "isRegenerated": True,
@@ -426,7 +426,10 @@ async def regenerate_solution_background(
             "updatedAt": datetime.utcnow(),
         }
 
-        result = await db.solutions.insert_one(new_solution_doc)
+        # Apply field-level encryption
+        encrypted_solution_doc = encrypt_solution_data(new_solution_doc)
+
+        result = await db.solutions.insert_one(encrypted_solution_doc)
         new_solution_id = result.inserted_id
 
         # Update original solution

@@ -14,7 +14,7 @@ from ..dependencies import get_current_user
 from ..models.solution import SolutionStatus
 from ..models.user import User
 from ..services.enhanced_ai_service import enhanced_ai_service
-from ..utils.encryption import decrypt_data
+from ..utils.field_encryption import decrypt_solution_data, encrypt_solution_data
 
 router = APIRouter(prefix="/api/ai/stage3", tags=["ai-stage3"])
 
@@ -210,35 +210,17 @@ async def get_stage3_status(
                 detail="Stage 3 solution not found",
             )
 
-        # Decrypt content if needed
-        content = solution_doc.get("content", {})
-        if content and solution_doc.get("status") == SolutionStatus.COMPLETED:
+        # Decrypt solution data using field-level decryption
+        decrypted_solution = solution_doc
+        if solution_doc.get("status") == SolutionStatus.COMPLETED:
             try:
-                if isinstance(content.get("title"), str) and content[
-                    "title"
-                ].startswith("encrypted:"):
-                    content["title"] = decrypt_data(content["title"])
-                if isinstance(content.get("follow_up_plan"), str) and content[
-                    "follow_up_plan"
-                ].startswith("encrypted:"):
-                    content["follow_up_plan"] = decrypt_data(content["follow_up_plan"])
-                if isinstance(content.get("progress_assessment"), str) and content[
-                    "progress_assessment"
-                ].startswith("encrypted:"):
-                    content["progress_assessment"] = decrypt_data(
-                        content["progress_assessment"]
-                    )
-                if isinstance(content.get("adaptive_recommendations"), list):
-                    content["adaptive_recommendations"] = [
-                        (
-                            decrypt_data(rec)
-                            if isinstance(rec, str) and rec.startswith("encrypted:")
-                            else rec
-                        )
-                        for rec in content["adaptive_recommendations"]
-                    ]
+                decrypted_solution = decrypt_solution_data(dict(solution_doc))
             except Exception as e:
                 print(f"Decryption warning: {e}")
+                # Fall back to original data if decryption fails
+                decrypted_solution = solution_doc
+
+        content = decrypted_solution.get("content", {})
 
         return {
             "solution_id": str(solution_doc["_id"]),
@@ -441,43 +423,36 @@ async def process_stage3_background(
             days=14
         )  # 2-week follow-up cycle
 
-        # Update solution record with comprehensive results and follow-up scheduling
-        # Content includes long-term growth plans and adaptive recommendations
+        solution_data = {
+            "status": SolutionStatus.COMPLETED,  # Mark as successfully completed
+            "content": processing_result["content"],  # Follow-up content
+            "aiMetadata": processing_result["aiMetadata"],  # AI processing details
+            "metadata": {
+                "confidence_score": processing_result.get(
+                    "confidence_score", 0.8
+                ),  # AI confidence in follow-up quality
+                "processing_time": processing_time,  # Total processing duration
+                "has_follow_up_data": bool(
+                    follow_up_data
+                ),  # User provided progress data
+                "stage1_integration": bool(stage1_solution_doc),  # Used healing context
+                "stage2_integration": bool(
+                    stage2_solution_doc
+                ),  # Used practical context
+                "context_provided": bool(additional_context),  # Had additional context
+            },
+            "processingTime": processing_time,  # Duplicate for compatibility
+            "nextFollowUp": next_follow_up,  # Scheduled next follow-up date
+            "updatedAt": datetime.utcnow(),  # Last update timestamp
+            "completedAt": datetime.utcnow(),  # Completion timestamp
+        }
+
+        # Apply field-level encryption
+        encrypted_solution_data = encrypt_solution_data(solution_data)
+
         await db.solutions.update_one(
             {"_id": ObjectId(solution_id)},
-            {
-                "$set": {
-                    "status": SolutionStatus.COMPLETED,  # Mark as successfully completed
-                    "content": processing_result[
-                        "content"
-                    ],  # Encrypted follow-up content
-                    "aiMetadata": processing_result[
-                        "ai_metadata"
-                    ],  # AI processing details
-                    "metadata": {
-                        "confidence_score": processing_result.get(
-                            "confidence_score", 0.8
-                        ),  # AI confidence in follow-up quality
-                        "processing_time": processing_time,  # Total processing duration
-                        "has_follow_up_data": bool(
-                            follow_up_data
-                        ),  # User provided progress data
-                        "stage1_integration": bool(
-                            stage1_solution_doc
-                        ),  # Used healing context
-                        "stage2_integration": bool(
-                            stage2_solution_doc
-                        ),  # Used practical context
-                        "context_provided": bool(
-                            additional_context
-                        ),  # Had additional context
-                    },
-                    "processingTime": processing_time,  # Duplicate for compatibility
-                    "nextFollowUp": next_follow_up,  # Scheduled next follow-up date
-                    "updatedAt": datetime.utcnow(),  # Last update timestamp
-                    "completedAt": datetime.utcnow(),  # Completion timestamp
-                }
-            },
+            {"$set": encrypted_solution_data},
         )
 
         # Log successful completion for monitoring and follow-up tracking

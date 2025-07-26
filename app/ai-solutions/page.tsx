@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense } from 'react';
+import { Suspense, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { EmptyState } from '@/components/ui/empty-state';
 import { useSolutions, Solution } from '@/hooks/use-solutions';
+import ReactMarkdown from 'react-markdown';
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
 import {
   Brain,
   Heart,
@@ -22,7 +25,8 @@ import {
   RefreshCw,
   Download,
   Eye,
-  TrendingUp
+  TrendingUp,
+  X
 } from 'lucide-react';
 
 const solutionStages = [
@@ -59,79 +63,502 @@ interface SolutionCardProps {
   solution: Solution;
 }
 
-function SolutionCard({ solution }: SolutionCardProps) {
-  const stage = solutionStages.find(s => s.id === solution.stage);
+function MarkdownRenderer({ children }: { children: string }) {
+  return (
+    <ReactMarkdown
+      components={{
+        h1: ({ node, ...props }) => <h1 className="text-2xl font-bold mt-6 mb-4" {...props} />,
+        h2: ({ node, ...props }) => <h2 className="text-xl font-bold mt-5 mb-3" {...props} />,
+        h3: ({ node, ...props }) => <h3 className="text-lg font-bold mt-4 mb-2" {...props} />,
+        h4: ({ node, ...props }) => <h4 className="text-base font-bold mt-3 mb-2" {...props} />,
+        p: ({ node, ...props }) => <p className="mb-3" {...props} />,
+        ul: ({ node, ...props }) => <ul className="list-disc list-inside mb-3" {...props} />,
+        ol: ({ node, ...props }) => <ol className="list-decimal list-inside mb-3" {...props} />,
+        li: ({ node, ...props }) => <li className="mb-1" {...props} />,
+        strong: ({ node, ...props }) => <span className="font-bold" {...props} />,
+        em: ({ node, ...props }) => <span className="italic" {...props} />,
+        blockquote: ({ node, ...props }) => (
+          <blockquote className="border-l-4 border-gray-300 pl-4 italic my-4" {...props} />
+        ),
+        code: ({ node, ...props }) => (
+          <code className="bg-gray-100 rounded px-1 py-0.5 font-mono text-sm" {...props} />
+        ),
+        pre: ({ node, ...props }) => (
+          <pre className="bg-gray-800 text-white rounded p-4 my-4 overflow-x-auto" {...props} />
+        ),
+      }}
+    >
+      {children}
+    </ReactMarkdown>
+  );
+}
+
+function SolutionDetailModal({ 
+  solution, 
+  isOpen, 
+  onClose 
+}: { 
+  solution: Solution; 
+  isOpen: boolean; 
+  onClose: () => void; 
+}) {
+  // Parse solution content
+  let content = null;
+  let aiMetadata = null;
+  
+  try {
+    const parsedContent = JSON.parse(solution.content);
+    content = parsedContent;
+    aiMetadata = parsedContent.aiMetadata || parsedContent.metadata || null;
+  } catch (e) {
+    // If parsing fails, treat content as plain text
+    content = { description: solution.content };
+  }
+
+  if (!isOpen) return null;
 
   return (
-    <Card className={`hover:shadow-lg transition-shadow ${stage?.borderColor}`}>
-      <CardHeader>
-        <div className="flex items-start justify-between">
-          <div className="flex items-center space-x-3">
-            {stage && (
-              <div className={`p-2 rounded-lg ${stage.bgColor}`}>
-                <stage.icon className={`h-5 w-5 ${stage.color}`} />
-              </div>
-            )}
-            <div>
-              <CardTitle className="text-lg">{solution.title}</CardTitle>
-              <p className="text-sm text-gray-500">{stage?.description}</p>
-            </div>
-          </div>
-          <div className="flex items-center space-x-2">
-            {solution.rating && (
-              <Badge variant="outline" className="flex items-center space-x-1">
-                <Star className="h-3 w-3" />
-                <span>{solution.rating}%</span>
-              </Badge>
-            )}
-            <Badge variant={
-              solution.status === 'completed' ? 'default' :
-              solution.status === 'needs_regeneration' ? 'destructive' : 'secondary'
-            }>
-              {solution.status === 'completed' ? '已完成' :
-               solution.status === 'needs_regeneration' ? '需重新生成' : '处理中'}
-            </Badge>
-          </div>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+        {/* Modal Header */}
+        <div className="flex justify-between items-center border-b p-4">
+          <h2 className="text-xl font-bold">
+            {content?.title || solution.title || '解决方案详情'}
+          </h2>
+          <button 
+            onClick={onClose}
+            className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+          >
+            <X className="h-5 w-5" />
+          </button>
         </div>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <p className="text-gray-700 leading-relaxed">
-            {solution.content}
-          </p>
-
-          <div className="flex items-center justify-between pt-4 border-t">
-            <div className="flex items-center space-x-4 text-sm text-gray-500">
-              <span className="flex items-center space-x-1">
-                <Brain className="h-4 w-4" />
-                <span>{solution.aiModel}</span>
-              </span>
-              <span className="flex items-center space-x-1">
-                <Clock className="h-4 w-4" />
-                <span>{new Date(solution.createdAt).toLocaleDateString()}</span>
-              </span>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Button size="sm" variant="outline">
-                <Eye className="h-4 w-4 mr-1" />
-                详细查看
-              </Button>
-              {solution.rating && solution.rating < 50 && (
-                <Button size="sm" variant="outline">
-                  <RefreshCw className="h-4 w-4 mr-1" />
-                  重新生成
-                </Button>
+        
+        {/* Modal Content */}
+        <div className="overflow-y-auto flex-1 p-4">
+          {content ? (
+            <div className="space-y-6">
+              {/* Description */}
+              {content.description && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-2 flex items-center">
+                    <Brain className="h-5 w-5 mr-2 text-blue-500" />
+                    方案描述
+                  </h3>
+                  <div className="text-gray-700 bg-gray-50 p-4 rounded-lg">
+                    <MarkdownRenderer>{content.description}</MarkdownRenderer>
+                  </div>
+                </div>
               )}
-              <Button size="sm" variant="outline">
-                <Download className="h-4 w-4 mr-1" />
-                导出
-              </Button>
+              
+              {/* Recommendations */}
+              {content.recommendations && content.recommendations.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-2 flex items-center">
+                    <Target className="h-5 w-5 mr-2 text-green-500" />
+                    推荐建议
+                  </h3>
+                  <ul className="space-y-2">
+                    {content.recommendations.map((rec: string, index: number) => (
+                      <li key={index} className="flex items-start">
+                        <span className="text-green-500 mr-2">•</span>
+                        <div className="text-gray-700">
+                          <MarkdownRenderer>{rec}</MarkdownRenderer>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              
+              {/* Action Steps */}
+              {content.actionSteps && content.actionSteps.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-2 flex items-center">
+                    <CheckCircle className="h-5 w-5 mr-2 text-purple-500" />
+                    行动步骤
+                  </h3>
+                  <ol className="space-y-2">
+                    {content.actionSteps.map((step: string, index: number) => (
+                      <li key={index} className="flex items-start">
+                        <span className="font-medium text-purple-500 mr-2">{index + 1}.</span>
+                        <div className="text-gray-700">
+                          <MarkdownRenderer>{step}</MarkdownRenderer>
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              )}
+              
+              {/* Emotional Support */}
+              {content.emotionalSupport && content.emotionalSupport.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-2 flex items-center">
+                    <Heart className="h-5 w-5 mr-2 text-red-500" />
+                    情感支持
+                  </h3>
+                  <ul className="space-y-2">
+                    {content.emotionalSupport.map((support: string, index: number) => (
+                      <li key={index} className="flex items-start">
+                        <span className="text-red-500 mr-2">•</span>
+                        <div className="text-gray-700">
+                          <MarkdownRenderer>{support}</MarkdownRenderer>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              
+              {/* Resources */}
+              {content.resources && content.resources.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-2 flex items-center">
+                    <Star className="h-5 w-5 mr-2 text-yellow-500" />
+                    相关资源
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {content.resources.map((resource: any, index: number) => (
+                      <div key={index} className="border rounded-lg p-3">
+                        <h4 className="font-medium">{resource.title}</h4>
+                        <div className="text-sm text-gray-600 mt-1">
+                          <MarkdownRenderer>{resource.description}</MarkdownRenderer>
+                        </div>
+                        <div className="flex items-center mt-2">
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            {resource.type}
+                          </span>
+                          <span className="ml-2 text-xs text-gray-500">{resource.category}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {/* AI Metadata */}
+              {aiMetadata && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-2 flex items-center">
+                    <MessageCircle className="h-5 w-5 mr-2 text-indigo-500" />
+                    AI处理信息
+                  </h3>
+                  <div className="bg-gray-50 p-4 rounded-lg grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                      <p className="text-sm text-gray-500">AI模型</p>
+                      <p className="font-medium">
+                        {aiMetadata.model_params?.model || aiMetadata.model || '未知模型'}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">置信度</p>
+                      <p className="font-medium">
+                        {aiMetadata.confidence_score ? `${(aiMetadata.confidence_score * 100).toFixed(1)}%` : '未知'}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">处理时间</p>
+                      <p className="font-medium">
+                        {aiMetadata.processing_time ? `${aiMetadata.processing_time.toFixed(2)}秒` : '未知'}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">生成时间</p>
+                      <p className="font-medium">
+                        {aiMetadata.generated_at || aiMetadata.createdAt || '未知'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-gray-500">无法解析解决方案内容</p>
+            </div>
+          )}
+        </div>
+        
+        {/* Modal Footer */}
+        <div className="border-t p-4 flex justify-end">
+          <Button onClick={onClose} variant="outline">
+            关闭
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SolutionCard({ solution }: SolutionCardProps) {
+  const stage = solutionStages.find(s => s.id === solution.stage);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  // Extract description from solution content
+  let description = solution.content;
+  let aiModelName = solution.aiModel; // Default to the existing aiModel field
+  
+  try {
+    const contentObj = JSON.parse(solution.content);
+    if (contentObj.description) {
+      description = contentObj.description;
+    }
+    
+    // Try to get the AI model name from aiMetadata if available
+    if (contentObj.aiMetadata?.model_params?.model) {
+      aiModelName = contentObj.aiMetadata.model_params.model;
+    } else if (contentObj.model_params?.model) {
+      // Alternative structure
+      aiModelName = contentObj.model_params.model;
+    } else if (contentObj.aiMetadata?.model) {
+      // Another alternative structure
+      aiModelName = contentObj.aiMetadata.model;
+    }
+  } catch (e) {
+    // If parsing fails, use the content as is
+  }
+  
+  // Show only first 100 characters
+  const truncatedDescription = description.length > 100 
+    ? description.substring(0, 100) + '...' 
+    : description;
+
+  // Export solution as PDF
+  const exportSolutionAsPDF = async () => {
+    try {
+      // Parse solution content
+      let content = null;
+      let aiMetadata = null;
+      
+      try {
+        const parsedContent = JSON.parse(solution.content);
+        content = parsedContent;
+        aiMetadata = parsedContent.aiMetadata || parsedContent.metadata || null;
+      } catch (e) {
+        // If parsing fails, treat content as plain text
+        content = { description: solution.content };
+      }
+
+      // Create PDF document
+      const doc = new jsPDF();
+      
+      // Set document properties
+      doc.setProperties({
+        title: content?.title || solution.title || '解决方案',
+        subject: 'AI Generated Solution',
+        author: 'Mortal Stardust',
+      });
+      
+      // Add title
+      doc.setFontSize(22);
+      doc.text(content?.title || solution.title || '解决方案', 10, 20);
+      
+      // Add metadata
+      doc.setFontSize(12);
+      const createdAt = new Date(solution.createdAt).toLocaleDateString('zh-CN');
+      doc.text(`创建时间: ${createdAt}`, 10, 30);
+      
+      if (aiMetadata) {
+        const modelName = aiMetadata.model_params?.model || aiMetadata.model || '未知模型';
+        doc.text(`AI模型: ${modelName}`, 10, 37);
+      }
+      
+      // Add content sections
+      let yPosition = 45;
+      
+      // Helper function to add text with automatic page breaking
+      const addTextWithPageBreak = (text: string, x: number, fontSize: number = 12) => {
+        doc.setFontSize(fontSize);
+        const lines = doc.splitTextToSize(text, 180);
+        
+        for (let i = 0; i < lines.length; i++) {
+          // Check if we need a new page
+          if (yPosition > 280) {
+            doc.addPage();
+            yPosition = 20;
+          }
+          
+          doc.text(lines[i], x, yPosition);
+          yPosition += 7;
+        }
+        
+        yPosition += 3; // Add some space after the text block
+        return yPosition;
+      };
+      
+      // Description section
+      if (content?.description) {
+        doc.setFontSize(16);
+        doc.text('方案描述', 10, yPosition);
+        yPosition += 10;
+        
+        yPosition = addTextWithPageBreak(content.description, 10, 12);
+      }
+      
+      // Recommendations section
+      if (content?.recommendations && content.recommendations.length > 0) {
+        doc.setFontSize(16);
+        doc.text('推荐建议', 10, yPosition);
+        yPosition += 10;
+        
+        content.recommendations.forEach((rec: string, index: number) => {
+          if (yPosition > 280) {
+            doc.addPage();
+            yPosition = 20;
+          }
+          
+          const recText = `${index + 1}. ${rec}`;
+          yPosition = addTextWithPageBreak(recText, 15, 12);
+        });
+      }
+      
+      // Action Steps section
+      if (content?.actionSteps && content.actionSteps.length > 0) {
+        doc.setFontSize(16);
+        doc.text('行动步骤', 10, yPosition);
+        yPosition += 10;
+        
+        content.actionSteps.forEach((step: string, index: number) => {
+          if (yPosition > 280) {
+            doc.addPage();
+            yPosition = 20;
+          }
+          
+          const stepText = `${index + 1}. ${step}`;
+          yPosition = addTextWithPageBreak(stepText, 15, 12);
+        });
+      }
+      
+      // Emotional Support section
+      if (content?.emotionalSupport && content.emotionalSupport.length > 0) {
+        doc.setFontSize(16);
+        doc.text('情感支持', 10, yPosition);
+        yPosition += 10;
+        
+        content.emotionalSupport.forEach((support: string, index: number) => {
+          if (yPosition > 280) {
+            doc.addPage();
+            yPosition = 20;
+          }
+          
+          const supportText = `${index + 1}. ${support}`;
+          yPosition = addTextWithPageBreak(supportText, 15, 12);
+        });
+      }
+      
+      // Resources section
+      if (content?.resources && content.resources.length > 0) {
+        doc.setFontSize(16);
+        doc.text('相关资源', 10, yPosition);
+        yPosition += 10;
+        
+        content.resources.forEach((resource: any, index: number) => {
+          if (yPosition > 280) {
+            doc.addPage();
+            yPosition = 20;
+          }
+          
+          const resourceTitle = `${index + 1}. ${resource.title}`;
+          yPosition = addTextWithPageBreak(resourceTitle, 15, 12);
+          
+          if (resource.description) {
+            yPosition = addTextWithPageBreak(resource.description, 20, 11);
+          }
+          
+          const resourceInfo = `类型: ${resource.type}${resource.category ? ` | 分类: ${resource.category}` : ''}`;
+          yPosition = addTextWithPageBreak(resourceInfo, 20, 11);
+          
+          yPosition += 2; // Extra space between resources
+        });
+      }
+      
+      // Save the PDF
+      const fileName = `${content?.title || solution.title || '解决方案'}_${createdAt}.pdf`.replace(/[^a-zA-Z0-9_\u4e00-\u9fa5.]/g, '_');
+      doc.save(fileName);
+    } catch (error) {
+      console.error('导出PDF失败:', error);
+      alert('导出失败，请重试');
+    }
+  };
+
+  return (
+    <>
+      <Card className={`hover:shadow-lg transition-shadow ${stage?.borderColor}`}>
+        <CardHeader>
+          <div className="flex items-start justify-between">
+            <div className="flex items-center space-x-3">
+              {stage && (
+                <div className={`p-2 rounded-lg ${stage.bgColor}`}>
+                  <stage.icon className={`h-5 w-5 ${stage.color}`} />
+                </div>
+              )}
+              <div>
+                <CardTitle className="text-lg">{solution.title}</CardTitle>
+                <p className="text-sm text-gray-500">{stage?.description}</p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-2">
+              {solution.rating && (
+                <Badge variant="outline" className="flex items-center space-x-1">
+                  <Star className="h-3 w-3" />
+                  <span>{solution.rating}%</span>
+                </Badge>
+              )}
+              <Badge variant={
+                solution.status === 'completed' ? 'default' :
+                solution.status === 'needs_regeneration' ? 'destructive' : 'secondary'
+              }>
+                {solution.status === 'completed' ? '已完成' :
+                solution.status === 'needs_regeneration' ? '需重新生成' : '处理中'}
+              </Badge>
             </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+              {truncatedDescription}
+            </div>
+
+            <div className="flex items-center justify-between pt-4 border-t">
+              <div className="flex items-center space-x-4 text-sm text-gray-500">
+                <span className="flex items-center space-x-1">
+                  <Brain className="h-4 w-4" />
+                  <span>{aiModelName}</span>
+                </span>
+                <span className="flex items-center space-x-1">
+                  <Clock className="h-4 w-4" />
+                  <span>{new Date(solution.createdAt).toLocaleDateString()}</span>
+                </span>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Button size="sm" variant="outline" onClick={() => setIsModalOpen(true)}>
+                  <Eye className="h-4 w-4 mr-1" />
+                  详细查看
+                </Button>
+                {solution.rating && solution.rating < 50 && (
+                  <Button size="sm" variant="outline">
+                    <RefreshCw className="h-4 w-4 mr-1" />
+                    重新生成
+                  </Button>
+                )}
+                <Button size="sm" variant="outline" onClick={exportSolutionAsPDF}>
+                  <Download className="h-4 w-4 mr-1" />
+                  导出
+                </Button>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      
+      <SolutionDetailModal 
+        solution={solution} 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
+    </>
   );
 }
 
