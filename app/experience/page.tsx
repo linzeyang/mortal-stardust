@@ -25,8 +25,9 @@ import {
   Target
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { experienceService, type ExperienceData } from '@/lib/api/experiences';
+import { experienceService, type ExperienceData as ApiExperienceData } from '@/lib/api/experiences';
 import { authHelper } from '@/lib/api/auth-helper';
+import { useRouter } from 'next/navigation';
 
 /**
  * Interface representing the complete experience data structure
@@ -120,6 +121,8 @@ export default function ExperiencePage() {
   }>({});
   /** Toast notification hook for user feedback */
   const { toast } = useToast();
+  /** Router for navigation */
+  const router = useRouter();
 
   /**
    * Effect hook to load existing draft data on component mount
@@ -937,24 +940,28 @@ export default function ExperiencePage() {
 
             {/* Action Buttons */}
             <div className="text-center space-y-4">
-              <Button size="lg" className="text-lg px-8 py-3">
+              <Button 
+                size="lg" 
+                className="text-lg px-8 py-3"
+                onClick={() => router.push('/ai-solutions')}
+              >
                 <FileText className="w-5 h-5 mr-2" />
                 查看完整AI解决方案
               </Button>
 
               <div className="flex justify-center space-x-4">
-                <Button variant="outline" size="sm">
+                <Button variant="outline" size="sm" onClick={() => router.push('/ai-solutions')}>
                   <Brain className="w-4 h-4 mr-2" />
                   查看心理疗愈
                 </Button>
                 {stageResults.stage2 && (
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" onClick={() => router.push('/ai-solutions')}>
                     <Target className="w-4 h-4 mr-2" />
                     查看实用方案
                   </Button>
                 )}
                 {stageResults.stage3 && (
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" onClick={() => router.push('/ai-solutions')}>
                     <RotateCcw className="w-4 h-4 mr-2" />
                     查看跟进计划
                   </Button>
