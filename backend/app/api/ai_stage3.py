@@ -278,6 +278,106 @@ async def get_stage3_status(
         )
 
 
+@router.get("/result/{solution_id}")
+async def get_stage3_result(
+    solution_id: str,
+    current_user: User = Depends(get_current_user),
+    db=Depends(get_database),
+):
+    """
+    Get the Stage 3 processing result.
+
+    Retrieves the completed AI-generated follow-up support solution.
+    The content is automatically decrypted before being returned.
+    """
+    try:
+        solution_doc = await db.solutions.find_one(
+            {
+                "_id": ObjectId(solution_id),
+                "userId": ObjectId(current_user.id),
+                "stage": 3,
+            }
+        )
+
+        if not solution_doc:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Stage 3 solution not found",
+            )
+
+        if solution_doc["status"] not in [SolutionStatus.COMPLETED, SolutionStatus.GENERATED]:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Stage 3 processing not completed. Current status: {solution_doc['status']}",
+            )
+
+        # Decrypt the solution content with safe decryption
+        content = solution_doc.get("content", {})
+        
+        def safe_decrypt(data):
+            """Safely decrypt data, return original if decryption fails."""
+            if not data:
+                return ""
+            try:
+                return decrypt_data(data)
+            except Exception as e:
+                print(f"Decryption warning for Stage 3: {e}")
+                return str(data)  # Return original data if decryption fails
+        
+        def safe_decrypt_list(data_list):
+            """Safely decrypt a list of data."""
+            if not data_list:
+                return []
+            return [safe_decrypt(item) for item in data_list]
+        
+        decrypted_content = {
+            "title": safe_decrypt(content.get("title", "")),
+            "description": safe_decrypt(content.get("description", "")),
+            "follow_up_plan": safe_decrypt(content.get("follow_up_plan", "")),  # String, not list
+            "progress_assessment": safe_decrypt(content.get("progress_assessment", "")),
+            "adaptive_recommendations": safe_decrypt_list(content.get("adaptive_recommendations", [])),
+            "next_steps": content.get("next_steps", []),  # Not encrypted
+            "milestone_tracking": content.get("milestone_tracking", {}),  # Not encrypted
+            "support_resources": content.get("support_resources", []),  # Not encrypted
+            "schedule": content.get("schedule", {}),  # Not encrypted
+        }
+
+        return {
+            "solution_id": str(solution_doc["_id"]),
+            "stage": solution_doc["stage"],
+            "stage_name": solution_doc.get("stageName", "follow_up_support"),
+            "status": solution_doc["status"],
+            "content": decrypted_content,
+            "metadata": {
+                "confidence_score": solution_doc.get("metadata", {}).get(
+                    "confidence_score", 0.0
+                ),
+                "processing_time": solution_doc.get("metadata", {}).get(
+                    "processing_time", 0.0
+                ),
+                "generated_at": solution_doc.get("metadata", {}).get("generated_at"),
+                "user_role": solution_doc.get("metadata", {}).get("user_role"),
+                "stage1_integration": solution_doc.get("metadata", {}).get("stage1_integration", False),
+                "stage2_integration": solution_doc.get("metadata", {}).get("stage2_integration", False),
+                "has_follow_up_data": solution_doc.get("metadata", {}).get("has_follow_up_data", False),
+            },
+            "created_at": solution_doc["createdAt"].isoformat(),
+            "completed_at": (
+                solution_doc.get("completedAt").isoformat()
+                if solution_doc.get("completedAt")
+                else None
+            ),
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to get Stage 3 result: {str(e)}",
+        )
+
+
 @router.post("/follow-up/{solution_id}")
 async def submit_follow_up(
     solution_id: str,
@@ -399,9 +499,15 @@ async def process_stage3_background(
     # Track processing time for performance monitoring and follow-up scheduling
     start_time = datetime.utcnow()
 
+    from motor.motor_asyncio import AsyncIOMotorClient
+    from ..core.config import settings
+
+    # Create database connection for background task
+    # Background tasks need their own database connection since they run outside request context
+    client = AsyncIOMotorClient(settings.MONGO_URI)
+    db = client[settings.MONGO_DB]
+
     try:
-        # Get database connection for background task processing
-        db = await get_database()
 
         # Get original experience data for context continuity
         # This maintains connection to the user's initial situation
@@ -494,7 +600,6 @@ async def process_stage3_background(
         # Update solution with error status and preserve processing attempt data
         # Status is set to GENERATED (not FAILED) to allow retry attempts
         try:
-            db = await get_database()
             await db.solutions.update_one(
                 {"_id": ObjectId(solution_id)},
                 {
@@ -511,6 +616,11 @@ async def process_stage3_background(
         except Exception as db_error:
             # Log database update failures for system monitoring
             print(f"Failed to update solution error status: {db_error}")
+
+    finally:
+        # Always close database connection to prevent connection leaks
+        # Critical for background tasks that create their own connections
+        client.close()
 
 
 async def process_follow_up_background(
@@ -554,9 +664,14 @@ async def process_follow_up_background(
         - Preserves original solution content if adaptation fails
         - Logs adaptation failures for system monitoring
     """
+    from motor.motor_asyncio import AsyncIOMotorClient
+    from ..core.config import settings
+
+    # Create database connection for background task
+    client = AsyncIOMotorClient(settings.MONGO_URI)
+    db = client[settings.MONGO_DB]
+
     try:
-        # Get database connection for follow-up processing
-        db = await get_database()
 
         # Get current Stage 3 solution for context and baseline
         # This provides the foundation for adaptive recommendations
@@ -599,3 +714,7 @@ async def process_follow_up_background(
         # Log adaptation failure with details for debugging and system monitoring
         # Note: Solution status is not changed on adaptation failure to preserve original content
         print(f"❌ Follow-up adaptation failed for solution {solution_id}: {e}")
+
+    finally:
+        # Always close database connection to prevent connection leaks
+        client.close()
