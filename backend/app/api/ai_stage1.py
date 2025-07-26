@@ -211,7 +211,9 @@ async def process_stage1(
             process_stage1_background,
             str(solution_id),
             str(request.experience_id),
-            current_user.role,  # User role affects AI prompt selection and response style
+            experience_doc[
+                "role"
+            ],  # role affects AI prompt selection and response style
             request.additional_context
             or {},  # Additional context for personalized processing
         )

@@ -128,6 +128,7 @@ async def create_experience(
             "text": experience_data.content.text,
             "mediaFiles": [],  # TODO: Handle media files in future iteration
         },
+        "role": experience_data.role,
         "category": experience_data.category.value,
         "emotionalState": {
             "primary": experience_data.emotionalState.primary.value,

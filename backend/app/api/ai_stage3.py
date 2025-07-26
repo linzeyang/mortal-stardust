@@ -164,7 +164,7 @@ async def process_stage3(
             str(request.experience_id),
             str(request.stage1_solution_id) if request.stage1_solution_id else None,
             str(request.stage2_solution_id) if request.stage2_solution_id else None,
-            current_user.role,
+            experience_doc["role"],
             request.follow_up_data.dict() if request.follow_up_data else {},
             request.additional_context or {},
         )

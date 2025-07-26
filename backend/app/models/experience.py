@@ -12,7 +12,7 @@ privacy and security through field-level encryption.
 
 from datetime import datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -302,6 +302,9 @@ class ExperienceCreate(BaseModel):
             Used in user interface lists and experience management.
         content: Core experience content including text and media attachments.
             Contains the actual experience data for AI analysis and processing.
+        role: User's role or identity during the experience.
+            Default: Other for general experiences.
+            Used for personalized AI responses and contextualization.
         category: Experience category for specialized AI processing.
             Determines which domain-specific knowledge and templates are applied.
         emotionalState: User's emotional context during the experience.
@@ -316,6 +319,7 @@ class ExperienceCreate(BaseModel):
 
     title: str = Field(..., min_length=1, max_length=200)
     content: ExperienceContent
+    role: Literal["workplace_newcomer", "entrepreneur", "student", "other"] = Field(...)
     category: ExperienceCategory
     emotionalState: ExperienceEmotionalState
     tags: List[str] = []
