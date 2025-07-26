@@ -133,7 +133,7 @@ async def process_stage1(
         experience_doc = await db.experiences.find_one(
             {
                 "_id": ObjectId(request.experience_id),
-                "userId": ObjectId(current_user.id),
+                "userId": current_user.id,
             }
         )
 
@@ -148,9 +148,9 @@ async def process_stage1(
         # Each experience can only have one solution per stage
         existing_solution = await db.solutions.find_one(
             {
-                "experienceId": ObjectId(request.experience_id),
+                "experienceId": request.experience_id,
                 "stage": 1,
-                "userId": ObjectId(current_user.id),
+                "userId": current_user.id,
             }
         )
 
@@ -174,10 +174,10 @@ async def process_stage1(
         solution_id = None
         if existing_solution:
             # Reprocess existing solution (e.g., after failure or user request)
-            solution_id = existing_solution["_id"]
+            solution_id = str(existing_solution["_id"])
             # Update status to processing and record when processing started
             await db.solutions.update_one(
-                {"_id": solution_id},
+                {"_id": ObjectId(solution_id)},
                 {
                     "$set": {
                         "status": SolutionStatus.PROCESSING,
@@ -190,8 +190,8 @@ async def process_stage1(
             # Create new solution record with initial metadata
             # stageName helps identify the type of processing for analytics
             solution_doc = {
-                "userId": ObjectId(current_user.id),
-                "experienceId": ObjectId(request.experience_id),
+                "userId": current_user.id,
+                "experienceId": request.experience_id,
                 "stage": 1,
                 "stageName": "psychological_healing",
                 "status": SolutionStatus.PROCESSING,
@@ -280,7 +280,7 @@ async def get_stage1_status(
         solution_doc = await db.solutions.find_one(
             {
                 "_id": ObjectId(solution_id),
-                "userId": ObjectId(current_user.id),
+                "userId": current_user.id,
                 "stage": 1,
             }
         )
@@ -389,7 +389,7 @@ async def get_stage1_result(
         solution_doc = await db.solutions.find_one(
             {
                 "_id": ObjectId(solution_id),
-                "userId": ObjectId(current_user.id),
+                "userId": current_user.id,
                 "stage": 1,
             }
         )
@@ -509,7 +509,7 @@ async def regenerate_stage1_solution(
         solution_doc = await db.solutions.find_one(
             {
                 "_id": ObjectId(solution_id),
-                "userId": ObjectId(current_user.id),
+                "userId": current_user.id,
                 "stage": 1,
             }
         )

@@ -40,7 +40,7 @@ class PrivacyComplianceMiddleware(BaseHTTPMiddleware):
     async def _log_data_access(self, request: Request):
         """Log data access for audit purposes."""
         try:
-            db = await get_database()
+            db = get_database()
             audit_collection = db.audit_logs
 
             # Extract user info if available
@@ -245,7 +245,7 @@ class DataRetentionManager:
     async def cleanup_expired_data(self):
         """Clean up data that has exceeded retention period."""
         try:
-            db = await get_database()
+            db = get_database()
             cutoff_date = datetime.utcnow() - timedelta(days=self.retention_days)
 
             # Clean up audit logs
@@ -268,7 +268,7 @@ class GDPRComplianceService:
     async def export_user_data(user_id: str) -> Dict[str, Any]:
         """Export all user data for GDPR compliance."""
         try:
-            db = await get_database()
+            db = get_database()
 
             # Collect all user data
             user_data = {}
@@ -323,7 +323,7 @@ class GDPRComplianceService:
     async def delete_user_data(user_id: str, verification_token: str = None) -> bool:
         """Delete all user data (right to be forgotten)."""
         try:
-            db = await get_database()
+            db = get_database()
 
             # In production, add verification token check
 

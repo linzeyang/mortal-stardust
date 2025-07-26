@@ -53,7 +53,7 @@ async def process_stage2(
         experience_doc = await db.experiences.find_one(
             {
                 "_id": ObjectId(request.experience_id),
-                "userId": ObjectId(current_user.id),
+                "userId": current_user.id,
             }
         )
 
@@ -66,9 +66,9 @@ async def process_stage2(
         # Check if Stage 2 solution already exists
         existing_solution = await db.solutions.find_one(
             {
-                "experienceId": ObjectId(request.experience_id),
+                "experienceId": request.experience_id,
                 "stage": 2,
-                "userId": ObjectId(current_user.id),
+                "userId": current_user.id,
             }
         )
 
@@ -93,7 +93,7 @@ async def process_stage2(
             stage1_solution = await db.solutions.find_one(
                 {
                     "_id": ObjectId(request.stage1_solution_id),
-                    "userId": ObjectId(current_user.id),
+                    "userId": current_user.id,
                     "stage": 1,
                 }
             )
@@ -116,16 +116,14 @@ async def process_stage2(
         else:
             # Create new solution record
             solution_doc = {
-                "userId": ObjectId(current_user.id),
-                "experienceId": ObjectId(request.experience_id),
+                "userId": current_user.id,
+                "experienceId": request.experience_id,
                 "stage": 2,
                 "stageName": "practical_solutions",
                 "status": SolutionStatus.PROCESSING,
                 "priority": request.priority,
                 "stage1SolutionId": (
-                    ObjectId(request.stage1_solution_id)
-                    if request.stage1_solution_id
-                    else None
+                    request.stage1_solution_id if request.stage1_solution_id else None
                 ),
                 "createdAt": datetime.utcnow(),
                 "updatedAt": datetime.utcnow(),
@@ -174,7 +172,7 @@ async def get_stage2_status(
         solution_doc = await db.solutions.find_one(
             {
                 "_id": ObjectId(solution_id),
-                "userId": ObjectId(current_user.id),
+                "userId": current_user.id,
                 "stage": 2,
             }
         )
@@ -298,7 +296,7 @@ async def process_stage2_background(
 
     try:
         # Get database connection for background task processing
-        db = await get_database()
+        db = get_database()
 
         # Get experience data containing user's original input
         # This provides the context for practical solution generation
@@ -369,7 +367,7 @@ async def process_stage2_background(
         # Update solution with error status and details
         # Status is set to GENERATED (not FAILED) to allow retry attempts
         try:
-            db = await get_database()
+            db = get_database()
             await db.solutions.update_one(
                 {"_id": ObjectId(solution_id)},
                 {
