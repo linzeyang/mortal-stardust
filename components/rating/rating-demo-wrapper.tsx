@@ -37,23 +37,23 @@ export default function RatingDemoWrapper({
   return (
     <div className="space-y-4">
       {/* 解决方案信息卡片 */}
-      <Card>
+      <Card className="bg-gray-800/80 backdrop-blur-md border-gray-600/50">
         <CardContent className="p-6">
           <div className="mb-4">
-            <h3 className="text-lg font-semibold mb-2">{solutionTitle}</h3>
+            <h3 className="text-lg font-semibold mb-2 text-white">{solutionTitle}</h3>
             <div className="flex gap-2 mb-4">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-400/20 text-blue-300">
                 阶段 {stage}
               </span>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-white/20 text-white">
                 {getTypeLabel(type)}
               </span>
             </div>
           </div>
 
-          <div className="bg-muted/50 p-4 rounded-lg">
-            <h4 className="font-medium mb-2">模拟解决方案内容：</h4>
-            <p className="text-sm text-muted-foreground">{content}</p>
+          <div className="bg-white/10 p-4 rounded-lg">
+            <h4 className="font-medium mb-2 text-white">模拟解决方案内容：</h4>
+            <p className="text-sm text-white/80">{content}</p>
           </div>
         </CardContent>
       </Card>
@@ -61,9 +61,9 @@ export default function RatingDemoWrapper({
       {/* 评价组件 */}
       <ClientOnly 
         fallback={
-          <Card>
+          <Card className="bg-gray-800/80 backdrop-blur-md border-gray-600/50">
             <CardContent className="p-4">
-              <div className="text-center text-muted-foreground">
+              <div className="text-center text-white/80">
                 <RefreshCw className="h-8 w-8 mx-auto mb-2 animate-spin" />
                 <p>加载评价组件中...</p>
               </div>

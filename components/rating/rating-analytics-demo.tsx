@@ -144,11 +144,11 @@ export default function RatingAnalyticsDemo() {
   // 防止水合错误 - 确保组件在客户端完全加载后再渲染
   if (!isClient || loading) {
     return (
-      <Card>
+      <Card className="bg-gray-800/80 backdrop-blur-md border-gray-600/50">
         <CardContent className="p-6">
           <div className="text-center">
-            <RefreshCw className="h-8 w-8 mx-auto mb-2 animate-spin text-muted-foreground" />
-            <p className="text-muted-foreground">加载评价统计中...</p>
+            <RefreshCw className="h-8 w-8 mx-auto mb-2 animate-spin text-white/80" />
+            <p className="text-white/80">加载评价统计中...</p>
           </div>
         </CardContent>
       </Card>
@@ -158,18 +158,18 @@ export default function RatingAnalyticsDemo() {
   // 空数据状态处理
   if (!analytics || analytics.total_ratings === 0) {
     return (
-      <Card>
+      <Card className="bg-gray-800/80 backdrop-blur-md border-gray-600/50">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-white">
             <Star className="h-5 w-5" />
             评价统计
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-8">
-            <Target className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-            <h3 className="text-lg font-medium mb-2">暂无评价数据</h3>
-            <p className="text-muted-foreground">
+            <Target className="h-12 w-12 mx-auto mb-4 text-white/60" />
+            <h3 className="text-lg font-medium mb-2 text-white">暂无评价数据</h3>
+            <p className="text-white/80">
               当您开始评价解决方案后，这里将显示详细的统计信息。
             </p>
           </div>
@@ -195,60 +195,60 @@ export default function RatingAnalyticsDemo() {
       {/* 统计概览卡片 - 显示核心指标 */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* 总评价数统计卡片 */}
-        <Card>
+        <Card className="bg-gray-800/80 backdrop-blur-md border-gray-600/50">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">总评价数</p>
-                <p className="text-2xl font-bold">{analytics.total_ratings}</p>
+                <p className="text-sm font-medium text-white/80">总评价数</p>
+                <p className="text-2xl font-bold text-white">{analytics.total_ratings}</p>
               </div>
-              <Star className="h-4 w-4 text-muted-foreground" />
+              <Star className="h-4 w-4 text-yellow-400" />
             </div>
           </CardContent>
         </Card>
 
         {/* 平均评分统计卡片 */}
-        <Card>
+        <Card className="bg-gray-800/80 backdrop-blur-md border-gray-600/50">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">平均评分</p>
-                <p className="text-2xl font-bold">{analytics.avg_rating}%</p>
+                <p className="text-sm font-medium text-white/80">平均评分</p>
+                <p className="text-2xl font-bold text-white">{analytics.avg_rating}%</p>
               </div>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <TrendingUp className="h-4 w-4 text-green-400" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-gray-800/80 backdrop-blur-md border-gray-600/50">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">成功率</p>
-                <p className="text-2xl font-bold text-green-600">{analytics.success_rate}%</p>
+                <p className="text-sm font-medium text-white/80">成功率</p>
+                <p className="text-2xl font-bold text-green-400">{analytics.success_rate}%</p>
               </div>
-              <Award className="h-4 w-4 text-green-600" />
+              <Award className="h-4 w-4 text-green-400" />
             </div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-gray-800/80 backdrop-blur-md border-gray-600/50">
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">高评价数</p>
-                <p className="text-2xl font-bold text-green-600">{analytics.high_ratings}</p>
+                <p className="text-sm font-medium text-white/80">高评价数</p>
+                <p className="text-2xl font-bold text-green-400">{analytics.high_ratings}</p>
               </div>
-              <ThumbsUp className="h-4 w-4 text-green-600" />
+              <ThumbsUp className="h-4 w-4 text-green-400" />
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* 评价分布详情 */}
-      <Card>
+      <Card className="bg-gray-800/80 backdrop-blur-md border-gray-600/50">
         <CardHeader>
-          <CardTitle>评价分布详情</CardTitle>
+          <CardTitle className="text-white">评价分布详情</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-3">
@@ -257,11 +257,11 @@ export default function RatingAnalyticsDemo() {
                 <Badge className="bg-green-100 text-green-800 border-green-200">
                   高评价 (70%+)
                 </Badge>
-                <span className="text-sm text-muted-foreground">解决方案非常有效</span>
+                <span className="text-sm text-white/80">解决方案非常有效</span>
               </div>
               <div className="flex items-center gap-2">
                 <Progress value={(analytics.high_ratings / analytics.total_ratings) * 100} className="w-20" />
-                <span className="text-sm font-medium">{analytics.high_ratings}</span>
+                <span className="text-sm font-medium text-white">{analytics.high_ratings}</span>
               </div>
             </div>
 
@@ -270,11 +270,11 @@ export default function RatingAnalyticsDemo() {
                 <Badge className="bg-yellow-100 text-yellow-800 border-yellow-200">
                   中等评价 (50-69%)
                 </Badge>
-                <span className="text-sm text-muted-foreground">解决方案有一定帮助</span>
+                <span className="text-sm text-white/80">解决方案有一定帮助</span>
               </div>
               <div className="flex items-center gap-2">
                 <Progress value={(analytics.medium_ratings / analytics.total_ratings) * 100} className="w-20" />
-                <span className="text-sm font-medium">{analytics.medium_ratings}</span>
+                <span className="text-sm font-medium text-white">{analytics.medium_ratings}</span>
               </div>
             </div>
 
@@ -283,23 +283,23 @@ export default function RatingAnalyticsDemo() {
                 <Badge className="bg-red-100 text-red-800 border-red-200">
                   低评价 (&lt;50%)
                 </Badge>
-                <span className="text-sm text-muted-foreground">需要重新生成解决方案</span>
+                <span className="text-sm text-white/80">需要重新生成解决方案</span>
               </div>
               <div className="flex items-center gap-2">
                 <Progress value={(analytics.low_ratings / analytics.total_ratings) * 100} className="w-20" />
-                <span className="text-sm font-medium">{analytics.low_ratings}</span>
+                <span className="text-sm font-medium text-white">{analytics.low_ratings}</span>
               </div>
             </div>
           </div>
 
           {/* 成功率指示器 */}
-          <div className="mt-6 p-4 bg-muted/50 rounded-lg">
+          <div className="mt-6 p-4 bg-white/10 rounded-lg">
             <div className="flex items-center justify-between mb-2">
-              <span className="font-medium">整体成功率</span>
-              <span className="text-2xl font-bold text-green-600">{analytics.success_rate}%</span>
+              <span className="font-medium text-white">整体成功率</span>
+              <span className="text-2xl font-bold text-green-400">{analytics.success_rate}%</span>
             </div>
             <Progress value={analytics.success_rate} className="h-2" />
-            <p className="text-xs text-muted-foreground mt-2">
+            <p className="text-xs text-white/80 mt-2">
               基于 70% 及以上评价的解决方案占比计算
             </p>
           </div>
@@ -307,23 +307,23 @@ export default function RatingAnalyticsDemo() {
       </Card>
 
       {/* 功能说明 */}
-      <Card>
+      <Card className="bg-gray-800/80 backdrop-blur-md border-gray-600/50">
         <CardHeader>
-          <CardTitle>统计功能说明</CardTitle>
+          <CardTitle className="text-white">统计功能说明</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
             <div>
-              <h4 className="font-medium mb-2">实时数据追踪</h4>
-              <ul className="space-y-1 text-muted-foreground">
+              <h4 className="font-medium mb-2 text-white">实时数据追踪</h4>
+              <ul className="space-y-1 text-white/80">
                 <li>• 自动收集用户评价数据</li>
                 <li>• 实时更新统计指标</li>
                 <li>• 多维度数据分析</li>
               </ul>
             </div>
             <div>
-              <h4 className="font-medium mb-2">智能分析</h4>
-              <ul className="space-y-1 text-muted-foreground">
+              <h4 className="font-medium mb-2 text-white">智能分析</h4>
+              <ul className="space-y-1 text-white/80">
                 <li>• 评价趋势分析</li>
                 <li>• 解决方案效果评估</li>
                 <li>• 持续改进建议</li>

@@ -40,10 +40,10 @@ const roleIcons = {
 };
 
 const roleColors = {
-  workplace_newcomer: 'bg-blue-50 border-blue-200 hover:bg-blue-100',
-  entrepreneur: 'bg-purple-50 border-purple-200 hover:bg-purple-100',
-  student: 'bg-green-50 border-green-200 hover:bg-green-100',
-  other: 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+  workplace_newcomer: 'bg-white-40 border-blue-400 hover:bg-blue-500',
+  entrepreneur: 'bg-white-40 border-purple-400 hover:bg-purple-500',
+  student: 'bg-white-40 border-green-400 hover:bg-green-500',
+  other: 'bg-white-40 border-gray-400 hover:bg-gray-500'
 };
 
 export function RoleSelection({ onRoleSelected, selectedRole }: RoleSelectionProps) {
@@ -137,8 +137,8 @@ export function RoleSelection({ onRoleSelected, selectedRole }: RoleSelectionPro
     return (
       <div className="w-full max-w-4xl mx-auto p-8">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">加载角色选项中...</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-400 mx-auto"></div>
+          <p className="mt-4 text-white">加载角色选项中...</p>
         </div>
       </div>
     );
@@ -148,8 +148,8 @@ export function RoleSelection({ onRoleSelected, selectedRole }: RoleSelectionPro
     <div className="w-full max-w-6xl mx-auto space-y-8">
       {/* Header */}
       <div className="text-center space-y-4">
-        <h1 className="text-3xl font-bold text-gray-900">选择您的身份角色</h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+        <h1 className="text-3xl font-bold text-white">选择您的身份角色</h1>
+        <p className="text-lg text-white max-w-2xl mx-auto">
           请选择最符合您当前情况的身份角色，我们将为您提供个性化的经历收集模板和AI咨询方案
         </p>
       </div>
@@ -160,8 +160,8 @@ export function RoleSelection({ onRoleSelected, selectedRole }: RoleSelectionPro
           <Card
             key={role.role}
             className={`cursor-pointer transition-all duration-200 ${selectedRole === role.role
-                ? 'ring-2 ring-blue-500 shadow-lg'
-                : roleColors[role.role as keyof typeof roleColors]
+              ? 'ring-2 ring-blue-500 shadow-lg'
+              : roleColors[role.role as keyof typeof roleColors]
               }`}
             onClick={() => handleRoleSelect(role.role)}
           >
@@ -169,22 +169,22 @@ export function RoleSelection({ onRoleSelected, selectedRole }: RoleSelectionPro
               <div className="flex items-start justify-between">
                 <div className="flex items-center space-x-3">
                   <div className={`p-2 rounded-lg ${selectedRole === role.role
-                      ? 'bg-blue-500 text-white'
-                      : 'bg-white shadow-sm'
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-white shadow-sm'
                     }`}>
                     {roleIcons[role.role as keyof typeof roleIcons]}
                   </div>
                   <div>
-                    <CardTitle className="flex items-center gap-2">
+                    <CardTitle className="flex items-center gap-2 text-white">
                       {role.name}
                       {selectedRole === role.role && (
-                        <CheckCircle className="w-5 h-5 text-blue-500" />
+                        <CheckCircle className="w-5 h-5 text-blue-400" />
                       )}
                     </CardTitle>
                   </div>
                 </div>
               </div>
-              <CardDescription className="text-sm leading-relaxed">
+              <CardDescription className="text-sm leading-relaxed text-white/90">
                 {role.description}
               </CardDescription>
             </CardHeader>
@@ -200,19 +200,19 @@ export function RoleSelection({ onRoleSelected, selectedRole }: RoleSelectionPro
               </div>
 
               {/* Preview Info */}
-              <div className="bg-white/50 rounded-lg p-3 space-y-2">
-                <h4 className="text-sm font-medium text-gray-700">模板预览</h4>
-                <div className="grid grid-cols-3 gap-4 text-xs text-gray-600">
+              <div className="bg-black/20 rounded-lg p-3 space-y-2">
+                <h4 className="text-sm font-medium text-white">模板预览</h4>
+                <div className="grid grid-cols-3 gap-4 text-xs text-white/80">
                   <div className="text-center">
-                    <div className="font-medium text-gray-900">{role.preview.sectionCount}</div>
+                    <div className="font-medium text-white">{role.preview.sectionCount}</div>
                     <div>个部分</div>
                   </div>
                   <div className="text-center">
-                    <div className="font-medium text-gray-900">{role.preview.fieldCount}</div>
+                    <div className="font-medium text-white">{role.preview.fieldCount}</div>
                     <div>个字段</div>
                   </div>
                   <div className="text-center">
-                    <div className="font-medium text-gray-900">{role.preview.estimatedTime}</div>
+                    <div className="font-medium text-white">{role.preview.estimatedTime}</div>
                     <div>预计用时</div>
                   </div>
                 </div>
@@ -241,15 +241,15 @@ export function RoleSelection({ onRoleSelected, selectedRole }: RoleSelectionPro
       </div>
 
       {/* Additional Info */}
-      <Card className="bg-blue-50 border-blue-200">
+      <Card className="bg-blue-500/30 border-blue-400/50">
         <CardContent className="p-6">
           <div className="flex items-start space-x-3">
             <div className="bg-blue-500 text-white p-2 rounded-lg flex-shrink-0">
               <User className="w-5 h-5" />
             </div>
             <div className="space-y-2">
-              <h3 className="font-medium text-blue-900">个性化AI咨询</h3>
-              <p className="text-sm text-blue-700 leading-relaxed">
+              <h3 className="font-medium text-white">个性化AI咨询</h3>
+              <p className="text-sm text-white/90 leading-relaxed">
                 根据您选择的角色，我们的AI系统将为您提供三个阶段的专业咨询：
                 <span className="font-medium">心理疗愈支持</span>、
                 <span className="font-medium">实际解决方案</span>、
@@ -262,7 +262,7 @@ export function RoleSelection({ onRoleSelected, selectedRole }: RoleSelectionPro
       </Card>
 
       {/* Help Text */}
-      <div className="text-center text-sm text-gray-500">
+      <div className="text-center text-sm text-white/70">
         <p>选择角色后，您可以随时在个人设置中修改身份信息</p>
       </div>
     </div>

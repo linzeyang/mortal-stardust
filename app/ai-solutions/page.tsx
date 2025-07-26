@@ -12,6 +12,7 @@ import { useSolutions, Solution } from '@/hooks/use-solutions';
 import ReactMarkdown from 'react-markdown';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
+import Image from 'next/image';
 import {
   Brain,
   Heart,
@@ -663,20 +664,37 @@ function AISolutionsContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
-        <div className="container mx-auto px-4 py-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-12">
-              <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                您的AI解决方案
-              </h1>
-              <p className="text-xl text-gray-600 mb-6">
-                基于深度分析的个性化建议和心理支持方案
-              </p>
-            </div>
-            <div className="flex justify-center items-center py-20">
-              <LoadingSpinner />
-              <span className="ml-3 text-gray-600">正在加载您的解决方案...</span>
+      <div className="relative min-h-screen">
+        {/* 背景图片层 - 使用 pageseven.png */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/images/pageseven.png"
+            alt="AI方案背景"
+            fill
+            className="object-cover object-center"
+            priority
+            quality={100}
+          />
+          {/* 深色遮罩层，确保内容可读性 */}
+          <div className="absolute inset-0 bg-black/30"></div>
+        </div>
+        
+        {/* 内容层 */}
+        <div className="relative z-10">
+          <div className="container mx-auto px-4 py-8">
+            <div className="max-w-7xl mx-auto">
+              <div className="text-center mb-12">
+                <h1 className="text-4xl font-bold text-white mb-4">
+                  您的AI解决方案
+                </h1>
+                <p className="text-xl text-white/90 mb-6">
+                  基于深度分析的个性化建议和心理支持方案
+                </p>
+              </div>
+              <div className="flex justify-center items-center py-20">
+                <LoadingSpinner />
+                <span className="ml-3 text-white">正在加载您的解决方案...</span>
+              </div>
             </div>
           </div>
         </div>
@@ -686,46 +704,79 @@ function AISolutionsContent() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
-        <div className="container mx-auto px-4 py-8">
-          <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-12">
-              <h1 className="text-4xl font-bold text-gray-900 mb-4">
-                您的AI解决方案
-              </h1>
-              <p className="text-xl text-gray-600 mb-6">
-                基于深度分析的个性化建议和心理支持方案
-              </p>
+      <div className="relative min-h-screen">
+        {/* 背景图片层 - 使用 pageseven.png */}
+        <div className="absolute inset-0 z-0">
+          <Image
+            src="/images/pageseven.png"
+            alt="AI方案背景"
+            fill
+            className="object-cover object-center"
+            priority
+            quality={100}
+          />
+          {/* 深色遮罩层，确保内容可读性 */}
+          <div className="absolute inset-0 bg-black/30"></div>
+        </div>
+        
+        {/* 内容层 */}
+        <div className="relative z-10">
+          <div className="container mx-auto px-4 py-8">
+            <div className="max-w-7xl mx-auto">
+              <div className="text-center mb-12">
+                <h1 className="text-4xl font-bold text-white mb-4">
+                  您的AI解决方案
+                </h1>
+                <p className="text-xl text-white/90 mb-6">
+                  基于深度分析的个性化建议和心理支持方案
+                </p>
+              </div>
+              <Card className="border-red-200/50 bg-red-500/20 backdrop-blur-md">
+                <CardContent className="p-6 text-center">
+                  <AlertCircle className="h-12 w-12 text-red-400 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-white mb-2">加载失败</h3>
+                  <p className="text-white/90 mb-4">{error}</p>
+                  <Button onClick={refetch} variant="outline" className="bg-white/10 border-white/30 text-white hover:bg-white/20">
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    重试
+                  </Button>
+                </CardContent>
+              </Card>
             </div>
-            <Card className="border-red-200 bg-red-50">
-              <CardContent className="p-6 text-center">
-                <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-red-900 mb-2">加载失败</h3>
-                <p className="text-red-700 mb-4">{error}</p>
-                <Button onClick={refetch} variant="outline">
-                  <RefreshCw className="h-4 w-4 mr-2" />
-                  重试
-                </Button>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </div>
     );
   }
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Header */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              您的AI解决方案
-            </h1>
-            <p className="text-xl text-gray-600 mb-6">
-              基于深度分析的个性化建议和心理支持方案
-            </p>
-          </div>
+    <div className="relative min-h-screen">
+      {/* 背景图片层 - 使用 pageseven.png */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="/images/pageseven.png"
+          alt="AI方案背景"
+          fill
+          className="object-cover object-center"
+          priority
+          quality={100}
+        />
+        {/* 深色遮罩层，确保内容可读性 */}
+        <div className="absolute inset-0 bg-black/30"></div>
+      </div>
+      
+      {/* 内容层 */}
+      <div className="relative z-10">
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-7xl mx-auto">
+            {/* Header */}
+            <div className="text-center mb-12">
+              <h1 className="text-4xl font-bold text-white mb-4">
+                您的AI解决方案
+              </h1>
+              <p className="text-xl text-white/90 mb-6">
+                基于深度分析的个性化建议和心理支持方案
+              </p>
+            </div>
 
           {/* Stats */}
           <SolutionStats solutions={solutions} />
@@ -820,6 +871,7 @@ function AISolutionsContent() {
               <RefreshCw className="h-5 w-5 mr-2" />
               刷新数据
             </Button>
+            </div>
           </div>
         </div>
       </div>

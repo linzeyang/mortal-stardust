@@ -28,6 +28,7 @@ import { useToast } from '@/hooks/use-toast';
 import { experienceService, type ExperienceData as ApiExperienceData } from '@/lib/api/experiences';
 import { authHelper } from '@/lib/api/auth-helper';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 /**
  * Interface representing the complete experience data structure
@@ -979,51 +980,68 @@ export default function ExperiencePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
-      {/* Header with navigation */}
-      {currentStep !== ExperienceStep.ROLE_SELECTION && (
-        <div className="w-full max-w-6xl mx-auto mb-8">
-          <div className="flex items-center justify-between">
-            <Button
-              variant="outline"
-              onClick={handleBackToRoleSelection}
-              disabled={isProcessing}
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              返回角色选择
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={handleStartOver}
-              disabled={isProcessing}
-            >
-              <RotateCcw className="w-4 h-4 mr-2" />
-              重新开始
-            </Button>
+    <div className="relative min-h-screen">
+      {/* 背景图片层 - 使用 pagehouse.png */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="/images/pagehouse.png"
+          alt="经历收集背景"
+          fill
+          className="object-cover object-center"
+          priority
+          quality={100}
+        />
+        {/* 深色遮罩层，确保内容可读性 */}
+        <div className="absolute inset-0 bg-black/20"></div>
+      </div>
+
+      {/* 内容层 */}
+      <div className="relative z-10 py-8 px-4">
+        {/* Header with navigation */}
+        {currentStep !== ExperienceStep.ROLE_SELECTION && (
+          <div className="w-full max-w-6xl mx-auto mb-8">
+            <div className="flex items-center justify-between">
+              <Button
+                variant="outline"
+                onClick={handleBackToRoleSelection}
+                disabled={isProcessing}
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                返回角色选择
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={handleStartOver}
+                disabled={isProcessing}
+              >
+                <RotateCcw className="w-4 h-4 mr-2" />
+                重新开始
+              </Button>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Step Content */}
-      {currentStep === ExperienceStep.ROLE_SELECTION && (
-        <RoleSelection
-          onRoleSelected={handleRoleSelected}
-          selectedRole={selectedRole}
-        />
-      )}
+        {/* Step Content */}
+        {currentStep === ExperienceStep.ROLE_SELECTION && (
+          <RoleSelection
+            onRoleSelected={handleRoleSelected}
+            selectedRole={selectedRole}
+          />
+        )}
 
-      {currentStep === ExperienceStep.FORM_INPUT && (
-        <ExperienceInputForm
-          selectedRole={selectedRole}
-          onSubmit={handleFormSubmit}
-          onSaveDraft={handleSaveDraft}
-          initialData={experienceData?.data}
-        />
-      )}
+        {currentStep === ExperienceStep.FORM_INPUT && (
+          <ExperienceInputForm
+            selectedRole={selectedRole}
+            onSubmit={handleFormSubmit}
+            onSaveDraft={handleSaveDraft}
+            initialData={experienceData?.data}
+          />
+        )}
 
-      {currentStep === ExperienceStep.PROCESSING && renderProcessingScreen()}
+        {currentStep === ExperienceStep.PROCESSING && renderProcessingScreen()}
 
-      {currentStep === ExperienceStep.RESULTS && renderResultsScreen()}
+        {currentStep === ExperienceStep.RESULTS && renderResultsScreen()}
+      </div>
     </div>
   );
 }

@@ -44,18 +44,18 @@ export default function RatingDemoContent() {
     <div className="space-y-8">
       {/* 评价统计分析 */}
       <div>
-        <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
+        <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2 text-white">
           <BarChart3 className="h-6 w-6" />
           评价统计分析
         </h2>
         <RatingErrorBoundary>
           <ClientOnly 
             fallback={
-              <Card>
+              <Card className="bg-gray-800/80 backdrop-blur-md border-gray-600/50">
                 <CardContent className="p-6">
                   <div className="text-center">
-                    <RefreshCw className="h-8 w-8 mx-auto mb-2 animate-spin text-muted-foreground" />
-                    <p className="text-muted-foreground">加载统计数据中...</p>
+                    <RefreshCw className="h-8 w-8 mx-auto mb-2 animate-spin text-white/80" />
+                    <p className="text-white/80">加载统计数据中...</p>
                   </div>
                 </CardContent>
               </Card>
@@ -70,7 +70,7 @@ export default function RatingDemoContent() {
 
       {/* 解决方案评价演示 */}
       <div>
-        <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
+        <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2 text-white">
           <Star className="h-6 w-6" />
           解决方案评价演示
         </h2>
@@ -94,61 +94,61 @@ export default function RatingDemoContent() {
       <Separator />
 
       <div>
-        <h2 className="text-2xl font-semibold mb-4">功能特点</h2>
+        <h2 className="text-2xl font-semibold mb-4 text-white">功能特点</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card>
+          <Card className="bg-gray-800/80 backdrop-blur-md border-gray-600/50">
             <CardHeader>
-              <CardTitle className="text-lg">智能评价机制</CardTitle>
+              <CardTitle className="text-lg text-white">智能评价机制</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-start gap-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
                 <div>
-                  <div className="font-medium">多维度评价</div>
-                  <div className="text-sm text-muted-foreground">支持整体评分、具体反馈、实施难度等多维度评价</div>
+                  <div className="font-medium text-white">多维度评价</div>
+                  <div className="text-sm text-white/80">支持整体评分、具体反馈、实施难度等多维度评价</div>
                 </div>
               </div>
               <div className="flex items-start gap-2">
                 <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
                 <div>
-                  <div className="font-medium">自动重新生成</div>
-                  <div className="text-sm text-muted-foreground">评分低于50%时自动触发解决方案重新生成</div>
+                  <div className="font-medium text-white">自动重新生成</div>
+                  <div className="text-sm text-white/80">评分低于50%时自动触发解决方案重新生成</div>
                 </div>
               </div>
               <div className="flex items-start gap-2">
                 <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
                 <div>
-                  <div className="font-medium">成功案例记录</div>
-                  <div className="text-sm text-muted-foreground">70%以上高评价解决方案自动记录为成功案例</div>
+                  <div className="font-medium text-white">成功案例记录</div>
+                  <div className="text-sm text-white/80">70%以上高评价解决方案自动记录为成功案例</div>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-gray-800/80 backdrop-blur-md border-gray-600/50">
             <CardHeader>
-              <CardTitle className="text-lg">数据分析与优化</CardTitle>
+              <CardTitle className="text-lg text-white">数据分析与优化</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex items-start gap-2">
                 <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2 flex-shrink-0"></div>
                 <div>
-                  <div className="font-medium">实时统计</div>
-                  <div className="text-sm text-muted-foreground">提供详细的评价统计和趋势分析</div>
+                  <div className="font-medium text-white">实时统计</div>
+                  <div className="text-sm text-white/80">提供详细的评价统计和趋势分析</div>
                 </div>
               </div>
               <div className="flex items-start gap-2">
                 <div className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
                 <div>
-                  <div className="font-medium">持续改进</div>
-                  <div className="text-sm text-muted-foreground">基于用户反馈持续优化AI解决方案质量</div>
+                  <div className="font-medium text-white">持续改进</div>
+                  <div className="text-sm text-white/80">基于用户反馈持续优化AI解决方案质量</div>
                 </div>
               </div>
               <div className="flex items-start gap-2">
                 <div className="w-2 h-2 bg-teal-500 rounded-full mt-2 flex-shrink-0"></div>
                 <div>
-                  <div className="font-medium">个性化推荐</div>
-                  <div className="text-sm text-muted-foreground">根据历史评价偏好提供更精准的解决方案</div>
+                  <div className="font-medium text-white">个性化推荐</div>
+                  <div className="text-sm text-white/80">根据历史评价偏好提供更精准的解决方案</div>
                 </div>
               </div>
             </CardContent>

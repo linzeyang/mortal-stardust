@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { DashboardLayout } from '@/components/ui/dashboard-layout';
+import Image from 'next/image';
 import {
   TrendingUp,
   BarChart3,
@@ -115,12 +116,12 @@ function OverviewStats() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {stats.map((stat, index) => (
-        <Card key={index} className="hover:shadow-md transition-shadow">
+        <Card key={index} className="bg-gray-800/80 backdrop-blur-md border-gray-600/50 hover:shadow-md transition-shadow">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                <p className="text-sm font-medium text-white/80">{stat.title}</p>
+                <p className="text-2xl font-bold text-white">{stat.value}</p>
                 <div className="flex items-center mt-1">
                   {stat.changeType === 'positive' ? (
                     <ArrowUpRight className="h-4 w-4 text-green-500" />
@@ -149,9 +150,9 @@ function CategoryAnalysis() {
   const totalExperiences = analyticsData.categoryBreakdown.reduce((sum, cat) => sum + cat.count, 0);
 
   return (
-    <Card>
+    <Card className="bg-gray-800/80 backdrop-blur-md border-gray-600/50">
       <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
+        <CardTitle className="flex items-center space-x-2 text-white">
           <PieChart className="h-5 w-5" />
           <span>经历类型分析</span>
         </CardTitle>
@@ -162,7 +163,7 @@ function CategoryAnalysis() {
             <div key={index} className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="font-medium">{category.category}</span>
-                <span className="text-gray-500">{category.count} 个经历</span>
+                <span className="text-white/80">{category.count} 个经历</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Progress value={category.percentage} className="flex-1" />
@@ -181,9 +182,9 @@ function CategoryAnalysis() {
 
 function SolutionEffectiveness() {
   return (
-    <Card>
+    <Card className="bg-gray-800/80 backdrop-blur-md border-gray-600/50">
       <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
+        <CardTitle className="flex items-center space-x-2 text-white">
           <BarChart3 className="h-5 w-5" />
           <span>解决方案效果分析</span>
         </CardTitle>
@@ -207,7 +208,7 @@ function SolutionEffectiveness() {
                 </div>
                 <div className="space-y-1">
                   <Progress value={stage.percentage} className="h-2" />
-                  <div className="flex justify-between text-xs text-gray-500">
+                  <div className="flex justify-between text-xs text-white/80">
                     <span>成功率: {stage.percentage.toFixed(1)}%</span>
                     <span>总方案: {stage.total}</span>
                   </div>
@@ -223,9 +224,9 @@ function SolutionEffectiveness() {
 
 function TimeSeriesChart() {
   return (
-    <Card>
+    <Card className="bg-gray-800/80 backdrop-blur-md border-gray-600/50">
       <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
+        <CardTitle className="flex items-center space-x-2 text-white">
           <Activity className="h-5 w-5" />
           <span>成长趋势分析</span>
         </CardTitle>
@@ -235,10 +236,10 @@ function TimeSeriesChart() {
           <div className="grid grid-cols-4 gap-4 text-center">
             {analyticsData.timeSeriesData.map((data, index) => (
               <div key={index} className="space-y-2">
-                <div className="text-xs text-gray-500">{data.month}</div>
+                <div className="text-xs text-white/80">{data.month}</div>
                 <div className="space-y-1">
                   <div className="text-sm font-medium">{data.experiences} 经历</div>
-                  <div className="text-xs text-gray-600">{data.solutions} 方案</div>
+                  <div className="text-xs text-white/80">{data.solutions} 方案</div>
                   <Badge variant="outline" className="text-xs">
                     {data.avgRating}%
                   </Badge>
@@ -288,9 +289,9 @@ function PersonalizedInsights() {
   ];
 
   return (
-    <Card>
+    <Card className="bg-gray-800/80 backdrop-blur-md border-gray-600/50">
       <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
+        <CardTitle className="flex items-center space-x-2 text-white">
           <Lightbulb className="h-5 w-5" />
           <span>个性化洞察</span>
         </CardTitle>
@@ -302,8 +303,8 @@ function PersonalizedInsights() {
               <div className="flex items-start space-x-3">
                 <insight.icon className={`h-5 w-5 mt-0.5 ${insight.color}`} />
                 <div>
-                  <h4 className="font-medium text-gray-900 mb-1">{insight.title}</h4>
-                  <p className="text-sm text-gray-700">{insight.content}</p>
+                  <h4 className="font-medium text-white mb-1">{insight.title}</h4>
+                  <p className="text-sm text-white/80">{insight.content}</p>
                 </div>
               </div>
             </div>
@@ -316,16 +317,32 @@ function PersonalizedInsights() {
 
 export default function AnalyticsPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-7xl mx-auto">
+    <div className="relative min-h-screen">
+      {/* 背景图片层 - 使用 pagesix.png */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="/images/pagesix.png"
+          alt="分析页面背景"
+          fill
+          className="object-cover object-center"
+          priority
+          quality={100}
+        />
+        {/* 深色遮罩层，确保内容可读性 */}
+        <div className="absolute inset-0 bg-black/30"></div>
+      </div>
+
+      {/* 内容层 */}
+      <div className="relative z-10">
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="flex justify-between items-center mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              <h1 className="text-3xl font-bold text-white mb-2">
                 数据分析仪表板
               </h1>
-              <p className="text-gray-600">
+              <p className="text-white/90">
                 深入了解您的成长轨迹和AI解决方案效果
               </p>
             </div>
@@ -348,7 +365,7 @@ export default function AnalyticsPage() {
 
           {/* Main Content */}
           <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-4 bg-gray-800/80 backdrop-blur-md border-gray-600/50">
               <TabsTrigger value="overview">综合概览</TabsTrigger>
               <TabsTrigger value="trends">趋势分析</TabsTrigger>
               <TabsTrigger value="categories">分类统计</TabsTrigger>
@@ -389,6 +406,7 @@ export default function AnalyticsPage() {
                 记录新经历
               </Button>
             </div>
+          </div>
           </div>
         </div>
       </div>

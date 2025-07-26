@@ -158,9 +158,9 @@ export default function DataSecurityDashboard() {
   };
 
   const getSecurityScoreColor = (score: number): string => {
-    if (score >= 90) return 'text-green-600';
-    if (score >= 70) return 'text-yellow-600';
-    return 'text-red-600';
+    if (score >= 90) return 'text-green-400';
+    if (score >= 70) return 'text-yellow-400';
+    return 'text-red-400';
   };
 
   const getCategoryIcon = (category: string) => {
@@ -191,8 +191,8 @@ export default function DataSecurityDashboard() {
     return (
       <div className="p-6">
         <div className="text-center">
-          <RefreshCw className="h-8 w-8 mx-auto mb-4 animate-spin text-muted-foreground" />
-          <p className="text-muted-foreground">加载安全仪表板...</p>
+          <RefreshCw className="h-8 w-8 mx-auto mb-4 animate-spin text-white/80" />
+          <p className="text-white/80">加载安全仪表板...</p>
         </div>
       </div>
     );
@@ -204,10 +204,10 @@ export default function DataSecurityDashboard() {
       <div className="mb-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Shield className="h-8 w-8 text-primary" />
+            <Shield className="h-8 w-8 text-blue-400" />
             <div>
-              <h1 className="text-3xl font-bold">数据安全中心</h1>
-              <p className="text-muted-foreground">
+              <h1 className="text-3xl font-bold text-white">数据安全中心</h1>
+              <p className="text-white/90">
                 管理和监控您的加密数据安全
               </p>
             </div>
@@ -222,9 +222,9 @@ export default function DataSecurityDashboard() {
       {/* Security Score Overview */}
       {securityStats && (
         <div className="mb-6">
-          <Card>
+          <Card className="bg-gray-800/80 backdrop-blur-md border-gray-600/50">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-white">
                 <Shield className="h-5 w-5" />
                 安全评分
               </CardTitle>
@@ -235,25 +235,25 @@ export default function DataSecurityDashboard() {
                   <div className={`text-4xl font-bold ${getSecurityScoreColor(securityStats.security_score)}`}>
                     {securityStats.security_score}
                   </div>
-                  <div className="text-sm text-muted-foreground">安全评分</div>
+                  <div className="text-sm text-white/80">安全评分</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">
+                  <div className="text-2xl font-bold text-blue-400">
                     {securityStats.total_encrypted_records}
                   </div>
-                  <div className="text-sm text-muted-foreground">加密记录数</div>
+                  <div className="text-sm text-white/80">加密记录数</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">
+                  <div className="text-2xl font-bold text-green-400">
                     {securityStats.data_categories}
                   </div>
-                  <div className="text-sm text-muted-foreground">数据类别</div>
+                  <div className="text-sm text-white/80">数据类别</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-600">
+                  <div className="text-2xl font-bold text-purple-400">
                     100%
                   </div>
-                  <div className="text-sm text-muted-foreground">加密覆盖率</div>
+                  <div className="text-sm text-white/80">加密覆盖率</div>
                 </div>
               </div>
 
@@ -280,7 +280,7 @@ export default function DataSecurityDashboard() {
       )}
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-3 bg-gray-800/80 backdrop-blur-md border-gray-600/50">
           <TabsTrigger value="overview">数据概览</TabsTrigger>
           <TabsTrigger value="access-logs">访问日志</TabsTrigger>
           <TabsTrigger value="compliance">合规管理</TabsTrigger>
@@ -291,26 +291,26 @@ export default function DataSecurityDashboard() {
           {inventory && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {Object.entries(inventory.categories).map(([category, data]) => (
-                <Card key={category}>
+                <Card key={category} className="bg-gray-800/80 backdrop-blur-md border-gray-600/50">
                   <CardHeader className="pb-3">
-                    <CardTitle className="flex items-center gap-2 text-base">
+                    <CardTitle className="flex items-center gap-2 text-base text-white">
                       {getCategoryIcon(category)}
                       {getCategoryLabel(category)}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">记录数量</span>
+                      <span className="text-sm text-white/80">记录数量</span>
                       <Badge variant="secondary">{data.record_count}</Badge>
                     </div>
 
                     <div className="flex justify-between items-center">
-                      <span className="text-sm text-muted-foreground">数据大小</span>
-                      <span className="text-sm font-medium">{formatBytes(data.total_size_bytes)}</span>
+                      <span className="text-sm text-white/80">数据大小</span>
+                      <span className="text-sm font-medium text-white">{formatBytes(data.total_size_bytes)}</span>
                     </div>
 
                     <div className="space-y-1">
-                      <div className="text-xs text-muted-foreground">敏感级别</div>
+                      <div className="text-xs text-white/80">敏感级别</div>
                       <div className="flex flex-wrap gap-1">
                         {data.sensitivity_levels.map((level) => (
                           <Badge key={level} variant="outline" className="text-xs">
@@ -320,7 +320,7 @@ export default function DataSecurityDashboard() {
                       </div>
                     </div>
 
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-xs text-white/80">
                       最新: {formatDate(data.newest_record)}
                     </div>
                   </CardContent>
@@ -332,9 +332,9 @@ export default function DataSecurityDashboard() {
 
         {/* Access Logs Tab */}
         <TabsContent value="access-logs" className="space-y-4">
-          <Card>
+          <Card className="bg-gray-800/80 backdrop-blur-md border-gray-600/50">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-white">
                 <Eye className="h-5 w-5" />
                 最近访问记录
               </CardTitle>
@@ -345,18 +345,18 @@ export default function DataSecurityDashboard() {
                   accessLogs.slice(0, 20).map((log) => (
                     <div key={log._id} className="flex items-center justify-between p-3 border rounded-lg">
                       <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-full ${log.success ? 'bg-green-100' : 'bg-red-100'}`}>
+                        <div className={`p-2 rounded-full ${log.success ? 'bg-green-400/20' : 'bg-red-400/20'}`}>
                           {log.success ? (
-                            <CheckCircle2 className="h-4 w-4 text-green-600" />
+                            <CheckCircle2 className="h-4 w-4 text-green-400" />
                           ) : (
-                            <AlertTriangle className="h-4 w-4 text-red-600" />
+                            <AlertTriangle className="h-4 w-4 text-red-400" />
                           )}
                         </div>
                         <div>
                           <div className="font-medium text-sm">
                             {log.accessType.toUpperCase()} - {getCategoryLabel(log.dataCategory)}
                           </div>
-                          <div className="text-xs text-muted-foreground">
+                          <div className="text-xs text-white/80">
                             {formatDateTime(log.timestamp)}
                             {log.ipAddress && ` • ${log.ipAddress}`}
                           </div>
@@ -368,7 +368,7 @@ export default function DataSecurityDashboard() {
                     </div>
                   ))
                 ) : (
-                  <div className="text-center py-8 text-muted-foreground">
+                  <div className="text-center py-8 text-white/80">
                     <Activity className="h-8 w-8 mx-auto mb-2" />
                     <p>暂无访问记录</p>
                   </div>
@@ -381,51 +381,51 @@ export default function DataSecurityDashboard() {
         {/* Compliance Tab */}
         <TabsContent value="compliance" className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Card>
+            <Card className="bg-gray-800/80 backdrop-blur-md border-gray-600/50">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-white">
                   <Lock className="h-5 w-5" />
                   数据保护合规
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-green-400/20 rounded-lg">
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-green-600" />
-                    <span className="text-sm font-medium">GDPR 合规</span>
+                    <CheckCircle2 className="h-4 w-4 text-green-400" />
+                    <span className="text-sm font-medium text-white">GDPR 合规</span>
                   </div>
-                  <Badge className="bg-green-100 text-green-800">已启用</Badge>
+                  <Badge className="bg-green-400/30 text-green-300">已启用</Badge>
                 </div>
 
-                <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-green-400/20 rounded-lg">
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-green-600" />
-                    <span className="text-sm font-medium">数据加密</span>
+                    <CheckCircle2 className="h-4 w-4 text-green-400" />
+                    <span className="text-sm font-medium text-white">数据加密</span>
                   </div>
-                  <Badge className="bg-green-100 text-green-800">AES-256</Badge>
+                  <Badge className="bg-green-400/30 text-green-300">AES-256</Badge>
                 </div>
 
-                <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-green-400/20 rounded-lg">
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-green-600" />
-                    <span className="text-sm font-medium">访问审计</span>
+                    <CheckCircle2 className="h-4 w-4 text-green-400" />
+                    <span className="text-sm font-medium text-white">访问审计</span>
                   </div>
-                  <Badge className="bg-green-100 text-green-800">完整记录</Badge>
+                  <Badge className="bg-green-400/30 text-green-300">完整记录</Badge>
                 </div>
 
-                <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-green-400/20 rounded-lg">
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="h-4 w-4 text-green-600" />
-                    <span className="text-sm font-medium">数据保留</span>
+                    <CheckCircle2 className="h-4 w-4 text-green-400" />
+                    <span className="text-sm font-medium text-white">数据保留</span>
                   </div>
-                  <Badge className="bg-green-100 text-green-800">自动管理</Badge>
+                  <Badge className="bg-green-400/30 text-green-300">自动管理</Badge>
                 </div>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-gray-800/80 backdrop-blur-md border-gray-600/50">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
+                <CardTitle className="flex items-center gap-2 text-white">
                   <Settings className="h-5 w-5" />
                   安全操作
                 </CardTitle>

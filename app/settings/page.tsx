@@ -15,6 +15,7 @@ import { Separator } from '@/components/ui/separator';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { useToast } from '@/hooks/use-toast';
 import { SettingsProvider, useSettings, UserRole } from '@/contexts/settings-context';
+import Image from 'next/image';
 import {
   User,
   Bell,
@@ -168,9 +169,9 @@ function ProfileSettings() {
   }
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <Card>
+      <Card className="bg-gray-800/80 backdrop-blur-md border-gray-600/50">
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
+          <CardTitle className="flex items-center space-x-2 text-white">
             <User className="h-5 w-5" />
             <span>个人信息</span>
           </CardTitle>
@@ -207,7 +208,7 @@ function ProfileSettings() {
                 <Upload className="h-4 w-4 mr-1" />
                 更换头像
               </Button>
-              <p className="text-sm text-gray-500 mt-1">推荐尺寸: 200x200像素，最大5MB</p>
+              <p className="text-sm text-white/80 mt-1">推荐尺寸: 200x200像素，最大5MB</p>
             </div>
           </div>
 
@@ -254,7 +255,7 @@ function ProfileSettings() {
                 验证
               </Button>
             </div>
-            <p className="text-sm text-gray-500">邮箱地址不可修改</p>
+            <p className="text-sm text-white/80">邮箱地址不可修改</p>
           </div>
 
           {/* Phone Number */}
@@ -321,7 +322,7 @@ function ProfileSettings() {
             {formErrors.bio && (
               <p className="text-sm text-red-500">{formErrors.bio}</p>
             )}
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-white/80">
               {(formData.bio || '').length}/500 字符
             </p>
           </div>
@@ -362,9 +363,9 @@ function ProfileSettings() {
 function NotificationSettings() {
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="bg-gray-800/80 backdrop-blur-md border-gray-600/50">
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
+          <CardTitle className="flex items-center space-x-2 text-white">
             <Bell className="h-5 w-5" />
             <span>通知偏好</span>
           </CardTitle>
@@ -374,7 +375,7 @@ function NotificationSettings() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label className="text-base">AI方案完成通知</Label>
-                <p className="text-sm text-gray-500">当AI完成您的经历分析后立即通知</p>
+                <p className="text-sm text-white/80">当AI完成您的经历分析后立即通知</p>
               </div>
               <Switch defaultChecked />
             </div>
@@ -382,7 +383,7 @@ function NotificationSettings() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label className="text-base">邮件提醒</Label>
-                <p className="text-sm text-gray-500">接收重要更新和方案建议的邮件</p>
+                <p className="text-sm text-white/80">接收重要更新和方案建议的邮件</p>
               </div>
               <Switch defaultChecked />
             </div>
@@ -390,7 +391,7 @@ function NotificationSettings() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label className="text-base">手机推送</Label>
-                <p className="text-sm text-gray-500">在移动设备上接收推送通知</p>
+                <p className="text-sm text-white/80">在移动设备上接收推送通知</p>
               </div>
               <Switch />
             </div>
@@ -398,7 +399,7 @@ function NotificationSettings() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label className="text-base">每周总结</Label>
-                <p className="text-sm text-gray-500">每周发送您的成长总结和分析报告</p>
+                <p className="text-sm text-white/80">每周发送您的成长总结和分析报告</p>
               </div>
               <Switch defaultChecked />
             </div>
@@ -406,7 +407,7 @@ function NotificationSettings() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label className="text-base">新功能提醒</Label>
-                <p className="text-sm text-gray-500">当平台推出新功能时通知您</p>
+                <p className="text-sm text-white/80">当平台推出新功能时通知您</p>
               </div>
               <Switch />
             </div>
@@ -436,9 +437,9 @@ function NotificationSettings() {
 function PrivacySettings() {
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="bg-gray-800/80 backdrop-blur-md border-gray-600/50">
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
+          <CardTitle className="flex items-center space-x-2 text-white">
             <Shield className="h-5 w-5" />
             <span>隐私与安全</span>
           </CardTitle>
@@ -448,7 +449,7 @@ function PrivacySettings() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label className="text-base">数据分析共享</Label>
-                <p className="text-sm text-gray-500">允许匿名数据用于改进AI模型</p>
+                <p className="text-sm text-white/80">允许匿名数据用于改进AI模型</p>
               </div>
               <Switch defaultChecked />
             </div>
@@ -456,7 +457,7 @@ function PrivacySettings() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label className="text-base">个性化建议</Label>
-                <p className="text-sm text-gray-500">基于您的历史数据提供个性化建议</p>
+                <p className="text-sm text-white/80">基于您的历史数据提供个性化建议</p>
               </div>
               <Switch defaultChecked />
             </div>
@@ -464,7 +465,7 @@ function PrivacySettings() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label className="text-base">营销通讯</Label>
-                <p className="text-sm text-gray-500">接收产品更新和营销信息</p>
+                <p className="text-sm text-white/80">接收产品更新和营销信息</p>
               </div>
               <Switch />
             </div>
@@ -472,7 +473,7 @@ function PrivacySettings() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label className="text-base">第三方集成</Label>
-                <p className="text-sm text-gray-500">允许与第三方服务集成</p>
+                <p className="text-sm text-white/80">允许与第三方服务集成</p>
               </div>
               <Switch />
             </div>
@@ -495,7 +496,7 @@ function PrivacySettings() {
                   <SelectItem value="5years">5年后</SelectItem>
                 </SelectContent>
               </Select>
-              <p className="text-sm text-gray-500">设置数据自动删除时间，保护您的隐私</p>
+              <p className="text-sm text-white/80">设置数据自动删除时间，保护您的隐私</p>
             </div>
           </div>
 
@@ -530,9 +531,9 @@ function PrivacySettings() {
 function SecuritySettings() {
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="bg-gray-800/80 backdrop-blur-md border-gray-600/50">
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
+          <CardTitle className="flex items-center space-x-2 text-white">
             <Lock className="h-5 w-5" />
             <span>账户安全</span>
           </CardTitle>
@@ -589,7 +590,7 @@ function SecuritySettings() {
                 </div>
                 <div>
                   <p className="font-medium">短信验证已启用</p>
-                  <p className="text-sm text-gray-500">验证码将发送至 +86 138****8888</p>
+                  <p className="text-sm text-white/80">验证码将发送至 +86 138****8888</p>
                 </div>
               </div>
               <Button variant="outline" size="sm">
@@ -600,11 +601,11 @@ function SecuritySettings() {
             <div className="flex items-center justify-between p-4 border rounded-lg">
               <div className="flex items-center space-x-3">
                 <div className="p-2 bg-gray-100 rounded-full">
-                  <Smartphone className="h-5 w-5 text-gray-600" />
+                  <Smartphone className="h-5 w-5 text-white/80" />
                 </div>
                 <div>
                   <p className="font-medium">应用验证器</p>
-                  <p className="text-sm text-gray-500">使用Google Authenticator或类似应用</p>
+                  <p className="text-sm text-white/80">使用Google Authenticator或类似应用</p>
                 </div>
               </div>
               <Button variant="outline" size="sm">
@@ -623,7 +624,7 @@ function SecuritySettings() {
                   <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                   <div>
                     <p className="font-medium">当前会话</p>
-                    <p className="text-sm text-gray-500">Chrome on Windows • 北京 • 刚刚活跃</p>
+                    <p className="text-sm text-white/80">Chrome on Windows • 北京 • 刚刚活跃</p>
                   </div>
                 </div>
                 <Badge variant="secondary">当前</Badge>
@@ -634,7 +635,7 @@ function SecuritySettings() {
                   <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
                   <div>
                     <p className="font-medium">移动端会话</p>
-                    <p className="text-sm text-gray-500">Safari on iPhone • 上海 • 2小时前</p>
+                    <p className="text-sm text-white/80">Safari on iPhone • 上海 • 2小时前</p>
                   </div>
                 </div>
                 <Button variant="outline" size="sm">
@@ -656,9 +657,9 @@ function SecuritySettings() {
 function PreferencesSettings() {
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="bg-gray-800/80 backdrop-blur-md border-gray-600/50">
         <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
+          <CardTitle className="flex items-center space-x-2 text-white">
             <Palette className="h-5 w-5" />
             <span>界面偏好</span>
           </CardTitle>
@@ -730,7 +731,7 @@ function PreferencesSettings() {
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label className="text-base">详细分析</Label>
-                  <p className="text-sm text-gray-500">提供更详细的经历分析和建议</p>
+                  <p className="text-sm text-white/80">提供更详细的经历分析和建议</p>
                 </div>
                 <Switch defaultChecked />
               </div>
@@ -738,7 +739,7 @@ function PreferencesSettings() {
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label className="text-base">快速响应</Label>
-                  <p className="text-sm text-gray-500">优先速度，提供简洁的建议</p>
+                  <p className="text-sm text-white/80">优先速度，提供简洁的建议</p>
                 </div>
                 <Switch />
               </div>
@@ -769,15 +770,31 @@ function SettingsContent() {
   const { unsavedChanges, resetChanges } = useSettings();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
+    <div className="relative min-h-screen">
+      {/* 背景图片层 - 使用 pagesix.png */}
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="/images/pagesix.png"
+          alt="设置页面背景"
+          fill
+          className="object-cover object-center"
+          priority
+          quality={100}
+        />
+        {/* 深色遮罩层，确保内容可读性 */}
+        <div className="absolute inset-0 bg-black/30"></div>
+      </div>
+
+      {/* 内容层 */}
+      <div className="relative z-10">
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-4xl mx-auto">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-3xl font-bold text-white mb-2">
               账户设置
             </h1>
-            <p className="text-gray-600">
+            <p className="text-white/90">
               管理您的账户信息、隐私偏好和个性化设置
             </p>
             {unsavedChanges && (
@@ -789,7 +806,7 @@ function SettingsContent() {
 
           {/* Settings Tabs */}
           <Tabs defaultValue="profile" className="w-full">
-            <TabsList className="grid w-full grid-cols-5">
+            <TabsList className="grid w-full grid-cols-5 bg-gray-800/80 backdrop-blur-md border-gray-600/50">
               <TabsTrigger value="profile" className="flex items-center space-x-2">
                 <User className="h-4 w-4" />
                 <span className="hidden sm:inline">个人资料</span>
@@ -844,6 +861,7 @@ function SettingsContent() {
             >
               重置更改
             </Button>
+          </div>
           </div>
         </div>
       </div>

@@ -1,112 +1,131 @@
 /**
  * @fileoverview Home Page Component
  *
- * The main landing page for the Mortal Stardust application. This component
- * serves as the entry point for new users, providing an overview of the
- * three-stage AI counseling process and encouraging user registration.
- *
- * The page features a hero section with the site branding, a description
- * of the service, and a visual representation of the three processing stages.
- * It uses the site configuration for dynamic content and provides a clear
- * call-to-action for user onboarding.
+ * 人间星尘主页 - 星空主题设计
+ * 使用背景图片和星空元素，营造梦幻的宇宙氛围
  *
  * @author Mortal Stardust Team
  * @since 1.0.0
  */
 
-import { Button } from '@/components/ui/button';
-import { ArrowRight, Heart, Brain, Users } from 'lucide-react';
-import { siteConfig } from '@/lib/config';
+'use client';
 
-/**
- * Home Page Component
- *
- * The main landing page that introduces users to the Mortal Stardust platform.
- * This component provides:
- *
- * - Hero section with site branding and value proposition
- * - Visual overview of the three-stage AI processing system
- * - Clear explanation of each stage's purpose and benefits
- * - Call-to-action button directing users to registration
- * - Responsive design optimized for various screen sizes
- *
- * The page is designed to be welcoming and informative, helping users
- * understand the platform's capabilities before they begin the registration
- * process. It uses consistent styling with the site's design system and
- * incorporates accessibility best practices.
- *
- * @component
- * @returns {JSX.Element} The rendered home page with hero section and feature overview
- *
- * @example
- * ```tsx
- * // This component is automatically rendered for the root route
- * // No props are required as it uses site configuration
- * <HomePage />
- * ```
- */
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { ChevronDown } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+
 export default function HomePage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    let scrollTimeout: NodeJS.Timeout;
+
+    const handleWheel = (e: WheelEvent) => {
+      // 清除之前的超时
+      clearTimeout(scrollTimeout);
+
+      // 如果向下滚动
+      if (e.deltaY > 0) {
+        scrollTimeout = setTimeout(() => {
+          router.push('/social');
+        }, 300); // 300ms 延迟，避免误触
+      }
+    };
+
+    // 添加滚轮事件监听
+    window.addEventListener('wheel', handleWheel, { passive: true });
+
+    // 清理函数
+    return () => {
+      window.removeEventListener('wheel', handleWheel);
+      clearTimeout(scrollTimeout);
+    };
+  }, [router]);
   return (
-    <main className="flex-1 flex items-center justify-center">
-      {/* Hero Section */}
-      <section className="py-20 text-center">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Main Heading - Uses site configuration for dynamic branding */}
-          <h1 className="text-4xl font-bold text-foreground tracking-tight sm:text-5xl md:text-6xl">
-            Welcome to
-            <span className="block text-primary">{siteConfig.name}</span>
-          </h1>
+    <main className="relative min-h-screen overflow-hidden select-none">
+      {/* 背景图片层 - 使用 firstpage.png */}
+      <div className="absolute inset-0">
+        <Image
+          src="/images/firstpage.png"
+          alt="星空背景"
+          fill
+          className="object-cover object-center"
+          priority
+          quality={100}
+        />
+        {/* 深色遮罩层，确保文字可读性 */}
+        <div className="absolute inset-0 bg-black/20"></div>
+      </div>
 
-          {/* Value Proposition - Explains the core service offering */}
-          <p className="mt-6 text-xl text-muted-foreground max-w-2xl mx-auto">
-            Share your life experiences and receive personalized AI guidance through our comprehensive three-stage counseling process
-          </p>
+      {/* 左上角装饰图标 */}
+      <div className="absolute top-8 left-8 z-20 flex items-center space-x-4">
+        {/* 对话框图标 */}
+        <div className="relative">
+          <Image
+            src="/images/Vector.png"
+            alt="对话框"
+            width={32}
+            height={32}
+            className="opacity-80"
+          />
+        </div>
 
-          {/* Three-Stage Process Overview - Visual representation of the AI processing stages */}
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            {/* Stage 1: Psychological Healing */}
-            <div className="text-center p-6 rounded-lg bg-card border">
-              <Heart className="h-12 w-12 text-primary mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Psychological Healing</h3>
-              <p className="text-muted-foreground text-sm">
-                Stage 1: Emotional support and mental wellness guidance tailored to your experiences
-              </p>
-            </div>
+        {/* 人间星尘 Logo */}
+        <div className="relative">
+          <Image
+            src="/images/humanicdust.png"
+            alt="人间星尘"
+            width={120}
+            height={40}
+            className="opacity-90"
+          />
+        </div>
+      </div>
 
-            {/* Stage 2: Practical Solutions */}
-            <div className="text-center p-6 rounded-lg bg-card border">
-              <Brain className="h-12 w-12 text-primary mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Practical Solutions</h3>
-              <p className="text-muted-foreground text-sm">
-                Stage 2: Actionable strategies and concrete steps to address your challenges
-              </p>
-            </div>
-
-            {/* Stage 3: Ongoing Support */}
-            <div className="text-center p-6 rounded-lg bg-card border">
-              <Users className="h-12 w-12 text-primary mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Ongoing Support</h3>
-              <p className="text-muted-foreground text-sm">
-                Stage 3: Follow-up guidance and experience enhancement for long-term growth
-              </p>
-            </div>
-          </div>
-
-          {/* Call-to-Action - Primary conversion point directing users to registration */}
-          <div className="mt-8">
-            <Button
-              asChild
-              size="lg"
-              className="text-lg rounded-full px-8 py-3"
-            >
-              <a href="/sign-up">
-                Get Started
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </a>
-            </Button>
+      {/* 主要内容层 */}
+      <div className="relative z-10 flex flex-col min-h-screen">
+        {/* 主内容区域 */}
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+            {/* 主要内容可以在这里添加 */}
           </div>
         </div>
-      </section>
+
+        {/* 底部 Starash logo 和向下箭头 */}
+        <div className="relative z-20 pb-8 flex flex-col items-center">
+          {/* Starash Logo */}
+          <div className="mb-4">
+            <Image
+              src="/images/Starash.png"
+              alt="Starash"
+              width={80}
+              height={80}
+              className="opacity-90"
+            />
+          </div>
+
+          {/* 向下箭头 - 可点击跳转到社交页面 */}
+          <Link href="/social" className="group cursor-pointer">
+            <div className="flex flex-col items-center">
+              <ChevronDown className="w-8 h-8 text-white/80 animate-bounce group-hover:text-white transition-colors duration-300" />
+              <div className="mt-2 text-white/60 text-sm group-hover:text-white/80 transition-colors duration-300">
+                探索更多
+              </div>
+            </div>
+          </Link>
+        </div>
+      </div>
+
+      {/* 浮动星光效果 */}
+      <div className="absolute inset-0 pointer-events-none">
+        {/* 可以添加一些CSS动画的星光点缀 */}
+        <div className="absolute top-1/4 left-1/4 w-2 h-2 bg-white rounded-full opacity-60 animate-pulse"></div>
+        <div className="absolute top-1/3 right-1/4 w-1 h-1 bg-white rounded-full opacity-40 animate-pulse delay-1000"></div>
+        <div className="absolute bottom-1/3 left-1/3 w-1.5 h-1.5 bg-white rounded-full opacity-50 animate-pulse delay-2000"></div>
+        <div className="absolute bottom-1/4 right-1/3 w-1 h-1 bg-white rounded-full opacity-30 animate-pulse delay-3000"></div>
+      </div>
     </main>
   );
 }

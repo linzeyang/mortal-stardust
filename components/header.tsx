@@ -29,7 +29,8 @@ import Link from 'next/link';
 import { useState, Suspense } from 'react';
 import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { CircleIcon, LogOut, User as UserIcon, FileText, Brain, BarChart3, Star, Shield, Sparkles, UserCheck, Settings } from 'lucide-react';
+import { LogOut, User as UserIcon, FileText, Brain, BarChart3, Star, Shield, Sparkles, UserCheck, Settings } from 'lucide-react';
+import Image from 'next/image';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -76,10 +77,10 @@ function UserMenu() {
   if (!user) {
     return (
       <div className="flex items-center space-x-4">
-        <Button asChild variant="outline" className="rounded-full">
+        <Button asChild variant="outline" className="rounded-full border-white/30 text-white hover:bg-white/10">
           <Link href="/sign-in">Sign In</Link>
         </Button>
-        <Button asChild className="rounded-full">
+        <Button asChild className="rounded-full bg-white text-black hover:bg-white/90">
           <Link href="/sign-up">Sign Up</Link>
         </Button>
       </div>
@@ -146,49 +147,49 @@ function NavigationMenu() {
     <nav className="hidden md:flex items-center space-x-6">
       <Link
         href="/experience"
-        className="flex items-center space-x-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
+        className="flex items-center space-x-2 text-sm font-medium text-white/80 hover:text-white transition-colors"
       >
         <FileText className="h-4 w-4" />
         <span>经历收集</span>
       </Link>
       <Link
         href="/ai-solutions"
-        className="flex items-center space-x-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
+        className="flex items-center space-x-2 text-sm font-medium text-white/80 hover:text-white transition-colors"
       >
         <Brain className="h-4 w-4" />
         <span>AI方案</span>
       </Link>
       <Link
         href="/analytics"
-        className="flex items-center space-x-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
+        className="flex items-center space-x-2 text-sm font-medium text-white/80 hover:text-white transition-colors"
       >
         <BarChart3 className="h-4 w-4" />
         <span>数据分析</span>
       </Link>
       <Link
         href="/rating-demo"
-        className="flex items-center space-x-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
+        className="flex items-center space-x-2 text-sm font-medium text-white/80 hover:text-white transition-colors"
       >
         <Star className="h-4 w-4" />
         <span>评价系统</span>
       </Link>
       <Link
         href="/experience-summary"
-        className="flex items-center space-x-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
+        className="flex items-center space-x-2 text-sm font-medium text-white/80 hover:text-white transition-colors"
       >
         <Sparkles className="h-4 w-4" />
         <span>经历总结</span>
       </Link>
       <Link
         href="/security"
-        className="flex items-center space-x-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
+        className="flex items-center space-x-2 text-sm font-medium text-white/80 hover:text-white transition-colors"
       >
         <Shield className="h-4 w-4" />
         <span>安全中心</span>
       </Link>
       <Link
         href="/privacy"
-        className="flex items-center space-x-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors"
+        className="flex items-center space-x-2 text-sm font-medium text-white/80 hover:text-white transition-colors"
       >
         <UserCheck className="h-4 w-4" />
         <span>隐私中心</span>
@@ -196,8 +197,8 @@ function NavigationMenu() {
       <Link
         href="/settings"
         className={`flex items-center space-x-2 text-sm font-medium transition-colors ${isSettingsActive
-            ? 'text-foreground font-semibold'
-            : 'text-foreground/80 hover:text-foreground'
+            ? 'text-white font-semibold'
+            : 'text-white/80 hover:text-white'
           }`}
         aria-label="访问设置页面管理账户偏好"
         aria-current={isSettingsActive ? 'page' : undefined}
@@ -211,12 +212,17 @@ function NavigationMenu() {
 
 export default function Header() {
   return (
-    <header className="border-b border-border bg-background">
+    <header className="border-b border-gray-800 bg-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
         <div className="flex items-center space-x-8">
           <Link href="/" className="flex items-center">
-            <CircleIcon className="h-6 w-6 text-primary" />
-            <span className="ml-2 text-xl font-semibold text-foreground">{siteConfig.name}</span>
+            <Image
+              src="/images/negative.png"
+              alt="Negative Logo"
+              width={64}
+              height={64}
+              className="opacity-90"
+            />
           </Link>
           <NavigationMenu />
         </div>

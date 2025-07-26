@@ -80,7 +80,7 @@ export default function ThemeControls() {
         variant="outline"
         size="sm"
         onClick={toggleMode}
-        className="rounded-full p-2 h-9 w-9"
+        className="rounded-full p-2 h-9 w-9 border-white/30 text-white hover:bg-white/10"
         title={mode === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
       >
         {mode === 'light' ? (
@@ -96,7 +96,7 @@ export default function ThemeControls() {
           <Button
             variant="outline"
             size="sm"
-            className="rounded-full p-2 h-9 w-9"
+            className="rounded-full p-2 h-9 w-9 border-white/30 text-white hover:bg-white/10"
             title="Change theme color"
           >
             <Palette className="h-4 w-4" />
