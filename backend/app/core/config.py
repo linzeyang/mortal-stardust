@@ -79,6 +79,9 @@ class Settings(BaseSettings):
     OPENAI_API_URL: str = os.getenv(
         "OPENAI_API_URL", "https://api.openai.com/v1"
     )  # OpenAI API base URL - can be changed for compatible APIs
+    OPENAI_MODEL_NAME: str = os.getenv(
+        "OPENAI_MODEL_NAME", "gpt-3.5-turbo"
+    )  # AI model name - for local models like Qwen3
 
     # File Upload and Storage Configuration
     # Multi-modal experience collection requires secure file handling for images, audio, and video
