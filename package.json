@@ -37,7 +37,7 @@
     "mongodb": "^6.18.0",
     "mongoose": "^8.16.4",
     "multer": "^2.0.2",
-    "next": "15.4.0-canary.47",
+    "next": "15.4.9",
     "postcss": "^8.5.3",
     "postgres": "^3.4.5",
     "radix-ui": "^1.4.2",
